@@ -8,8 +8,8 @@ def loader():
 class BasicInstaller(ExtensionInstaller):
     def __init__(self):
         super(BasicInstaller, self).__init__(
-            version="1.49.15-et",
-            name='neowx-material-et',
+            version="1.49.15",
+            name='neowx-material',
             description='The most versatile and modern weewx skin',
             author="Neoground GmbH",
             author_email="weather@neoground.com",
@@ -20,7 +20,7 @@ class BasicInstaller(ExtensionInstaller):
                     }
                 }
             },
-            files=[('skins/neowx-material-et',
+            files=[('skins/neowx-material',
                     ['skins/neowx-material/almanac.html.tmpl',
                      'skins/neowx-material/archive/NOAA-%Y-%m.txt.tmpl',
                      'skins/neowx-material/archive/NOAA-%Y.txt.tmpl',
