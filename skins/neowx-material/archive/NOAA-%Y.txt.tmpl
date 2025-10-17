@@ -54,7 +54,7 @@ ELEV: $station.altitude
 #end if
 
 
-                                       TEMPERATURE ($unit.label.outTemp.strip())
+                                       TEMPERATUR ($unit.label.outTemp.strip())
 
                               HEAT    COOL                              TROP.  SUM.   TROP.  ARKT.
           MEAN   MEAN         DEG     DEG                               DAYS   DAYS   NIGHT  DAYS
@@ -71,7 +71,7 @@ $month.dateTime.format($YM)
         $year.outTemp.meanmax.nolabel($Temp,$NONE) $year.outTemp.meanmin.nolabel($Temp,$NONE) $year.outTemp.avg.nolabel($Temp,$NONE) $year.heatdeg.sum.nolabel($Temp,$NONE) $year.cooldeg.sum.nolabel($Temp,$NONE)  $year.outTemp.max.nolabel($Temp,$NONE) $year.outTemp.maxtime.format($M,$NODAY)  $year.outTemp.min.nolabel($Temp,$NONE) $year.outTemp.mintime.format($M,$NODAY) $year.outTemp.max_ge($TropicDay).nolabel($Count,$NONE) $year.outTemp.max_ge($SummerDay).nolabel($Count,$NONE) $year.outTemp.min_ge($TropicNight).nolabel($Count,$NONE) $year.outTemp.min_le($ArcticDay).nolabel($Count,$NONE)
 
 
-                  PRECIPITATION ($unit.label.rain.strip())
+                  NIEDERSCHLAG ($unit.label.rain.strip())
 
                   MAX         ---DAYS OF RAIN---
                   OBS.               OVER
@@ -86,19 +86,3 @@ $month.dateTime.format($YM)
 #end for
 ------------------------------------------------
         $year.rain.sum.nolabel($Rain,$NONE) $year.rain.maxsum.nolabel($Rain,$NONE)  $year.rain.maxsumtime.format($M,$NODAY) $year.rain.sum_ge($Trace).nolabel($Count,$NONE) $year.rain.sum_ge($SomeRain).nolabel($Count,$NONE) $year.rain.sum_ge($Soak).nolabel($Count,$NONE)
-
-
-           WIND SPEED ($unit.label.windSpeed.strip())
-
-                                DOM
- YR  MO    AVG     HI   DATE    DIR
------------------------------------
-#for $month in $year.months
-#if $month.barometer.count.raw
-$month.dateTime.format($YM) $month.wind.avg.nolabel($Wind,$NONE) $month.wind.max.nolabel($Wind,$NONE)   $month.wind.maxtime.format($D,$NODAY) $month.wind.vecdir.nolabel($Dir,$NONE)
-#else
-$month.dateTime.format($YM)
-#end if
-#end for
------------------------------------
-        $year.wind.avg.nolabel($Wind,$NONE) $year.wind.max.nolabel($Wind,$NONE)   $year.wind.maxtime.format($M,$NODAY) $year.wind.vecdir.nolabel($Dir,$NONE)
