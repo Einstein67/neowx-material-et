@@ -29,16 +29,40 @@
                         $getVar('obs.label.' + name)
                     </h5>
 
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            #set current_value = $getVar('current.' + name)
-                            #set display_value = $mapBatteryValue($name, $current_value)
+<div class="row justify-content-center">
+    <div class="col-6 text-center">
+        #set current_value = $getVar('current.' + name)
+        #set display_value = $mapBatteryValue($name, $current_value)
+        #set display_percent = $formatBatteryValue($display_value)
 
-                            <h4 class="h2-responsive">
-                                $formatBatteryValue($display_value)%
-                            </h4>
-                        </div>
-                    </div>
+        <h4 class="h2-responsive mb-2">
+            $display_percent%
+        </h4>
+
+        <!-- Visuelle Batterieanzeige -->
+        <div class="battery-container" style="border: 2px solid #555; border-radius: 4px; width: 100px; height: 20px; margin: 0 auto; position: relative;">
+            <div class="battery-fill" 
+                 style="
+                     background-color: #4caf50; 
+                     width: $display_percent%; 
+                     height: 100%; 
+                     border-radius: 2px;
+                     transition: width 0.3s ease;
+                 ">
+            </div>
+            <div style="
+                     position: absolute; 
+                     top: 0; 
+                     left: 100%; 
+                     width: 6px; 
+                     height: 12px; 
+                     background: #555;
+                     border-radius: 2px;
+                     margin-left: 2px;
+                 "></div>
+        </div>
+    </div>
+</div>
 
                 </div>
             </div>
