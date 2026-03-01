@@ -21,10 +21,11 @@ xaxis: {
         '$Extras.hemispheres[7]'
     ]
 },
+
 tooltip: {
     x: {
-        formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
-            return value
+        formatter: function(val) {
+			return moment.unix(val).format("$Extras.Formatting.datetime_graph_tooltip");
         }
     }
-},
+}
