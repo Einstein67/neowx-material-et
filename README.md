@@ -8,7 +8,7 @@
 
 This actively maintained fork brings NeoWX Material into the modern era with **real-time MQTT updates**, **weather forecasting**, **comprehensive multi-language support**, and many more improvements.
 
-> **Live Demo:** [weewx.seehausen.org](https://weewx.seehausen.org/)
+> **Live Demo:** [WeeWx-ET](https://wetter.eini67.ddnss.de/)
 
 ---
 
