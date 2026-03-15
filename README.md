@@ -2,8 +2,6 @@
 
 **The most modern and feature-rich skin for WeeWX weather stations**
 
-[![GitHub Issues](https://img.shields.io/github/issues/seehase/neowx-material?style=flat-square)](https://github.com/seehase/neowx-material/issues)
-
 This actively maintained fork brings NeoWX Material into the modern era with **real-time MQTT updates**, **weather forecasting**, **comprehensive multi-language support**, and many more improvements.
 
 > **Live Demo:** [Home-ET](https://wetter.eini67.ddnss.de/)
