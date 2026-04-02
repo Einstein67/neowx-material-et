@@ -389,6 +389,11 @@
             #if $week.co2.has_data
                 $getChartJsCode("co2", "co2chart", "area", "co2")
             #end if
+			
+            // NOISE
+            #if $week.noise.has_data
+                $getChartJsCode("noise", "noisechart", "area", "noise")
+            #end if
 
             // UV / ET / Radiation
             #if $week.UV.has_data
