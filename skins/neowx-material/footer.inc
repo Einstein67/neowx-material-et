@@ -146,7 +146,7 @@
         ## Update notification
         #if $update_check and $update_check.available
             <div class="alert alert-info alert-dismissible fade show mx-3 my-2" role="alert">
-                <i class="fas fa-info-circle"></i>
+                <span class="mdi mdi-information-outline"></span>
                 $gettext("update_available")
                 <strong>v$update_check.latest_version</strong>
                 ($gettext("current"): v$update_check.current_version)
