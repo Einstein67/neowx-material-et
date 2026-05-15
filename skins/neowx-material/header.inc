@@ -33,7 +33,23 @@
                         <span class="font-small datetime-header" id="current-datetime" data-timestamp="$current.dateTime.raw">$current.dateTime.format($datetime_format)</span>
                         #if ($Extras.MQTT.enabled == "true" or $Extras.MQTT.enabled == True) and $active_nav == 'current'
                             <span id="mqtt-status" class="font-small datetime-header" style="margin-left: 1px; display: inline-block;">
-                                <i id="mqtt-indicator" class="fas fa-share-nodes" data-toggle="tooltip" data-placement="bottom" style="vertical-align: middle;" title=""></i>
+                                <span id="mqtt-indicator" class="mdi mdi-resistor-nodes" data-toggle="tooltip" data-placement="bottom" style="vertical-align: middle;" title=""></span>
+                            </span>
+                        #end if
+                        #if $varExists('onlinecheck')
+                            #set $online_check = $onlinecheck.get_status()
+                        #else
+                            #set $online_check = {'offline': False}
+                        #end if
+                        #if $online_check.offline
+                            <!-- Show wifi slash icon if online check is offline -->
+                            <span id="online-status" class="font-small datetime-header" style="margin-left: 1px; display: inline-block;">
+                                <span class="mdi mdi-wifi-strength-alert-outline" data-toggle="tooltip" data-placement="bottom" style="vertical-align: middle;" title="$gettext('System is offline')"></span>
+                            </span>
+                        #elif $Extras.OnlineCheck.get('always_show_status', False)
+                            <!-- Show online status if enabled -->
+                            <span id="online-status" class="font-small datetime-header" style="margin-left: 1px; display: inline-block;">
+                                <span class="mdi mdi-wifi" data-toggle="tooltip" data-placement="bottom" style="vertical-align: middle;" title="$gettext('System is online')"></span>
                             </span>
                         #end if
                     #end if
