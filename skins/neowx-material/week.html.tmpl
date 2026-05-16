@@ -322,25 +322,25 @@
                                     data: [ $getChartData(series4, column) ]
                                 }
                             #end if
-                            #if $series5 != "" and $getVar('day.' + series5 + '.has_data')
+                            #if $series5 != "" and $getVar('week.' + series5 + '.has_data')
                                 ,{
                                     name: "$getVar('obs.label.' + series5)",
                                     data: [ $getChartData(series5, column) ]
                                 }
                             #end if
-                            #if $series6 != "" and $getVar('day.' + series6 + '.has_data')
+                            #if $series6 != "" and $getVar('week.' + series6 + '.has_data')
                                 ,{
                                     name: "$getVar('obs.label.' + series6)",
                                     data: [ $getChartData(series6, column) ]
                                 }
                             #end if
-                            #if $series7 != "" and $getVar('day.' + series7 + '.has_data')
+                            #if $series7 != "" and $getVar('week.' + series7 + '.has_data')
                                 ,{
                                     name: "$getVar('obs.label.' + series7)",
                                     data: [ $getChartData(series7, column) ]
                                 }
                             #end if
-                            #if $series8 != "" and $getVar('day.' + series8 + '.has_data')
+                            #if $series8 != "" and $getVar('week.' + series8 + '.has_data')
                                 ,{
                                     name: "$getVar('obs.label.' + series8)",
                                     data: [ $getChartData(series8, column) ]
@@ -447,7 +447,7 @@
             #end if
 
             #if $week.leafTemp1.has_data or $week.leafTemp2.has_data
-                $getChartJsCode("leafTemp", "leafTemp1chart", "area", "leafTemp1", "leafTemp2", "avg")
+                $getChartJsCode("leafTemp1", "leafTemp1chart", "area", "leafTemp1", "leafTemp2", "avg")
             #end if
 
             #if $day.soilTemp1.has_data or $day.soilTemp2.has_data or $day.soilTemp3.has_data or $day.soilTemp4.has_data or $day.soilTemp5.has_data or $day.soilTemp6.has_data or $day.soilTemp7.has_data or $day.soilTemp8.has_data

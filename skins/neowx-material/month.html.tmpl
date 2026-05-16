@@ -338,41 +338,14 @@
             ## Only add JS chart code if in array
             #if $name in $Extras.Appearance.charts_order
 
-                var chartElement = document.querySelector('#$id');
-                if (chartElement) {
-                    new ApexCharts(chartElement, {
-                        ...graph_${type}_config,
-                        #if $name == "windDir"
-                            yaxis: {
-                                max: 360,
-                                min: 0,
-                                type: 'datetime',
-                                tickAmount: 8,
-                                trim: false,
-                                labels: {
-                                    tickAmount: 8,
-                                    rotateAlways: false,
-                                    hideOverlappingLabels: true,
-                                    showDuplicates: false,
-                                    trim: false,
-                                    formatter: function(val, timestamp) {
-                                        var degrees = Number(val);
-                                        var direction = getOrdinalDirection(degrees);
-                                        return direction;
-                                    }
-                                },
-                            },
-                            tooltip: {
-                                enabled: true,
-                                y: {
-                                    formatter: function (val) {
-                                        var degrees = Number(val);
-                                        var direction = getOrdinalDirection(degrees);
-                                        return direction + ' (' + degrees.toFixed(0) + '°)';
-                                    }
-                                },
-                            },
-                        #else
+                #if $series1 == "outTemp"
+
+                    ## Special diagram for outside temp
+
+                    var chartElement = document.querySelector('#$id');
+                    if (chartElement) {
+                        new ApexCharts(chartElement, {
+                            ...graph_${type}_config,
                             yaxis: {
                                 labels: {
                                     formatter: function (val) {
@@ -380,57 +353,158 @@
                                     }
                                 },
                             },
-                        #end if
-                        series: [
-                            {
-                                name: "$getVar('obs.label.' + series1)",
-                                data: [ $getChartData(series1, column) ]
-                            }
-                            #if $series2 != "" and $getVar('month.' + series2 + '.has_data')
-                                ,{
-                                    name: "$getVar('obs.label.' + series2)",
-                                    data: [ $getChartData(series2, column) ]
+                            series: [
+                                {
+                                    name: "$getVar('obs.label.' + series1) $gettext("min")",
+                                    data: [ $getChartData(series1, 'min') ]
+                                },
+                                {
+                                    name: "$getVar('obs.label.' + series1) $gettext("max")",
+                                    data: [ $getChartData(series1, 'max') ]
                                 }
+                                #if $series2 != "" and $getVar('month.' + series2 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series2)",
+                                        data: [ $getChartData(series2, column) ]
+                                    }
+                                #end if
+                                #if $series3 != "" and $getVar('month.' + series3 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series3)",
+                                        data: [ $getChartData(series3, column) ]
+                                    }
+                                #end if
+                                #if $series4 != "" and $getVar('month.' + series4 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series4)",
+                                        data: [ $getChartData(series4, column) ]
+                                    }
+                                #end if
+                                #if $series5 != "" and $getVar('month.' + series5 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series5)",
+                                        data: [ $getChartData(series5, column) ]
+                                    }
+                                #end if
+                                #if $series6 != "" and $getVar('month.' + series6 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series6)",
+                                        data: [ $getChartData(series6, column) ]
+                                    }
+                                #end if
+                                #if $series7 != "" and $getVar('month.' + series7 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series7)",
+                                        data: [ $getChartData(series7, column) ]
+                                    }
+                                #end if
+                                #if $series8 != "" and $getVar('month.' + series8 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series8)",
+                                        data: [ $getChartData(series8, column) ]
+                                    }
+                                #end if
+                            ]
+                        }).render()
+                    }
+
+                #else
+
+                    var chartElement = document.querySelector('#$id');
+                    if (chartElement) {
+                        new ApexCharts(chartElement, {
+                            ...graph_${type}_config,
+                            #if $name == "windDir"
+                                yaxis: {
+                                    max: 360,
+                                    min: 0,
+                                    type: 'datetime',
+                                    tickAmount: 8,
+                                    trim: false,
+                                    labels: {
+                                        tickAmount: 8,
+                                        rotateAlways: false,
+                                        hideOverlappingLabels: true,
+                                        showDuplicates: false,
+                                        trim: false,
+                                        formatter: function(val, timestamp) {
+                                            var degrees = Number(val);
+                                            var direction = getOrdinalDirection(degrees);
+                                            return direction;
+                                        }
+                                    },
+                                },
+                                tooltip: {
+                                    enabled: true,
+                                    y: {
+                                        formatter: function (val) {
+                                            var degrees = Number(val);
+                                            var direction = getOrdinalDirection(degrees);
+                                            return direction + ' (' + degrees.toFixed(0) + '°)';
+                                        }
+                                    },
+                                },
+                            #else
+                                yaxis: {
+                                    labels: {
+                                        formatter: function (val) {
+                                            return formatNumber(val, "$getVar('unit.format.' + name)") + "$getVar('unit.label.' + name)";
+                                        }
+                                    },
+                                },
                             #end if
-                            #if $series3 != "" and $getVar('month.' + series3 + '.has_data')
-                                ,{
-                                    name: "$getVar('obs.label.' + series3)",
-                                    data: [ $getChartData(series3, column) ]
+                            series: [
+                                {
+                                    name: "$getVar('obs.label.' + series1)",
+                                    data: [ $getChartData(series1, column) ]
                                 }
-                            #end if
-                            #if $series4 != "" and $getVar('month.' + series4 + '.has_data')
-                                ,{
-                                    name: "$getVar('obs.label.' + series4)",
-                                    data: [ $getChartData(series4, column) ]
-                                }
-                            #end if
-                            #if $series5 != "" and $getVar('day.' + series5 + '.has_data')
-                                ,{
-                                    name: "$getVar('obs.label.' + series5)",
-                                    data: [ $getChartData(series5, column) ]
-                                }
-                            #end if
-                            #if $series6 != "" and $getVar('day.' + series6 + '.has_data')
-                                ,{
-                                    name: "$getVar('obs.label.' + series6)",
-                                    data: [ $getChartData(series6, column) ]
-                                }
-                            #end if
-                            #if $series7 != "" and $getVar('day.' + series7 + '.has_data')
-                                ,{
-                                    name: "$getVar('obs.label.' + series7)",
-                                    data: [ $getChartData(series7, column) ]
-                                }
-                            #end if
-                            #if $series8 != "" and $getVar('day.' + series8 + '.has_data')
-                                ,{
-                                    name: "$getVar('obs.label.' + series8)",
-                                    data: [ $getChartData(series8, column) ]
-                                }
-                            #end if
-                        ]
-                    }).render()
-                }
+                                #if $series2 != "" and $getVar('month.' + series2 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series2)",
+                                        data: [ $getChartData(series2, column) ]
+                                    }
+                                #end if
+                                #if $series3 != "" and $getVar('month.' + series3 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series3)",
+                                        data: [ $getChartData(series3, column) ]
+                                    }
+                                #end if
+                                #if $series4 != "" and $getVar('month.' + series4 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series4)",
+                                        data: [ $getChartData(series4, column) ]
+                                    }
+                                #end if
+                                #if $series5 != "" and $getVar('month.' + series5 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series5)",
+                                        data: [ $getChartData(series5, column) ]
+                                    }
+                                #end if
+                                #if $series6 != "" and $getVar('month.' + series6 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series6)",
+                                        data: [ $getChartData(series6, column) ]
+                                    }
+                                #end if
+                                #if $series7 != "" and $getVar('month.' + series7 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series7)",
+                                        data: [ $getChartData(series7, column) ]
+                                    }
+                                #end if
+                                #if $series8 != "" and $getVar('month.' + series8 + '.has_data')
+                                    ,{
+                                        name: "$getVar('obs.label.' + series8)",
+                                        data: [ $getChartData(series8, column) ]
+                                    }
+                                #end if
+                            ]
+                        }).render()
+                    }
+
+                #end if
 
             #end if
 
