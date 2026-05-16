@@ -245,9 +245,13 @@
         ## | string  $column   the column of the display value  (e.g. min, max, avg) |
         ## | string  $series3  opt. field name for 3rd series   (e.g. outTemp or "") |
         ## | string  $series4  opt. field name for 4th series   (e.g. outTemp or "") |
+        ## | string  $series5  opt. field name for 5th series   (e.g. outTemp or "") |
+        ## | string  $series6  opt. field name for 6th series   (e.g. outTemp or "") |
+        ## | string  $series7  opt. field name for 7th series   (e.g. outTemp or "") |
+        ## | string  $series8  opt. field name for 8th series   (e.g. outTemp or "") |
         ## +-------------------------------------------------------------------------+
 
-        #def getChartJsCode($name, $id, $type, $series1, $series2 = "", $column = "avg", $series3 = "", $series4 = "")
+        #def getChartJsCode($name, $id, $type, $series1, $series2 = "", $column = "avg", $series3 = "", $series4 = "", $series5 = "", $series6 = "", $series7 = "", $series8 = "")
 
             ## Only add JS chart code if in array
             #if $name in $Extras.Appearance.charts_order
@@ -316,6 +320,30 @@
                                 ,{
                                     name: "$getVar('obs.label.' + series4)",
                                     data: [ $getChartData(series4, column) ]
+                                }
+                            #end if
+                            #if $series5 != "" and $getVar('day.' + series5 + '.has_data')
+                                ,{
+                                    name: "$getVar('obs.label.' + series5)",
+                                    data: [ $getChartData(series5, column) ]
+                                }
+                            #end if
+                            #if $series6 != "" and $getVar('day.' + series6 + '.has_data')
+                                ,{
+                                    name: "$getVar('obs.label.' + series6)",
+                                    data: [ $getChartData(series6, column) ]
+                                }
+                            #end if
+                            #if $series7 != "" and $getVar('day.' + series7 + '.has_data')
+                                ,{
+                                    name: "$getVar('obs.label.' + series7)",
+                                    data: [ $getChartData(series7, column) ]
+                                }
+                            #end if
+                            #if $series8 != "" and $getVar('day.' + series8 + '.has_data')
+                                ,{
+                                    name: "$getVar('obs.label.' + series8)",
+                                    data: [ $getChartData(series8, column) ]
                                 }
                             #end if
                         ]
@@ -422,12 +450,12 @@
                 $getChartJsCode("leafTemp", "leafTemp1chart", "area", "leafTemp1", "leafTemp2", "avg")
             #end if
 
-            #if $week.soilTemp1.has_data or $week.soilTemp2.has_data or $week.soilTemp3.has_data or $week.soilTemp4.has_data
-                $getChartJsCode("soilTemp1", "soilTemp1chart", "area", "soilTemp1", "soilTemp2", "avg", "soilTemp3", "soilTemp4")
+            #if $day.soilTemp1.has_data or $day.soilTemp2.has_data or $day.soilTemp3.has_data or $day.soilTemp4.has_data or $day.soilTemp5.has_data or $day.soilTemp6.has_data or $day.soilTemp7.has_data or $day.soilTemp8.has_data
+                $getChartJsCode("soilTemp1", "soilTemp1chart", "area", "soilTemp1", "soilTemp2", "avg", "soilTemp3", "soilTemp4", "soilTemp5", "soilTemp6", "soilTemp7", "soilTemp8")
             #end if
 
-            #if $week.soilMoist1.has_data or $week.soilMoist2.has_data or $week.soilMoist3.has_data or $week.soilMoist4.has_data
-                $getChartJsCode("soilMoist1", "soilMoist1chart", "area", "soilMoist1", "soilMoist2", "avg", "soilMoist3", "soilMoist4")
+            #if $day.soilMoist1.has_data or $day.soilMoist2.has_data or $day.soilMoist3.has_data or $day.soilMoist4.has_data or $day.soilMoist5.has_data or $day.soilMoist6.has_data or $day.soilMoist7.has_data or $day.soilMoist8.has_data
+                $getChartJsCode("soilMoist1", "soilMoist1chart", "area", "soilMoist1", "soilMoist2", "avg", "soilMoist3", "soilMoist4", "soilMoist5", "soilMoist6", "soilMoist7", "soilMoist8")
             #end if
 
             #if $week.cloudbase.has_data
