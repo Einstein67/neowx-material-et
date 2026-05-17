@@ -144,6 +144,7 @@ class BasicInstaller(ExtensionInstaller):
                         "skins/neowx-material/js/vendor/moment-with-locales.min.js",
                         "skins/neowx-material/js/weewx-mqtt.js",
                         "skins/neowx-material/lang/ca.conf",
+                        "skins/neowx-material/lang/da.conf",
                         "skins/neowx-material/lang/de.conf",
                         "skins/neowx-material/lang/en.conf",
                         "skins/neowx-material/lang/es.conf",
