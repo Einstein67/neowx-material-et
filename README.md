@@ -2,13 +2,9 @@
 
 **The most modern and feature-rich skin for WeeWX weather stations**
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-blue?style=flat-square)](https://weewx.seehausen.org/)
-[![GitHub Issues](https://img.shields.io/github/issues/seehase/neowx-material?style=flat-square)](https://github.com/seehase/neowx-material/issues)
-[![License](https://img.shields.io/github/license/seehase/neowx-material?style=flat-square)](LICENSE)
-
 This actively maintained fork brings NeoWX Material into the modern era with **real-time MQTT updates**, **weather forecasting**, **comprehensive multi-language support**, and many more improvements.
 
-> **Live Demo:** [weewx.seehausen.org](https://weewx.seehausen.org/)
+> **Live Demo:** [Home-ET](https://wetter.eini67.ddnss.de/)
 
 ---
 
