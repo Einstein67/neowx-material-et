@@ -399,6 +399,6 @@ class BasicInstaller(ExtensionInstaller):
                         "skins/neowx-material/config_patcher.py",
                     ],
                 ),
-                ("bin/user", ["bin/user/historygenerator.py", "bin/user/openmeteo.py", "bin/user/updatecheck.py", "bin/user/onlinecheck.py"]),
+                ("bin/user", ["bin/user/extensions.py","bin/user/historygenerator.py", "bin/user/openmeteo.py", "bin/user/updatecheck.py", "bin/user/onlinecheck.py"]),
             ],
         )
