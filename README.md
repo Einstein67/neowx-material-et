@@ -2,13 +2,9 @@
 
 **The most modern and feature-rich skin for WeeWX weather stations**
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-blue?style=flat-square)](https://weewx.seehausen.org/)
-[![GitHub Issues](https://img.shields.io/github/issues/seehase/neowx-material?style=flat-square)](https://github.com/seehase/neowx-material/issues)
-[![License](https://img.shields.io/github/license/seehase/neowx-material?style=flat-square)](LICENSE)
-
 This actively maintained fork brings NeoWX Material into the modern era with **real-time MQTT updates**, **weather forecasting**, **multi-axis charts**, **collapsible grouping panels**, **comprehensive telemetry monitoring**, **comprehensive multi-language support**, and many more improvements.
 
-> **Live Demo:** [weewx.seehausen.org](https://weewx.seehausen.org/)
+> **Live Demo:** [Home-ET](https://wetter.eini67.ddnss.de/)
 
 ---
 
@@ -425,8 +421,8 @@ This project maintains the original license from NeoWX Material.
 
 ## 📞 Contact & Links
 
-- **Live Demo**: [weewx.seehausen.org](https://weewx.seehausen.org/)
-- **Issues**: [GitHub Issues](https://github.com/seehase/neowx-material/issues)
+- **Live Demo**: [Home-ET](https://wetter.eini67.ddnss.de/)
+- **Issues**: [GitHub Issues](https://github.com/Einstein67/neowx-material-et/issues)
 - **Original Project**: [neoground/neowx-material](https://github.com/neoground/neowx-material) (not maintained)
 - **WeeWX**: [weewx.com](https://weewx.com)
 

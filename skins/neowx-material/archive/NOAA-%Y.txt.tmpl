@@ -52,10 +52,13 @@ ELEV: $station.altitude    LAT: $station.latitude[0]-$station.latitude[1] $stati
 ELEV: $station.altitude
 #end if
 
-TEMPERATURE ($unit.label.outTemp.strip())
+
+                                          TEMPERATURE ($unit.label.outTemp.strip())
+
                               HEAT    COOL                              TROP.  SUM.   TROP.  ARKT.
           MEAN   MEAN         DEG     DEG                               DAYS   DAYS   NIGHT  DAYS
  YR  MO   MAX    MIN    MEAN  DAYS    DAYS      HI  DAY     LOW  DAY    >=30   >=25   >=20   <=-10
+ ##YR  MO   MAX    MIN    MEAN  DAYS    DAYS      HI  DAY     LOW  DAY $ShowInt($TropicDay) $ShowInt($SummerDay) $ShowInt($TropicNight) $ShowInt($ArcticDay)
 --------------------------------------------------------------------------------------------------
 #for $month in $year.months
 #if $month.barometer.count.raw
@@ -68,11 +71,12 @@ $month.dateTime.format($YM)
         $year.outTemp.meanmax.nolabel($Temp,$NONE) $year.outTemp.meanmin.nolabel($Temp,$NONE) $year.outTemp.avg.nolabel($Temp,$NONE) $year.heatdeg.sum.nolabel($Temp,$NONE) $year.cooldeg.sum.nolabel($Temp,$NONE)  $year.outTemp.max.nolabel($Temp,$NONE) $year.outTemp.maxtime.format($M,$NODAY)  $year.outTemp.min.nolabel($Temp,$NONE) $year.outTemp.mintime.format($M,$NODAY) $year.outTemp.max_ge($TropicDay).nolabel($Count,$NONE) $year.outTemp.max_ge($SummerDay).nolabel($Count,$NONE) $year.outTemp.min_ge($TropicNight).nolabel($Count,$NONE) $year.outTemp.max_le($ArcticDay).nolabel($Count,$NONE)
 
 
-RAIN ($unit.label.rain.strip())
+                      RAIN ($unit.label.rain.strip())
 
-DAYS OF RAIN                         OVER
+                  MAX         ---DAYS OF RAIN---
+                  OBS.               OVER
  YR  MO  TOTAL    DAY  DATE $ShowFloat(Trace) $ShowFloat($SomeRain) $ShowFloat($Soak)
---------------------------------------------------
+------------------------------------------------
 #for $month in $year.months
 #if $month.barometer.count.raw
 $month.dateTime.format($YM) $month.rain.sum.nolabel($Rain,$NONE) $month.rain.maxsum.nolabel($Rain,$NONE)  $month.rain.maxsumtime.format($D,$NODAY) $month.rain.sum_ge($Trace).nolabel($Count,$NONE) $month.rain.sum_ge($SomeRain).nolabel($Count,$NONE) $month.rain.sum_ge($Soak).nolabel($Count,$NONE)
@@ -82,19 +86,3 @@ $month.dateTime.format($YM)
 #end for
 ------------------------------------------------
         $year.rain.sum.nolabel($Rain,$NONE) $year.rain.maxsum.nolabel($Rain,$NONE)  $year.rain.maxsumtime.format($M,$NODAY) $year.rain.sum_ge($Trace).nolabel($Count,$NONE) $year.rain.sum_ge($SomeRain).nolabel($Count,$NONE) $year.rain.sum_ge($Soak).nolabel($Count,$NONE)
-
-
-WIND SPEED ($unit.label.windSpeed.strip())
-
-DOM
- YR  MO    AVG     HI   DATE    DIR
------------------------------------
-#for $month in $year.months
-#if $month.barometer.count.raw
-$month.dateTime.format($YM) $month.wind.avg.nolabel($Wind,$NONE) $month.wind.max.nolabel($Wind,$NONE)   $month.wind.maxtime.format($D,$NODAY) $month.wind.vecdir.nolabel($Dir,$NONE)
-#else
-$month.dateTime.format($YM)
-#end if
-#end for
------------------------------------
-        $year.wind.avg.nolabel($Wind,$NONE) $year.wind.max.nolabel($Wind,$NONE)   $year.wind.maxtime.format($M,$NODAY) $year.wind.vecdir.nolabel($Dir,$NONE)
