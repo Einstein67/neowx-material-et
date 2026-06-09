@@ -80,7 +80,7 @@
     #set $_lbl    = $getVar('unit.label.' + $name, '')
     #set $_disp_r = round($_disp, 2)
     ## Effective window: the actual elapsed span, but snapped to the full target
-    ## when within 5 minutes of it (archive timing rarely lands exactly on now-3h),
+    ## when within 15 minutes (required for Netatmo API calls with a 10m delay) of it (archive timing rarely lands exactly on now-3h),
     ## so the normal case reads a clean "3 h" with nominal thresholds.
     #set $_win_h = $_elapsed
     #if abs($_secs - float($_hours) * 3600.0) <= 900.0
