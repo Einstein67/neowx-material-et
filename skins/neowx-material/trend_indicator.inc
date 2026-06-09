@@ -83,7 +83,7 @@
     ## when within 5 minutes of it (archive timing rarely lands exactly on now-3h),
     ## so the normal case reads a clean "3 h" with nominal thresholds.
     #set $_win_h = $_elapsed
-    #if abs($_secs - float($_hours) * 3600.0) <= 300.0
+    #if abs($_secs - float($_hours) * 3600.0) <= 900.0
         #set $_win_h = float($_hours)
     #end if
     #set $_win = '%g h' % round($_win_h, 1)
