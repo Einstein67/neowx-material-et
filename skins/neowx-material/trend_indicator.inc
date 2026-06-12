@@ -80,13 +80,13 @@
     #set $_lbl    = $getVar('unit.label.' + $name, '')
     #set $_disp_r = round($_disp, 2)
     ## Effective window: the actual elapsed span, but snapped to the full target
-    ## when within 5 minutes of it (archive timing rarely lands exactly on now-3h),
+    ## when within 15 minutes (required for Netatmo API calls with a 10m delay) of it (archive timing rarely lands exactly on now-3h),
     ## so the normal case reads a clean "3 h" with nominal thresholds.
     #set $_win_h = $_elapsed
-    #if abs($_secs - float($_hours) * 3600.0) <= 300.0
+    #if abs($_secs - float($_hours) * 3600.0) <= 900.0
         #set $_win_h = float($_hours)
     #end if
-    #set $_win = '%g h' % round($_win_h, 1)
+    #set $_win = '%gh' % round($_win_h, 1)
     #if $_pressure
         ## Decimals per pressure display unit (small inHg/kPa deltas need more).
         #set $_dec    = {'inHg': 3, 'kPa': 2, 'mmHg': 2, 'hPa': 1, 'mbar': 1}.get($_du, 2)
