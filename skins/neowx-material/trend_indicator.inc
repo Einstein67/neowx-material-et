@@ -105,9 +105,9 @@
         #if $_mode == 'davis'
             ## Davis Vantage (3 h, hPa): steady <0.7, slowly 0.7-2.0, rapidly >=2.0
             #if $_mag < 0.7 * $_scale
-                <i class="wi wi-direction-right" title="Steady: $_disp_s$_lbl (over $_win)" data-toggle="tooltip" data-html="true"></i>
+                <i class="wi wi-direction-right" title="Stabil: $_disp_s$_lbl [$_win]" data-toggle="tooltip" data-html="true"></i>
             #else
-                #set $_verb = 'Rising' if $_tv > 0 else 'Falling'
+                #set $_verb = 'Steigend' if $_tv > 0 else 'Fallend'
                 #if $_mag >= 2.0 * $_scale
                     #set $_wic  = 'wi-direction-' + $_ud
                     #set $_word = $_verb + ' rapidly'
@@ -115,34 +115,34 @@
                     #set $_wic  = 'wi-direction-' + $_ud + '-right'
                     #set $_word = $_verb + ' slowly'
                 #end if
-                <i class="wi $_wic" title="$_word: $_disp_s$_lbl (over $_win)" data-toggle="tooltip" data-html="true"></i>
+                <i class="wi $_wic" title="$_word: $_disp_s$_lbl [$_win]" data-toggle="tooltip" data-html="true"></i>
             #end if
         #else
             ## multi / WMO-style (3 h, hPa): steady <0.7, slowly 0.7-2.0,
             ## rising 2.0-5.0, rapidly >=5.0 (doubled arrow).
             #if $_mag < 0.7 * $_scale
-                <i class="wi wi-direction-right" title="Steady: $_disp_s$_lbl (over $_win)" data-toggle="tooltip" data-html="true"></i>
+                <i class="wi wi-direction-right" title="Stabil: $_disp_s$_lbl [$_win]" data-toggle="tooltip" data-html="true"></i>
             #else
-                #set $_dir = 'Rising' if $_tv > 0 else 'Falling'
+                #set $_dir = 'Steigend' if $_tv > 0 else 'Fallend'
                 #set $_double = False
                 #if $_mag >= 5.0 * $_scale
                     ## rapidly: two straight arrows
                     #set $_wic  = 'wi-direction-' + $_ud
                     #set $_double = True
-                    #set $_word = 'Rapidly ' + $_dir
+                    #set $_word = 'Stark ' + $_dir
                 #else if $_mag >= 2.0 * $_scale
                     ## rising: one straight arrow
                     #set $_wic  = 'wi-direction-' + $_ud
                     #set $_word = $_dir
                 #else
-                    ## slowly: one diagonal arrow
+                    ## slowly: one diagonal arrowF
                     #set $_wic  = 'wi-direction-' + $_ud + '-right'
-                    #set $_word = 'Slowly ' + $_dir
+                    #set $_word = 'Leicht ' + $_dir
                 #end if
                 #if $_double
-                    <span title="$_word: $_disp_s$_lbl (over $_win)" data-toggle="tooltip" data-html="true"><i class="wi $_wic"></i><i class="wi $_wic"></i></span>
+                    <span title="$_word: $_disp_s$_lbl [$_win]" data-toggle="tooltip" data-html="true"><i class="wi $_wic"></i><i class="wi $_wic"></i></span>
                 #else
-                    <i class="wi $_wic" title="$_word: $_disp_s$_lbl (over $_win)" data-toggle="tooltip" data-html="true"></i>
+                    <i class="wi $_wic" title="$_word: $_disp_s$_lbl [$_win]" data-toggle="tooltip" data-html="true"></i>
                 #end if
             #end if
         #end if
@@ -151,11 +151,11 @@
         ## non-pressure path for multi/davis. Canonical dead-band per family.
         #set $_simp = $_disp_s if $_pressure else $_disp_r
         #if $_tv > $_band
-            <i class="wi wi-direction-up-right" title="Rising: $_simp$_lbl (over $_win)" data-toggle="tooltip" data-html="true"></i>
+            <i class="wi wi-direction-up-right" title="Steigend: $_simp$_lbl [$_win]" data-toggle="tooltip" data-html="true"></i>
         #else if $_tv < -$_band
-            <i class="wi wi-direction-down-right" title="Falling: $_simp$_lbl (over $_win)" data-toggle="tooltip" data-html="true"></i>
+            <i class="wi wi-direction-down-right" title="Fallend: $_simp$_lbl [$_win]" data-toggle="tooltip" data-html="true"></i>
         #else
-            <i class="wi wi-direction-right" title="Steady: $_simp$_lbl (over $_win)" data-toggle="tooltip" data-html="true"></i>
+            <i class="wi wi-direction-right" title="Stabil: $_simp$_lbl [$_win]" data-toggle="tooltip" data-html="true"></i>
         #end if
     #end if
 #end if
