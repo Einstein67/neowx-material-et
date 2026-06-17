@@ -6,6 +6,19 @@ This actively maintained fork brings NeoWX Material into the modern era with **r
 
 > **Live Demo:** [Home-ET](https://wetter.eini67.ddnss.de/)
 
+### 🔧 My changes - et
+- The text for trend indicators has been shortened and translated into German.
+- Modified ‘extensions.py’ file for displaying Netatmo telemetry.
+- Custom date format for the month/year archive.
+- CPU-optimised report generation (stale_age in skin.conf).
+	Only the index.html file and the NOAA archive text files are generated during each ‘report run’.
+	The Yesterday, the Archive (overview) and the Almanac page are generated every hour.
+	The Week page is generated every 2 hours.
+	The Month page and the “Archive/Month” page are generated every 4 hours.
+	The History page (which is very CPU-intensive) is generated every 12 hours. The existing ‘refresh_interval’ parameter, which is intended to reduce the load, is not working.
+	All other pages, such as ‘Year’, ‘Archive/Year’ and ‘Telemetry’, are generated every 24 hours.
+- ... and a few other things.
+
 ---
 
 ## 🚀 Why This Fork?
