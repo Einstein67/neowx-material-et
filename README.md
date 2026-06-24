@@ -2,13 +2,25 @@
 
 **The most modern and feature-rich skin for WeeWX weather stations**
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-blue?style=flat-square)](https://weewx.seehausen.org/)
-[![GitHub Issues](https://img.shields.io/github/issues/seehase/neowx-material?style=flat-square)](https://github.com/seehase/neowx-material/issues)
-[![License](https://img.shields.io/github/license/seehase/neowx-material?style=flat-square)](LICENSE)
-
 This actively maintained fork brings NeoWX Material into the modern era with **real-time MQTT updates**, **weather forecasting**, **multi-axis charts**, **collapsible grouping panels**, **comprehensive telemetry monitoring**, **comprehensive multi-language support**, and many more improvements.
 
-> **Live Demo:** [weewx.seehausen.org](https://weewx.seehausen.org/)
+> **Live Demo:** [Home-ET](https://wetter.eini67.ddnss.de/)
+
+### Tested with WeeWx Version 5.4.0-1 - everything's fine
+
+### 🔧 My changes - et
+
+- The text for trend indicators has been shortened and translated into German.
+- Modified `extensions.py` file for displaying Netatmo telemetry.
+- Custom date format for the month/year archive.
+- CPU-optimised report generation (`stale_age` in `skin.conf`).
+    - Only the `index.html` file and the NOAA archive text files are generated during each report run.
+    - The Yesterday, Archive (overview) and Almanac pages are generated every hour.
+    - The Week page is generated every 2 hours.
+    - The Month page and the Archive/Month page are generated every 4 hours.
+    - The History page (which is very CPU-intensive) is generated every 12 hours. The existing `refresh_interval` parameter, which is intended to reduce the load, is not working.
+    - All other pages, such as Year, Archive/Year and Telemetry, are generated every 24 hours.
+- ... and a few other things.
 
 ---
 
@@ -143,7 +155,6 @@ Full guide to combining sensors with different value ranges on one chart:
 Compact cheat-sheet for the multi-axis syntax:
 - Minimal working configuration snippets
 - All supported keys at a glance
-
 ### 📈 [Trend Indicators – Usage Guide](docs/TREND-INDICATORS.md)
 How the current-page trend arrows work and how to tune them:
 - Unit-aware direction (metric / imperial / other behave identically)
@@ -438,8 +449,8 @@ This project maintains the original license from NeoWX Material.
 
 ## 📞 Contact & Links
 
-- **Live Demo**: [weewx.seehausen.org](https://weewx.seehausen.org/)
-- **Issues**: [GitHub Issues](https://github.com/seehase/neowx-material/issues)
+- **Live Demo**: [Home-ET](https://wetter.eini67.ddnss.de/)
+- **Issues**: [GitHub Issues](https://github.com/Einstein67/neowx-material-et/issues)
 - **Original Project**: [neoground/neowx-material](https://github.com/neoground/neowx-material) (not maintained)
 - **WeeWX**: [weewx.com](https://weewx.com)
 

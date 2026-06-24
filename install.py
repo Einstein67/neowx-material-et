@@ -36,7 +36,6 @@ class BasicInstaller(ExtensionInstaller):
                         "skins/neowx-material/fonts/Rubik-Regular.woff2",
                         "skins/neowx-material/card_datetime.inc",
                         "skins/neowx-material/chart_date_format.inc",
-                        "skins/neowx-material/chart_hidden_series.inc",
                         "skins/neowx-material/chart_tick_axis.inc",
                         "skins/neowx-material/chart_colors_setup.inc",
                         "skins/neowx-material/chart_tick_setup.inc",
@@ -413,6 +412,6 @@ class BasicInstaller(ExtensionInstaller):
                         "skins/neowx-material/config_patcher.py",
                     ],
                 ),
-                ("bin/user", ["bin/user/historygenerator.py", "bin/user/openmeteo.py", "bin/user/updatecheck.py", "bin/user/onlinecheck.py"]),
+                ("bin/user", ["bin/user/extensions.py","bin/user/historygenerator.py", "bin/user/openmeteo.py", "bin/user/updatecheck.py", "bin/user/onlinecheck.py"]),
             ],
         )
