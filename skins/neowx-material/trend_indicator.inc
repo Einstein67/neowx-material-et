@@ -80,13 +80,13 @@
     #set $_lbl    = $getVar('unit.label.' + $name, '')
     #set $_disp_r = round($_disp, 2)
     ## Effective window: the actual elapsed span, but snapped to the full target
-    ## when within 5 minutes of it (archive timing rarely lands exactly on now-3h),
+    ## when within 15 minutes (required for Netatmo API calls with a 10m delay) of it (archive timing rarely lands exactly on now-3h),
     ## so the normal case reads a clean "3 h" with nominal thresholds.
     #set $_win_h = $_elapsed
-    #if abs($_secs - float($_hours) * 3600.0) <= 300.0
+    #if abs($_secs - float($_hours) * 3600.0) <= 900.0
         #set $_win_h = float($_hours)
     #end if
-    #set $_win = '%g h' % round($_win_h, 1)
+    #set $_win = '%gh' % round($_win_h, 1)
     #if $_pressure
         ## Decimals per pressure display unit (small inHg/kPa deltas need more).
         #set $_dec    = {'inHg': 3, 'kPa': 2, 'mmHg': 2, 'hPa': 1, 'mbar': 1}.get($_du, 2)
@@ -105,7 +105,7 @@
         #if $_mode == 'davis'
             ## Davis Vantage (3 h, hPa): steady <0.7, slowly 0.7-2.0, rapidly >=2.0
             #if $_mag < 0.7 * $_scale
-                <i class="wi wi-direction-right" title="$pgettext("Trend", "steady"): $_disp_s$_lbl ($pgettext("Trend", "over") $_win)" data-toggle="tooltip" data-html="true"></i>
+                <i class="wi wi-direction-right" title="$pgettext("Trend", "steady"): $_disp_s$_lbl [$pgettext("Trend", "over")$_win]" data-toggle="tooltip" data-html="true"></i>
             #else
                 #if $_mag >= 2.0 * $_scale
                     #set $_wic  = 'wi-direction-' + $_ud
@@ -114,13 +114,13 @@
                     #set $_wic  = 'wi-direction-' + $_ud + '-right'
                     #set $_word = $pgettext("Trend", "rising_slowly") if $_tv > 0 else $pgettext("Trend", "falling_slowly")
                 #end if
-                <i class="wi $_wic" title="$_word: $_disp_s$_lbl ($pgettext("Trend", "over") $_win)" data-toggle="tooltip" data-html="true"></i>
+                <i class="wi $_wic" title="$_word: $_disp_s$_lbl [$pgettext("Trend", "over")$_win]" data-toggle="tooltip" data-html="true"></i>
             #end if
         #else
             ## multi / WMO-style (3 h, hPa): steady <0.7, slowly 0.7-2.0,
             ## rising 2.0-5.0, rapidly >=5.0 (doubled arrow).
             #if $_mag < 0.7 * $_scale
-                <i class="wi wi-direction-right" title="$pgettext("Trend", "steady"): $_disp_s$_lbl ($pgettext("Trend", "over") $_win)" data-toggle="tooltip" data-html="true"></i>
+                <i class="wi wi-direction-right" title="$pgettext("Trend", "steady"): $_disp_s$_lbl [$pgettext("Trend", "over")$_win]" data-toggle="tooltip" data-html="true"></i>
             #else
                 #set $_rising = $_tv > 0
                 #set $_double = False
@@ -139,9 +139,9 @@
                     #set $_word = $pgettext("Trend", "rising_slowly") if $_rising else $pgettext("Trend", "falling_slowly")
                 #end if
                 #if $_double
-                    <span title="$_word: $_disp_s$_lbl ($pgettext("Trend", "over") $_win)" data-toggle="tooltip" data-html="true"><i class="wi $_wic"></i><i class="wi $_wic"></i></span>
+                    <span title="$_word: $_disp_s$_lbl [$pgettext("Trend", "over")$_win]" data-toggle="tooltip" data-html="true"><i class="wi $_wic"></i><i class="wi $_wic"></i></span>
                 #else
-                    <i class="wi $_wic" title="$_word: $_disp_s$_lbl ($pgettext("Trend", "over") $_win)" data-toggle="tooltip" data-html="true"></i>
+                    <i class="wi $_wic" title="$_word: $_disp_s$_lbl [$pgettext("Trend", "over")$_win]" data-toggle="tooltip" data-html="true"></i>
                 #end if
             #end if
         #end if
@@ -150,11 +150,11 @@
         ## non-pressure path for multi/davis. Canonical dead-band per family.
         #set $_simp = $_disp_s if $_pressure else $_disp_r
         #if $_tv > $_band
-            <i class="wi wi-direction-up-right" title="$pgettext("Trend", "rising"): $_simp$_lbl ($pgettext("Trend", "over") $_win)" data-toggle="tooltip" data-html="true"></i>
+            <i class="wi wi-direction-up-right" title="$pgettext("Trend", "rising"): $_simp$_lbl [$pgettext("Trend", "over")$_win]" data-toggle="tooltip" data-html="true"></i>
         #else if $_tv < -$_band
-            <i class="wi wi-direction-down-right" title="$pgettext("Trend", "falling"): $_simp$_lbl ($pgettext("Trend", "over") $_win)" data-toggle="tooltip" data-html="true"></i>
+            <i class="wi wi-direction-down-right" title="$pgettext("Trend", "falling"): $_simp$_lbl [$pgettext("Trend", "over")$_win]" data-toggle="tooltip" data-html="true"></i>
         #else
-            <i class="wi wi-direction-right" title="$pgettext("Trend", "steady"): $_simp$_lbl ($pgettext("Trend", "over") $_win)" data-toggle="tooltip" data-html="true"></i>
+            <i class="wi wi-direction-right" title="$pgettext("Trend", "steady"): $_simp$_lbl [$pgettext("Trend", "over")$_win]" data-toggle="tooltip" data-html="true"></i>
         #end if
     #end if
 #end if
