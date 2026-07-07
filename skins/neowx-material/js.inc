@@ -168,8 +168,8 @@
                 export: {
                     csv: {
                         headerCategory: 'DateTime',
-                        dateFormatter(timestamp) {
-                            return moment(timestamp).toISOString()
+                        categoryFormatter(x) {
+                            return new Date(x).getTime()
                         }
                     }
                 }
