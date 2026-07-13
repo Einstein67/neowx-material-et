@@ -42,7 +42,7 @@
 
     <header>
 
-        <nav class="navbar navbar-expand-lg navbar-dark $Extras.color" style="padding: 0.4rem 1rem; min-height: 5.2rem;">
+        <nav class="navbar navbar-expand-lg navbar-dark $Extras.color flex-nowrap" style="padding: 0.4rem 1rem; min-height: 5.2rem;">
 
             <!-- ===== COLUMN 1: Brand / Station Info ===== -->
             <!-- Fixed height = guarantees logo + station name never move between pages -->
@@ -68,6 +68,7 @@
                     <!-- Row 2: Date + icons (icons column always rendered, empty on non-current pages) -->
                     <div style="display:flex; align-items:center; gap:0.4rem;">
                         #set $date_format = $Extras.Formatting.get('date', '%x')
+                        #set $always_show_status = $Extras.OnlineCheck.get('always_show_status', False)
                         #if $active_nav == 'current'
                             <div id="current-date" style="white-space:nowrap; font-size:0.95rem; color:#fff;">$current.dateTime.format($date_format)</div>
                         #else
@@ -97,7 +98,7 @@
                                                   data-toggle="tooltip" data-placement="bottom"
                                                   style="vertical-align:middle;" title="$gettext('System is offline')"></span>
                                         </div>
-                                    #elif $Extras.OnlineCheck.get('always_show_status', False)
+                                    #elif not $online_check.offline and ($always_show_status == True or str($always_show_status).lower() == 'true')
                                         <div id="online-status" class="text-white">
                                             <span class="mdi mdi-wifi"
                                                   data-toggle="tooltip" data-placement="bottom"
