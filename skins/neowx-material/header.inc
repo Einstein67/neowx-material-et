@@ -42,7 +42,7 @@
 
     <header>
 
-        <nav class="navbar navbar-expand-lg navbar-dark $Extras.color" style="padding: 0.4rem 1rem; min-height: 5.2rem;">
+        <nav class="navbar navbar-expand-lg navbar-dark $Extras.color flex-nowrap" style="padding: 0.4rem 1rem; min-height: 5.2rem;">
 
             <!-- ===== COLUMN 1: Brand / Station Info ===== -->
             <!-- Fixed height = guarantees logo + station name never move between pages -->
