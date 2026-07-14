@@ -42,7 +42,7 @@
 
     <header>
 
-        <nav class="navbar navbar-expand-lg navbar-dark $Extras.color flex-nowrap" style="padding: 0.4rem 1rem; min-height: 5.2rem;">
+        <nav class="navbar navbar-expand-lg navbar-dark $Extras.color" style="padding: 0.4rem 1rem; min-height: 5.2rem;">
 
             <!-- ===== COLUMN 1: Brand / Station Info ===== -->
             <!-- Fixed height = guarantees logo + station name never move between pages -->
@@ -144,7 +144,7 @@
             </div><!-- end column 1 -->
 
             <!-- Mobile toggle button -->
-            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse"
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
