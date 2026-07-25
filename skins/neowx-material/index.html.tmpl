@@ -504,7 +504,45 @@
                                 #end if
                             #end for
                         #else
-                            $renderValSegment($seg, $val_panel_idx)
+                            ## Panel segment: rendered inline (not via def) so that
+                            ## #include "forecast.inc" works in the main template scope.
+                            ## forecast counts as "has data" for the any_has_data check.
+                            #set $any_has_data = False
+                            #for $x in $seg['items']
+                                #if $x == 'forecast'
+                                    #set $any_has_data = True
+                                #else if $getVar('day.' + $x + '.has_data')
+                                    #set $any_has_data = True
+                                #end if
+                            #end for
+                            #if $any_has_data
+                                #set $p_exp   = ($seg['type'] == 'hr')
+                                #set $p_exp_s = 'true' if $p_exp else 'false'
+                                #set $p_show  = ' show' if $p_exp else ''
+                                #set $p_id    = 'nwm-val-panel-' + str($val_panel_idx)
+                                <div class="col-12 mb-3">
+                                    <div class="card nwm-expansion-panel">
+                                        <div class="nwm-panel-header" data-toggle="collapse"
+                                             data-target="#${p_id}" aria-expanded="${p_exp_s}">
+                                            <span class="nwm-panel-title">${seg['title']}</span>
+                                            <span class="mdi mdi-chevron-down nwm-panel-icon"></span>
+                                        </div>
+                                        <div id="${p_id}" class="collapse${p_show}">
+                                            <div class="nwm-panel-body">
+                                                <div class="row">
+                                                    #for $x in $seg['items']
+                                                        #if $x == 'forecast'
+                                                            #include "forecast.inc"
+                                                        #else
+                                                            $valuesCard($x)
+                                                        #end if
+                                                    #end for
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            #end if
                         #end if
                     #end for
 
