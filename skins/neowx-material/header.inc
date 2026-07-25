@@ -80,7 +80,7 @@
                             <!-- Icons row -->
                             <div style="display:flex; align-items:center; gap:0.25rem; font-size:1.1rem;">
                                 #if $active_nav == 'current'
-                                    #if ($Extras.MQTT.enabled == "true" or $Extras.MQTT.enabled == True)
+                                    #if str($Extras.MQTT.enabled).lower() == 'true'
                                         <div id="mqtt-status" class="text-white">
                                             <span id="mqtt-indicator" class="mdi mdi-resistor-nodes"
                                                   data-toggle="tooltip" data-placement="bottom"
@@ -98,7 +98,7 @@
                                                   data-toggle="tooltip" data-placement="bottom"
                                                   style="vertical-align:middle;" title="$gettext('System is offline')"></span>
                                         </div>
-                                    #elif not $online_check.offline and ($always_show_status == True or str($always_show_status).lower() == 'true')
+                                    #elif not $online_check.offline and str($always_show_status).lower() == 'true'
                                         <div id="online-status" class="text-white">
                                             <span class="mdi mdi-wifi"
                                                   data-toggle="tooltip" data-placement="bottom"
@@ -155,97 +155,49 @@
                 <ul class="navbar-nav">
 
                     #if $Extras.Header.current_nav_link == "yes"
-                        #if $active_nav == 'current'
-                            <li class="nav-item active mr-3">
-                                <a class="nav-link" href="index.html">$gettext("current")</a>
-                            </li>
-                        #else
-                            <li class="nav-item mr-3">
-                                <a class="nav-link" href="index.html">$gettext("current")</a>
-                            </li>
-                        #end if
+                        <li class="nav-item#if $active_nav == 'current'# active#end if# mr-3">
+                            <a class="nav-link" href="index.html">$gettext("current")</a>
+                        </li>
                     #end if
 
                     #if $Extras.Header.yesterday_nav_link == "yes"
-                        #if $active_nav == 'yesterday'
-                            <li class="nav-item active mr-3">
-                                <a class="nav-link" href="yesterday.html">$gettext("yesterday")</a>
-                            </li>
-                        #else
-                            <li class="nav-item mr-3">
-                                <a class="nav-link" href="yesterday.html">$gettext("yesterday")</a>
-                            </li>
-                        #end if
+                        <li class="nav-item#if $active_nav == 'yesterday'# active#end if# mr-3">
+                            <a class="nav-link" href="yesterday.html">$gettext("yesterday")</a>
+                        </li>
                     #end if
 
                     #if $Extras.Header.week_nav_link == "yes"
-                        #if $active_nav == 'week'
-                            <li class="nav-item active mr-3">
-                                <a class="nav-link" href="week.html">$gettext("week")</a>
-                            </li>
-                        #else
-                            <li class="nav-item mr-3">
-                                <a class="nav-link" href="week.html">$gettext("week")</a>
-                            </li>
-                        #end if
+                        <li class="nav-item#if $active_nav == 'week'# active#end if# mr-3">
+                            <a class="nav-link" href="week.html">$gettext("week")</a>
+                        </li>
                     #end if
 
                     #if $Extras.Header.month_nav_link == "yes"
-                        #if $active_nav == 'month'
-                            <li class="nav-item active mr-3">
-                                <a class="nav-link" href="month.html">$gettext("month")</a>
-                            </li>
-                        #else
-                            <li class="nav-item mr-3">
-                                <a class="nav-link" href="month.html">$gettext("month")</a>
-                            </li>
-                        #end if
+                        <li class="nav-item#if $active_nav == 'month'# active#end if# mr-3">
+                            <a class="nav-link" href="month.html">$gettext("month")</a>
+                        </li>
                     #end if
 
                     #if $Extras.Header.year_nav_link == "yes"
-                        #if $active_nav == 'year'
-                            <li class="nav-item active mr-3">
-                                <a class="nav-link" href="year.html">$gettext("year")</a>
-                            </li>
-                        #else
-                            <li class="nav-item mr-3">
-                                <a class="nav-link" href="year.html">$gettext("year")</a>
-                            </li>
-                        #end if
+                        <li class="nav-item#if $active_nav == 'year'# active#end if# mr-3">
+                            <a class="nav-link" href="year.html">$gettext("year")</a>
+                        </li>
                     #end if
 
                     #if $Extras.Header.archive_nav_link == "yes"
-                        #if $active_nav == 'archive'
-                            <li class="nav-item active mr-3">
-                                <a class="nav-link" href="archive.html">$gettext("archive")</a>
-                            </li>
-                        #else
-                            <li class="nav-item mr-3">
-                                <a class="nav-link" href="archive.html">$gettext("archive")</a>
-                            </li>
-                        #end if
+                        <li class="nav-item#if $active_nav == 'archive'# active#end if# mr-3">
+                            <a class="nav-link" href="archive.html">$gettext("archive")</a>
+                        </li>
                     #end if
 
-                    #if $active_nav == 'history'
-                        <li class="nav-item active mr-3">
-                            <a class="nav-link" href="history.html">$gettext("history")</a>
-                        </li>
-                    #else
-                        <li class="nav-item mr-3">
-                            <a class="nav-link" href="history.html">$gettext("history")</a>
-                        </li>
-                    #end if
+                    <li class="nav-item#if $active_nav == 'history'# active#end if# mr-3">
+                        <a class="nav-link" href="history.html">$gettext("history")</a>
+                    </li>
 
                     #if $Extras.Header.almanac_nav_link == "yes"
-                        #if $active_nav == 'almanac'
-                            <li class="nav-item active mr-3">
-                                <a class="nav-link" href="almanac.html">$gettext("almanac")</a>
-                            </li>
-                        #else
-                            <li class="nav-item mr-3">
-                                <a class="nav-link" href="almanac.html">$gettext("almanac")</a>
-                            </li>
-                        #end if
+                        <li class="nav-item#if $active_nav == 'almanac'# active#end if# mr-3">
+                            <a class="nav-link" href="almanac.html">$gettext("almanac")</a>
+                        </li>
                     #end if
 
                     #if $Extras.Header.custom1_url != ""
@@ -278,25 +230,9 @@
                         <li class="nav-item mr-2 text-white text-center" style="line-height: 1.5">
                             <span id="alm-moon-phase" title="$almanac.moon_phase" data-toggle="tooltip" data-html="true">
                                 <span id="alm-moon-icon">
-                                #if $almanac.moon_index == 0
-                                    <i class="wi wi-moon-new mr-1" style="opacity: .75"></i>
-                                #else if $almanac.moon_index == 1
-                                    <i class="wi wi-moon-waxing-crescent-4 mr-1" style="opacity: .75"></i>
-                                #else if $almanac.moon_index == 2
-                                    <i class="wi wi-moon-first-quarter mr-1" style="opacity: .75"></i>
-                                #else if $almanac.moon_index == 3
-                                    <i class="wi wi-moon-waxing-gibbous-4 mr-1" style="opacity: .75"></i>
-                                #else if $almanac.moon_index == 4
-                                    <i class="wi wi-moon-full mr-1" style="opacity: .75"></i>
-                                #else if $almanac.moon_index == 5
-                                    <i class="wi wi-moon-waning-gibbous-4 mr-1" style="opacity: .75"></i>
-                                #else if $almanac.moon_index == 6
-                                    <i class="wi wi-moon-third-quarter mr-1" style="opacity: .75"></i>
-                                #else if $almanac.moon_index == 7
-                                    <i class="wi wi-moon-waning-crescent-4 mr-1" style="opacity: .75"></i>
-                                #else
-                                    <i class="wi wi-moon-waning-crescent-3 mr-1" style="opacity: .75"></i>
-                                #end if
+                                #set $moon_icons = {0: 'wi-moon-new', 1: 'wi-moon-waxing-crescent-4', 2: 'wi-moon-first-quarter', 3: 'wi-moon-waxing-gibbous-4', 4: 'wi-moon-full', 5: 'wi-moon-waning-gibbous-4', 6: 'wi-moon-third-quarter', 7: 'wi-moon-waning-crescent-4'}
+                                #set $moon_icon_class = $moon_icons.get($almanac.moon_index, 'wi-moon-waning-crescent-3')
+                                <i class="wi $moon_icon_class mr-1" style="opacity: .75"></i>
                                 </span>
                                 <span id="alm-moon-fullness">$almanac.moon_fullness</span>%
                             </span><br>
