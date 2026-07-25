@@ -283,11 +283,17 @@
 ## | Helper: render a single value-card item by name                         |
 ## +-------------------------------------------------------------------------+
 
-#def renderValueItem($x)
-    ## Note: 'forecast' items in non-panel segments are handled inline in the main
-    ## body (outside defs) to avoid Cheetah #include-inside-def scope issues.
-    ## This def is used by renderValSegment for panel-type segments only.
-    #if $x != "forecast"
+#def renderValueItem($x, $in_panel, $is_first, $is_last)
+    ## 'forecast' renders via #include, which only sees the search list and
+    ## #set global vars - so its placement flags are handed over as globals.
+    ## is_first / is_last refer to the cards actually rendered in this segment,
+    ## and drive the forecast_separator rules inside forecast.inc.
+    #if $x == "forecast"
+        #set global $forecast_in_panel = $in_panel
+        #set global $forecast_is_first = $is_first
+        #set global $forecast_is_last  = $is_last
+        #include "forecast.inc"
+    #else
         $valuesCard($x)
     #end if
 #end def
@@ -297,22 +303,43 @@
 ## +-------------------------------------------------------------------------+
 
 #def renderValSegment($seg, $panel_idx)
-    #if $seg['type'] is None
-        ## No panel – render cards directly into the surrounding row
+    ## Items that actually produce a card - mirrors the render guard in
+    ## valuesCard(), so the panel-empty test and the forecast separator rules
+    ## both agree with what ends up on the page.
+    ##
+    ## Only a panel (which must decide whether to draw at all) and a segment
+    ## holding the forecast (which needs to know its neighbours) need this.
+    ## Plain rows skip it, so they don't pay a second day.<obs>.has_data lookup
+    ## - that is a database aggregate - for every card.
+    #set $vis_items = []
+    #set $f_first = False
+    #set $f_last  = False
+    #if $seg['type'] is not None or 'forecast' in $seg['items']
         #for $x in $seg['items']
-            $renderValueItem($x)
-        #end for
-    #else
-        ## Expansion panel
-        #set $any_has_data = False
-        #for $x in $seg['items']
-            #if $x != "forecast"
-                #if $getVar('day.' + $x + '.has_data')
-                    #set $any_has_data = True
+            ## Skip panel markers kept as plain items (enablePanels = false) - never a card
+            #set $_nm = $x.strip().lower()
+            #if not ($_nm in ('hr', 'hrc') or $_nm[:3] in ('hr:', 'hr ') or $_nm[:4] in ('hrc:', 'hrc '))
+                #if $x == "forecast"
+                    #if $forecast is not None
+                        #silent $vis_items.append($x)
+                    #end if
+                #else if $getVar('day.' + $x + '.has_data') and ($x != 'ET' or ($day.ET.sum.raw is not None and $day.ET.sum.raw >= 0.0))
+                    #silent $vis_items.append($x)
                 #end if
             #end if
         #end for
-        #if $any_has_data
+        #set $f_first = (len($vis_items) > 0 and $vis_items[0] == 'forecast')
+        #set $f_last  = (len($vis_items) > 0 and $vis_items[-1] == 'forecast')
+    #end if
+
+    #if $seg['type'] is None
+        ## No panel – render cards directly into the surrounding row
+        #for $x in $seg['items']
+            $renderValueItem($x, False, $f_first, $f_last)
+        #end for
+    #else
+        ## Expansion panel
+        #if len($vis_items) > 0
             #set $p_exp   = ($seg['type'] == 'hr')
             #set $p_exp_s = 'true' if $p_exp else 'false'
             #set $p_show  = ' show' if $p_exp else ''
@@ -328,7 +355,7 @@
                         <div class="nwm-panel-body">
                             <div class="row">
                                 #for $x in $seg['items']
-                                    $renderValueItem($x)
+                                    $renderValueItem($x, True, $f_first, $f_last)
                                 #end for
                             </div>
                         </div>
@@ -493,19 +520,7 @@
                         #if $seg['type'] is not None
                             #set $val_panel_idx = $val_panel_idx + 1
                         #end if
-                        #if $seg['type'] is None
-                            ## Non-panel: render inline so #include "forecast.inc" runs
-                            ## in main template scope (not inside a def method).
-                            #for $vi_item in $seg['items']
-                                #if $vi_item == 'forecast'
-                                    #include "forecast.inc"
-                                #else
-                                    $valuesCard($vi_item)
-                                #end if
-                            #end for
-                        #else
-                            $renderValSegment($seg, $val_panel_idx)
-                        #end if
+                        $renderValSegment($seg, $val_panel_idx)
                     #end for
 
                 </div>

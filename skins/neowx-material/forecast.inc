@@ -34,6 +34,21 @@
 99: "wi-day-thunderstorm"
 }
 
+## Set by renderValueItem() in the calling template. Inside an expansion panel the
+## forecast already has its own frame, so the row separators are suppressed.
+## is_first / is_last refer to the cards actually rendered next to the forecast,
+## so a neighbour without data no longer strands a separator. Defaults suppress
+## the separators when the flags were never set.
+#set $in_panel = $getVar('forecast_in_panel', False)
+#set $is_first = $getVar('forecast_is_first', True)
+#set $is_last  = $getVar('forecast_is_last', True)
+
+## $forecast is an autocalled SearchList method: every $forecast reference
+## re-enters the Forecast SLE (rebuilding its params dict, json.dumps + md5
+## for the cache key). Resolve it once - $forecast.generated.hour sits inside
+## the hourly-icon loops, so this is ~77 SLE calls per render otherwise.
+#set $fcast = $forecast
+
 #set $vars = $Extras.Forecast.variables
 #if not isinstance($vars, list)
     #if len($vars) > 0
@@ -43,12 +58,12 @@
     #end if
 #end if
 
-#if $forecast is not None
-    #if $forecast.error is None
-        #if $Extras.Forecast.forecast_separator == "yes" and $Extras.Appearance.values_order[0] != "forecast"
+#if $fcast is not None
+    #if $fcast.error is None
+        #if $Extras.Forecast.forecast_separator == "yes" and not $in_panel and not $is_first
             <div class="col-12"><hr class="m-0 mb-4" /></div>
         #end if
-        #for $i, $x in $enumerate($forecast.daily)
+        #for $i, $x in $enumerate($fcast.daily)
             <div class="col-12 col-md-6 col-xl-4 mb-4">
                 <div class="card card-forecast">
                     <div class="card-body text-center pb-1">
@@ -208,9 +223,9 @@
                                     #for $hour_index, $hourly_weather_code in enumerate($x[1].hourly_weather_codes)
                                         #set $hour = $hour_index * int($Extras.Forecast.hourly_icons_interval)
                                         #set $hour_until = ($hour_index + 1) * int($Extras.Forecast.hourly_icons_interval) - 1
-                                        #if $i == 0 and $hour_until < $forecast.generated.hour
+                                        #if $i == 0 and $hour_until < $fcast.generated.hour
                                             <th class="$size text-muted">${"%02d" % $hour}</th>
-                                        #else if $i == 0 and $hour <= $forecast.generated.hour and $hour_until >= $forecast.generated.hour
+                                        #else if $i == 0 and $hour <= $fcast.generated.hour and $hour_until >= $fcast.generated.hour
                                             <th class="$size $Extras.color-text">${"%02d" % $hour}</th>
                                         #else
                                             <th class="$size">${"%02d" % $hour}</th>
@@ -222,9 +237,9 @@
                                         #set $hour = $hour_index * int($Extras.Forecast.hourly_icons_interval)
                                         #set $hour_until = ($hour_index + 1) * int($Extras.Forecast.hourly_icons_interval) - 1
                                         <td>
-                                            #if $i == 0 and $hour_until < $forecast.generated.hour
+                                            #if $i == 0 and $hour_until < $fcast.generated.hour
                                                 <i class="$size text-muted wi $weatherMap.get($hourly_weather_code, "wi-na")" title="$pgettext("Forecast",str($hourly_weather_code))" data-toggle="tooltip" data-html="true"></i>
-                                            #else if $i == 0 and $hour <= $forecast.generated.hour and $hour_until >= $forecast.generated.hour
+                                            #else if $i == 0 and $hour <= $fcast.generated.hour and $hour_until >= $fcast.generated.hour
                                                 <i class="$size $Extras.color-text wi $weatherMap.get($hourly_weather_code, "wi-na")" title="$pgettext("Forecast",str($hourly_weather_code))" data-toggle="tooltip" data-html="true"></i>
                                             #else
                                                 <i class="$size wi $weatherMap.get($hourly_weather_code, "wi-na")" title="$pgettext("Forecast",str($hourly_weather_code))" data-toggle="tooltip" data-html="true"></i>
@@ -242,11 +257,11 @@
                 </div>
             </div>
         #end for
-        #if $Extras.Forecast.forecast_separator == "yes" and $Extras.Appearance.values_order[-1] != "forecast"
+        #if $Extras.Forecast.forecast_separator == "yes" and not $in_panel and not $is_last
             <div class="col-12"><hr class="m-0 mb-4" /></div>
         #end if
     #else
-        #if $Extras.Forecast.forecast_separator == "yes" and $Extras.Appearance.values_order[0] != "forecast"
+        #if $Extras.Forecast.forecast_separator == "yes" and not $in_panel and not $is_first
             <div class="col-12"><hr class="m-0 mb-4" /></div>
         #end if
 
@@ -258,14 +273,14 @@
                     </h3>
                     <div class="row flex-fill font-small">
                         <div class="col-12 text-center pb-2">
-                            $forecast.error
+                            $fcast.error
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        #if $Extras.Forecast.forecast_separator == "yes" and $Extras.Appearance.values_order[-1] != "forecast"
+        #if $Extras.Forecast.forecast_separator == "yes" and not $in_panel and not $is_last
             <div class="col-12"><hr class="m-0 mb-4" /></div>
         #end if
     #end if
