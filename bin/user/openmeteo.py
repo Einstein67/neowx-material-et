@@ -76,6 +76,11 @@ import logging
 from collections import Counter
 
 from weewx.cheetahgenerator import SearchList
+
+# values_order may group items into {Panel: ...} braces, so "forecast" is not
+# necessarily a bare element of the list any more - tokenise it the same way the
+# templates do rather than testing membership directly.
+from user.panelorder import order_items
 from weewx.units import ValueHelper, ValueTuple
 
 VERSION = "1.0.7"
@@ -183,9 +188,7 @@ class Forecast(SearchList):
 
     def forecast(self):
 
-        enabled = False
-        if "forecast" in self.values_order:
-            enabled = True
+        enabled = "forecast" in order_items(self.values_order)
 
         if enabled != True:
             log.debug("Forecast is disabled")

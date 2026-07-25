@@ -36,9 +36,13 @@ This is an **actively maintained** continuation of the NeoWX Material skin. The 
 - Group cards and charts into **collapsible Material Design expansion panels**
 - Panels can be expanded or collapsed by default
 - Optional panel titles for clear labelling
-- Add separator markers directly inside `values_order` and `charts_order`:
-   - `hr` / `hr:My Title` — expanded panel (with or without title)
-   - `hrc` / `hrc:My Title` — collapsed panel (with or without title)
+- Wrap items in braces inside `values_order`, `charts_order`, `embedded_order`, `telemetry_order` and `telemetry_chart_order`:
+   - `{My Title: a, b, c}` — expanded panel
+   - `{{My Title: a, b, c}}` — collapsed panel
+   - `{a, b, c}` — panel with no title
+- Groups are self-delimiting, so a panel can be followed by ungrouped items
+- Panels whose items all lack data are hidden rather than drawn empty
+- `br` inserts a blank full-width row break between cards
 - Fully configurable panel header color and title color for both light and dark mode
 
 ### 📡 Advanced Telemetry & Battery Monitoring

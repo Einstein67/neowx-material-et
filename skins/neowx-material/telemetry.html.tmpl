@@ -169,8 +169,6 @@
 ## +-------------------------------------------------------------------------+
 
 #def chartCard($name)
-    #set $_nm = $name.strip().lower()
-    #if not ($_nm in ('hr', 'hrc') or $_nm[:3] in ('hr:', 'hr ') or $_nm[:4] in ('hrc:', 'hrc '))
     #if $getVar('day.' + name + '.has_data') and ($getVar('day.' + name + '.max.raw') > 0 or $Extras.Telemetry.allow_zero_values == "yes")
         <div class="col-12 col-xl-6 mb-4">
             <div class="card card-chart h-100" id="${name}-chart-card" data-name="$name">
@@ -183,7 +181,64 @@
             </div>
         </div>
     #end if
-    #end if  ## panel-marker guard
+#end def
+
+## +-------------------------------------------------------------------------+
+## | Collapsible expansion panels for the telemetry rows                     |
+## +-------------------------------------------------------------------------+
+
+#set $enablePanels = str($Extras.Appearance.get('enablePanels', 'true')).strip().lower() not in ['false', 'no', '0']
+
+#def renderTeleItem($x, $kind)
+    #if $x.strip().lower() == 'br'
+        <div class="col-12 mb-4"></div>
+    #else if $kind == 'chart'
+        $chartCard($x)
+    #else
+        $batteryCard($x)
+    #end if
+#end def
+
+#def renderTeleSegment($seg, $panel_idx, $kind)
+    ## Mirrors the render guard in batteryCard()/chartCard() so a panel whose
+    ## items all lack data is hidden instead of drawing an empty box.
+    #set $vis_items = []
+    #for $x in $seg['items']
+        #if $x.strip().lower() != 'br'
+            #if $getVar('day.' + $x + '.has_data') and ($getVar('day.' + $x + '.max.raw') > 0 or $Extras.Telemetry.allow_zero_values == "yes")
+                #silent $vis_items.append($x)
+            #end if
+        #end if
+    #end for
+
+    #if $seg['type'] is None
+        #for $x in $seg['items']
+            $renderTeleItem($x, $kind)
+        #end for
+    #else if len($vis_items) > 0
+        #set $p_exp   = ($seg['type'] == 'expanded')
+        #set $p_exp_s = 'true' if $p_exp else 'false'
+        #set $p_show  = ' show' if $p_exp else ''
+        #set $p_id    = 'nwm-tele-' + $kind + '-panel-' + str($panel_idx)
+        <div class="col-12 mb-3">
+            <div class="card nwm-expansion-panel">
+                <div class="nwm-panel-header" data-toggle="collapse"
+                     data-target="#${p_id}" aria-expanded="${p_exp_s}">
+                    <span class="nwm-panel-title">${seg['title']}</span>
+                    <span class="mdi mdi-chevron-down nwm-panel-icon"></span>
+                </div>
+                <div id="${p_id}" class="collapse${p_show}">
+                    <div class="nwm-panel-body">
+                        <div class="row">
+                            #for $x in $seg['items']
+                                $renderTeleItem($x, $kind)
+                            #end for
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    #end if
 #end def
 
 ## +-------------------------------------------------------------------------+
@@ -582,8 +637,13 @@
                         #set global $_tele_val_pos = 'bottom'
                     #end if
 
-                    #for $x in $Extras.Appearance.telemetry_order
-                        $batteryCard($x)
+                    #set $tele_val_segments = $panelSegments($Extras.Appearance.telemetry_order, $enablePanels)
+                    #set $tele_val_idx = 0
+                    #for $seg in $tele_val_segments
+                        #if $seg['type'] is not None
+                            #set $tele_val_idx = $tele_val_idx + 1
+                        #end if
+                        $renderTeleSegment($seg, $tele_val_idx, 'value')
                     #end for
 
                 </div>
@@ -592,8 +652,13 @@
 
                 <div class="row mt-3 graphrow align-content-start">
 
-                    #for $x in $Extras.Appearance.telemetry_chart_order
-                        $chartCard($x)
+                    #set $tele_chart_segments = $panelSegments($Extras.Appearance.telemetry_chart_order, $enablePanels)
+                    #set $tele_chart_idx = 0
+                    #for $seg in $tele_chart_segments
+                        #if $seg['type'] is not None
+                            #set $tele_chart_idx = $tele_chart_idx + 1
+                        #end if
+                        $renderTeleSegment($seg, $tele_chart_idx, 'chart')
                     #end for
 
                 </div>
@@ -799,7 +864,7 @@
                 #include "graph_area_config.inc"
             }
 
-            #for $x in $Extras.Appearance.telemetry_chart_order
+            #for $x in $panelItems($Extras.Appearance.telemetry_chart_order)
                 $getChartJsCode($x, $x)
             #end for
         </script>

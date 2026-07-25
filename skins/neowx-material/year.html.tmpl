@@ -16,8 +16,6 @@
 #set global $ArcticDay = ($table_dict.get('arctic_days_threshold', 0.0),  $threshold_unit)
 
 #def valuesCard($name)
-    #set $_nm = $name.strip().lower()
-    #if not ($_nm in ('hr', 'hrc') or $_nm[:3] in ('hr:', 'hr ') or $_nm[:4] in ('hrc:', 'hrc '))
     ## ET requires a valid positive sum to be shown
     #if $getVar('year.' + name + '.has_data') and ($name != 'ET' or ($year.ET.sum.raw is not None and $year.ET.sum.raw > 0.0))
         <div class="col-12 col-md-6 col-xl-4 mb-4">
@@ -101,12 +99,9 @@
             </div>
         </div>
     #end if
-    #end if  ## panel-marker guard
 #end def
 
 #def chartCard($name, $id, $name2 = "XX")
-    #set $_nm = $name.strip().lower()
-    #if not ($_nm in ('hr', 'hrc') or $_nm[:3] in ('hr:', 'hr ') or $_nm[:4] in ('hrc:', 'hrc '))
     #if $name.startswith('customChart')
         #set $cc = $Extras.Appearance.get($name, {})
         #if $cc
@@ -147,7 +142,6 @@
             </div>
         </div>
     #end if
-    #end if  ## panel-marker guard
 #end def
 
 ## +-------------------------------------------------------------------------+
@@ -241,7 +235,7 @@
             #end if
         #end for
         #if $any_has_data
-            #set $p_exp   = ($seg['type'] == 'hr')
+            #set $p_exp   = ($seg['type'] == 'expanded')
             #set $p_exp_s = 'true' if $p_exp else 'false'
             #set $p_show  = ' show' if $p_exp else ''
             #set $p_id    = 'nwm-val-panel-' + str($panel_idx)
@@ -298,7 +292,7 @@
             #end if
         #end for
         #if $any_has_data
-            #set $p_exp   = ($seg['type'] == 'hr')
+            #set $p_exp   = ($seg['type'] == 'expanded')
             #set $p_exp_s = 'true' if $p_exp else 'false'
             #set $p_show  = ' show' if $p_exp else ''
             #set $p_id    = 'nwm-chart-panel-' + str($panel_idx)
@@ -331,70 +325,13 @@
 ## enablePanels: read from skin.conf [[Appearance]], default true
 #set $enablePanels = str($Extras.Appearance.get('enablePanels', 'true')).strip().lower() not in ['false', 'no', '0']
 
-## isPanelMarker: returns True when item is hr / hrc / hr:Title / hrc:Title
-#set $isPanelMarker = lambda x: (x.strip().lower() in ('hr', 'hrc') or x.strip().lower()[:3] in ('hr:', 'hr ') or x.strip().lower()[:4] in ('hrc:', 'hrc '))
 
-## --- Build value-card segments from values_order ---
-#if isinstance($Extras.Appearance.values_order, list)
-    #set $vo_list = [x.strip() for x in $Extras.Appearance.values_order if x.strip()]
-#else
-    #set $vo_list = [x.strip() for x in str($Extras.Appearance.values_order).split(',') if x.strip()]
-#end if
-
-#set $val_segments = []
-#set $val_cur     = {'type': None, 'title': '', 'items': []}
-#set $val_seen    = set()
-
-#for $vi in $vo_list
-    #set $vi_l = $vi.strip().lower()
-    #if $enablePanels and ($vi_l == 'hr' or ($vi_l[:3] in ('hr:', 'hr ') and $vi_l[:3] != 'hrc'))
-        #silent $val_segments.append($val_cur)
-        ## Extract title: strip the 'hr' prefix (2 chars) + separator (: or space)
-        #set $p_title_v = $vi.strip()[3:].strip()
-        #set $val_cur = {'type': 'hr', 'title': $p_title_v, 'items': []}
-    #else if $enablePanels and ($vi_l == 'hrc' or $vi_l[:4] in ('hrc:', 'hrc '))
-        #silent $val_segments.append($val_cur)
-        ## Extract title: strip the 'hrc' prefix (3 chars) + separator (: or space)
-        #set $p_title_v = $vi.strip()[4:].strip()
-        #set $val_cur = {'type': 'hrc', 'title': $p_title_v, 'items': []}
-    #else if $vi_l == 'br'
-        ## Row-break spacer is a "current"-page feature; ignore it here so
-        ## it never reaches day.<obs>.has_data as an unknown observation.
-        #pass
-    #else if $vi not in $val_seen
-        #silent $val_seen.add($vi)
-        #silent $val_cur['items'].append($vi)
-    #end if
-#end for
-#silent $val_segments.append($val_cur)
-
-## --- Build chart segments from charts_order ---
-#if isinstance($Extras.Appearance.charts_order, list)
-    #set $co_list = [x.strip() for x in $Extras.Appearance.charts_order if x.strip()]
-#else
-    #set $co_list = [x.strip() for x in str($Extras.Appearance.charts_order).split(',') if x.strip()]
-#end if
-
-#set $chart_segments = []
-#set $chart_cur     = {'type': None, 'title': '', 'items': []}
-#set $chart_seen    = set()
-
-#for $ci in $co_list
-    #set $ci_l = $ci.strip().lower()
-    #if $enablePanels and ($ci_l == 'hr' or ($ci_l[:3] in ('hr:', 'hr ') and $ci_l[:3] != 'hrc'))
-        #silent $chart_segments.append($chart_cur)
-        #set $p_title_c = $ci.strip()[3:].strip()
-        #set $chart_cur = {'type': 'hr', 'title': $p_title_c, 'items': []}
-    #else if $enablePanels and ($ci_l == 'hrc' or $ci_l[:4] in ('hrc:', 'hrc '))
-        #silent $chart_segments.append($chart_cur)
-        #set $p_title_c = $ci.strip()[4:].strip()
-        #set $chart_cur = {'type': 'hrc', 'title': $p_title_c, 'items': []}
-    #else if $ci not in $chart_seen
-        #silent $chart_seen.add($ci)
-        #silent $chart_cur['items'].append($ci)
-    #end if
-#end for
-#silent $chart_segments.append($chart_cur)
+## --- Build layout segments -------------------------------------------------
+## Parsing lives in bin/user/panelorder.py: {Title: a, b} is an expanded
+## collapsible panel, {{Title: a, b}} a collapsed one, anything outside a
+## group renders loose, and 'br' is a blank full-width row break.
+#set $val_segments   = $panelSegments($Extras.Appearance.values_order, $enablePanels)
+#set $chart_segments = $panelSegments($Extras.Appearance.charts_order, $enablePanels)
 
 <!DOCTYPE html>
 <html lang="$lang">
@@ -470,7 +407,7 @@
 
         #def getChartJsCode($name, $id, $type, $series1, $series2 = "", $column = "avg", $series3 = "", $series4 = "", $series5 = "", $series6 = "", $series7 = "", $series8 = "")
 
-            #if $name in $Extras.Appearance.charts_order
+            #if $name in $panelItems($Extras.Appearance.charts_order)
                 #set global $cc_name  = $name
                 #set global $cc_scope = ''
                 #include "chart_colors_setup.inc"
@@ -743,9 +680,8 @@
             #set $default_chart_columns = {'windDir': 'vecdir', 'ET': 'sum', 'rain': 'sum', 'windrun': 'sum', 'UV': 'max', 'radiation': 'max', 'luminosity': 'max', 'snowDepth': 'sum', 'lightning_strike_count': 'sum'}
             #set $default_chart_series = {'windDir': 'wind'}
 
-            #for $x in $Extras.Appearance.charts_order
-                #set $x_nm = $x.strip().lower()
-                #if not $x.startswith('customChart') and $x not in $processed_charts and not ($x_nm in ('hr', 'hrc') or $x_nm[:3] in ('hr:', 'hr ') or $x_nm[:4] in ('hrc:', 'hrc '))
+            #for $x in $panelItems($Extras.Appearance.charts_order)
+                #if not $x.startswith('customChart') and $x not in $processed_charts
                     #silent $processed_charts.add($x)
                     #if $getVar('year.' + $x + '.has_data')
                         #set $c_type = $default_chart_types.get($x, 'area')
@@ -759,7 +695,7 @@
 
             // Custom charts
             #set $seen_custom_charts = set()
-            #for $x in $Extras.Appearance.charts_order
+            #for $x in $panelItems($Extras.Appearance.charts_order)
                 #if $x.startswith('customChart') and $x not in $seen_custom_charts
                     #silent $seen_custom_charts.add($x)
                     #set $cc = $Extras.Appearance.get($x, {})
@@ -868,7 +804,7 @@
                         ##
                         ## Render the chart JS
                         ## Render chart JS
-                        #if len($cc_series_pairs) > 0 and $x in $Extras.Appearance.charts_order
+                        #if len($cc_series_pairs) > 0 and $x in $panelItems($Extras.Appearance.charts_order)
                             #set $cc_id = $x + "chart"
                             #try
                                 #set $_ = $axes_list
