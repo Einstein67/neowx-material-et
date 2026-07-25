@@ -102,7 +102,9 @@
 
     #def valuesCard($name)
         ## ET requires a valid positive sum to be shown
-        #if $getVar('day.' + name + '.has_data') and ($name != 'ET' or ($day.ET.sum.raw is not None and $day.ET.sum.raw >= 0.0))
+        #if $name.strip().lower() == '//'
+            <div class="col-12 mb-4"></div>
+        #else if $getVar('day.' + name + '.has_data') and ($name != 'ET' or ($day.ET.sum.raw is not None and $day.ET.sum.raw >= 0.0))
             <div class="col-12 col-md-6 col-xl-4 mb-4">
                 <div class="card card-value" id="${name}-value" data-name="$name">
                     <div class="card-body text-center">
@@ -230,7 +232,9 @@
 ## +-------------------------------------------------------------------------+
 
 #def chartCard($name, $name2 = "XX")
-    #if $name.startswith('customChart')
+    #if $name.strip().lower() == '//'
+        <div class="col-12 mb-4"></div>
+    #else if $name.startswith('customChart')
         ## Custom chart: read config from Extras.Appearance
         #set $cc = $Extras.Appearance.get($name, {})
         #if $cc
@@ -397,7 +401,10 @@
     #else
         #set $any_has_data = False
         #for $x in $seg['items']
-            #if $x.startswith('customChart')
+            ## '//' row-break spacers never carry data - skip the lookup
+            #if $x.strip().lower() == '//'
+                #pass
+            #else if $x.startswith('customChart')
                 #set $cc = $Extras.Appearance.get($x, {})
                 #if $cc
                     #set $cc_values_raw = $cc.get('values', '')

@@ -21,7 +21,9 @@
 
 #def valuesCard($name)
     ## ET requires a valid positive sum to be shown
-    #if $getVar('month.' + name + '.has_data') and ($name != 'ET' or ($month.ET.sum.raw is not None and $month.ET.sum.raw > 0.0))
+    #if $name.strip().lower() == '//'
+        <div class="col-12 mb-4"></div>
+    #else if $getVar('month.' + name + '.has_data') and ($name != 'ET' or ($month.ET.sum.raw is not None and $month.ET.sum.raw > 0.0))
         <div class="col-12 col-md-6 col-xl-4 mb-4">
             <div class="card card-value" id="${name}-value" data-name="$name">
                 <div class="card-body text-center">
@@ -95,7 +97,9 @@
 ## +-------------------------------------------------------------------------+
 
 #def chartCard($name, $id, $name2="XX")
-    #if $name.startswith('customChart')
+    #if $name.strip().lower() == '//'
+        <div class="col-12 mb-4"></div>
+    #else if $name.startswith('customChart')
         #set $cc = $Extras.Appearance.get($name, {})
         #if $cc
             #set $cc_title = $cc.get('title', $name)
@@ -216,7 +220,10 @@
         ## Expansion panel
         #set $any_has_data = False
         #for $x in $seg['items']
-            #if $x == "ET"
+            ## '//' row-break spacers never carry data - skip the lookup
+            #if $x.strip().lower() == '//'
+                #pass
+            #else if $x == "ET"
                 #if $month.ET.has_data and $month.ET.sum.raw is not None and $month.ET.sum.raw > 0.0
                     #set $any_has_data = True
                 #end if
@@ -267,7 +274,10 @@
     #else
         #set $any_has_data = False
         #for $x in $seg['items']
-            #if $x.startswith('customChart')
+            ## '//' row-break spacers never carry data - skip the lookup
+            #if $x.strip().lower() == '//'
+                #pass
+            #else if $x.startswith('customChart')
                 #set $cc = $Extras.Appearance.get($x, {})
                 #if $cc
                     #set $cc_values_raw = $cc.get('values', '')
