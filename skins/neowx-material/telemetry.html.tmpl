@@ -190,7 +190,7 @@
 #set $enablePanels = str($Extras.Appearance.get('enablePanels', 'true')).strip().lower() not in ['false', 'no', '0']
 
 #def renderTeleItem($x, $kind)
-    #if $x.strip().lower() == 'br'
+    #if $x.strip().lower() == '//'
         <div class="col-12 mb-4"></div>
     #else if $kind == 'chart'
         $chartCard($x)
@@ -204,7 +204,7 @@
     ## items all lack data is hidden instead of drawing an empty box.
     #set $vis_items = []
     #for $x in $seg['items']
-        #if $x.strip().lower() != 'br'
+        #if $x.strip().lower() != '//'
             #if $getVar('day.' + $x + '.has_data') and ($getVar('day.' + $x + '.max.raw') > 0 or $Extras.Telemetry.allow_zero_values == "yes")
                 #silent $vis_items.append($x)
             #end if

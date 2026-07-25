@@ -282,7 +282,7 @@
     ## #set global vars - so its placement flags are handed over as globals.
     ## is_first / is_last refer to the cards actually rendered in this segment,
     ## and drive the forecast_separator rules inside forecast.inc.
-    #if $x.strip().lower() == 'br'
+    #if $x.strip().lower() == '//'
         ## Full-width blank spacer: ends the current Bootstrap row so the next
         ## card starts on a new line, and leaves a gap - same break as
         ## forecast_separator, without drawing the rule.
@@ -314,12 +314,12 @@
     #set $vis_items = []
     #set $f_first = False
     #set $f_last  = False
-    #if $seg['type'] is not None or 'forecast' in $items_l or 'br' in $items_l
+    #if $seg['type'] is not None or 'forecast' in $items_l or '//' in $items_l
         #for $x in $seg['items']
             ## Skip markers that never produce a card: panel markers kept as plain
-            ## items (enablePanels = false), and 'br' row-break spacers.
+            ## items (enablePanels = false), and '//' row-break spacers.
             #set $_nm = $x.strip().lower()
-            #if $_nm != 'br'
+            #if $_nm != '//'
                 #if $x == "forecast"
                     #if $forecast is not None
                         #silent $vis_items.append($x)
@@ -333,13 +333,13 @@
         #set $f_last  = (len($vis_items) > 0 and $vis_items[-1] == 'forecast')
     #end if
 
-    ## Drop any 'br' that has no rendered card ahead of it in this segment, so a
+    ## Drop any '//' that has no rendered card ahead of it in this segment, so a
     ## spacer never opens a row with a stray gap (e.g. when the forecast it was
     ## meant to follow is disabled or has no data).
     #set $render_items = []
     #set $seen_card = False
     #for $x in $seg['items']
-        #if $x.strip().lower() == 'br'
+        #if $x.strip().lower() == '//'
             #if $seen_card
                 #silent $render_items.append($x)
             #end if
@@ -447,7 +447,7 @@
 ## +-------------------------------------------------------------------------+
 
 #def renderEmbItem($x)
-    #if $x.strip().lower() == 'br'
+    #if $x.strip().lower() == '//'
         <div class="col-12 mb-4"></div>
     #else if $x.startswith("iFrame")
         $iframeCard($x)
@@ -501,7 +501,7 @@
 ## --- Build layout segments -------------------------------------------------
 ## Parsing lives in bin/user/panelorder.py: {Title: a, b} is an expanded
 ## collapsible panel, {{Title: a, b}} a collapsed one, anything outside a
-## group renders loose, and 'br' is a blank full-width row break.
+## group renders loose, and '//' is a blank full-width row break.
 #set $val_segments   = $panelSegments($Extras.Appearance.values_order, $enablePanels)
 #set $chart_segments = $panelSegments($Extras.Appearance.charts_order, $enablePanels)
 

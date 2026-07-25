@@ -42,7 +42,7 @@ This is an **actively maintained** continuation of the NeoWX Material skin. The 
    - `{a, b, c}` — panel with no title
 - Groups are self-delimiting, so a panel can be followed by ungrouped items
 - Panels whose items all lack data are hidden rather than drawn empty
-- `br` inserts a blank full-width row break between cards
+- `//` inserts a blank full-width row break between cards
 - Fully configurable panel header color and title color for both light and dark mode
 
 ### 📡 Advanced Telemetry & Battery Monitoring

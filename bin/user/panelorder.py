@@ -12,13 +12,13 @@ telemetry_chart_order.  Syntax:
     {Title: a, b, c}      collapsible panel, initially EXPANDED
     {{Title: a, b, c}}    collapsible panel, initially COLLAPSED
     {a, b, c}             panel with no title
-    br                    blank full-width row break (see below)
+    //                    blank full-width row break (see below)
     anything else         a plain item, rendered outside any panel
 
 Everything outside a {...} group renders loose, so a panel can be followed by
 ungrouped items - the groups are self-delimiting.
 
-"br" is not panel syntax: it is a full-width spacer that ends the current row so
+"//" is not panel syntax: it is a full-width spacer that ends the current row so
 the next card starts on a new line.  It may appear inside or outside a group and,
 unlike real items, may be repeated.
 
@@ -52,7 +52,7 @@ VERSION = "1.0.0"
 EXPANDED = "expanded"
 COLLAPSED = "collapsed"
 
-SPACER = "br"
+SPACER = "//"
 
 
 def _elements(order):
