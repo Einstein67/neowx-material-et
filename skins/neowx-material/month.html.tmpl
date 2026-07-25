@@ -351,6 +351,10 @@
         ## Extract title: strip the 'hrc' prefix (3 chars) + separator (: or space)
         #set $p_title_v = $vi.strip()[4:].strip()
         #set $val_cur = {'type': 'hrc', 'title': $p_title_v, 'items': []}
+    #else if $vi_l == 'br'
+        ## Row-break spacer is a "current"-page feature; ignore it here so
+        ## it never reaches day.<obs>.has_data as an unknown observation.
+        #pass
     #else if $vi not in $val_seen
         #silent $val_seen.add($vi)
         #silent $val_cur['items'].append($vi)
