@@ -1683,7 +1683,7 @@ a {
   transition: all 0.2s ease-in-out;
 }
 a:hover {
-  color: rgb(1.2981651376, 75.9426605505, 140.2018348624);
+  color: rgb(0.5090843677%, 29.78143551%, 54.9811117107%);
   text-decoration: none;
   transition: all 0.2s ease-in-out;
 }
@@ -1784,7 +1784,7 @@ a:not([href]):not([tabindex]), a:not([href]):not([tabindex]):focus, a:not([href]
 a.bg-primary:hover, a.bg-primary:focus,
 button.bg-primary:hover,
 button.bg-primary:focus {
-  background-color: rgb(17.805, 101.89, 241.195) !important;
+  background-color: rgb(6.9823529412%, 39.9568627451%, 94.5862745098%) !important;
 }
 
 .border-primary {
@@ -1798,7 +1798,7 @@ button.bg-primary:focus {
 a.bg-danger:hover, a.bg-danger:focus,
 button.bg-danger:hover,
 button.bg-danger:focus {
-  background-color: rgb(255, 2, 24.5445544554) !important;
+  background-color: rgb(100%, 0.7843137255%, 9.6253154727%) !important;
 }
 
 .border-danger {
@@ -1826,7 +1826,7 @@ button.bg-warning:focus {
 a.bg-success:hover, a.bg-success:focus,
 button.bg-success:hover,
 button.bg-success:focus {
-  background-color: rgb(0, 149, 60.345) !important;
+  background-color: rgb(0%, 58.431372549%, 23.6647058824%) !important;
 }
 
 .border-success {
@@ -1840,7 +1840,7 @@ button.bg-success:focus {
 a.bg-info:hover, a.bg-info:focus,
 button.bg-info:hover,
 button.bg-info:focus {
-  background-color: rgb(25.8869565217, 155.3217391304, 203.1130434783) !important;
+  background-color: rgb(10.1517476556%, 60.9104859335%, 79.652173913%) !important;
 }
 
 .border-info {
@@ -1854,7 +1854,7 @@ button.bg-info:focus {
 a.bg-default:hover, a.bg-default:focus,
 button.bg-default:hover,
 button.bg-default:focus {
-  background-color: rgb(33.4652173913, 145.5347826087, 134.6391304348) !important;
+  background-color: rgb(13.1236146633%, 57.0724637681%, 52.799658994%) !important;
 }
 
 .border-default {
@@ -1868,7 +1868,7 @@ button.bg-default:focus {
 a.bg-secondary:hover, a.bg-secondary:focus,
 button.bg-secondary:hover,
 button.bg-secondary:focus {
-  background-color: rgb(148.75, 63.75, 191.25) !important;
+  background-color: rgb(58.3333333333%, 25%, 75%) !important;
 }
 
 .border-secondary {
@@ -1882,7 +1882,7 @@ button.bg-secondary:focus {
 a.bg-dark:hover, a.bg-dark:focus,
 button.bg-dark:hover,
 button.bg-dark:focus {
-  background-color: rgb(7.5, 7.5, 7.5) !important;
+  background-color: rgb(2.9411764706%, 2.9411764706%, 2.9411764706%) !important;
 }
 
 .border-dark {
@@ -1896,7 +1896,7 @@ button.bg-dark:focus {
 a.bg-light:hover, a.bg-light:focus,
 button.bg-light:hover,
 button.bg-light:focus {
-  background-color: rgb(198.5, 198.5, 198.5) !important;
+  background-color: rgb(77.8431372549%, 77.8431372549%, 77.8431372549%) !important;
 }
 
 .border-light {
@@ -2076,7 +2076,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a.text-primary:hover, a.text-primary:focus {
-  color: rgb(17.805, 101.89, 241.195) !important;
+  color: rgb(6.9823529412%, 39.9568627451%, 94.5862745098%) !important;
 }
 
 .text-danger {
@@ -2084,7 +2084,7 @@ a.text-primary:hover, a.text-primary:focus {
 }
 
 a.text-danger:hover, a.text-danger:focus {
-  color: rgb(255, 2, 24.5445544554) !important;
+  color: rgb(100%, 0.7843137255%, 9.6253154727%) !important;
 }
 
 .text-warning {
@@ -2100,7 +2100,7 @@ a.text-warning:hover, a.text-warning:focus {
 }
 
 a.text-success:hover, a.text-success:focus {
-  color: rgb(0, 149, 60.345) !important;
+  color: rgb(0%, 58.431372549%, 23.6647058824%) !important;
 }
 
 .text-info {
@@ -2108,7 +2108,7 @@ a.text-success:hover, a.text-success:focus {
 }
 
 a.text-info:hover, a.text-info:focus {
-  color: rgb(25.8869565217, 155.3217391304, 203.1130434783) !important;
+  color: rgb(10.1517476556%, 60.9104859335%, 79.652173913%) !important;
 }
 
 .text-default {
@@ -2116,7 +2116,7 @@ a.text-info:hover, a.text-info:focus {
 }
 
 a.text-default:hover, a.text-default:focus {
-  color: rgb(33.4652173913, 145.5347826087, 134.6391304348) !important;
+  color: rgb(13.1236146633%, 57.0724637681%, 52.799658994%) !important;
 }
 
 .text-secondary {
@@ -2124,7 +2124,7 @@ a.text-default:hover, a.text-default:focus {
 }
 
 a.text-secondary:hover, a.text-secondary:focus {
-  color: rgb(148.75, 63.75, 191.25) !important;
+  color: rgb(58.3333333333%, 25%, 75%) !important;
 }
 
 .text-dark {
@@ -2132,7 +2132,7 @@ a.text-secondary:hover, a.text-secondary:focus {
 }
 
 a.text-dark:hover, a.text-dark:focus {
-  color: rgb(7.5, 7.5, 7.5) !important;
+  color: rgb(2.9411764706%, 2.9411764706%, 2.9411764706%) !important;
 }
 
 .text-light {
@@ -2140,7 +2140,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 a.text-light:hover, a.text-light:focus {
-  color: rgb(198.5, 198.5, 198.5) !important;
+  color: rgb(77.8431372549%, 77.8431372549%, 77.8431372549%) !important;
 }
 
 .font-small {
@@ -2656,22 +2656,22 @@ a.waves-effect, a.waves-light {
 }
 .btn-primary:hover {
   color: #fff;
-  background-color: rgb(90.0975, 148.555, 245.4025);
+  background-color: rgb(35.3323529412%, 58.2568627451%, 96.2362745098%);
 }
 .btn-primary:focus, .btn-primary.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-primary:focus, .btn-primary:active, .btn-primary.active {
-  background-color: rgb(11.44, 81.12, 196.56);
+  background-color: rgb(4.4862745098%, 31.8117647059%, 77.0823529412%);
 }
 .btn-primary.dropdown-toggle {
   background-color: #4285f4 !important;
 }
 .btn-primary.dropdown-toggle:hover, .btn-primary.dropdown-toggle:focus {
-  background-color: rgb(90.0975, 148.555, 245.4025) !important;
+  background-color: rgb(35.3323529412%, 58.2568627451%, 96.2362745098%) !important;
 }
 .btn-primary:not([disabled]):not(.disabled):active, .btn-primary:not([disabled]):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
-  background-color: rgb(11.44, 81.12, 196.56) !important;
+  background-color: rgb(4.4862745098%, 31.8117647059%, 77.0823529412%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-primary:not([disabled]):not(.disabled):active:focus, .btn-primary:not([disabled]):not(.disabled).active:focus, .show > .btn-primary.dropdown-toggle:focus {
@@ -2720,22 +2720,22 @@ table.table a.btn.btn-primary {
 }
 .btn-danger:hover {
   color: #fff;
-  background-color: rgb(255, 78.5, 94.2277227723);
+  background-color: rgb(100%, 30.7843137255%, 36.952048146%);
 }
 .btn-danger:focus, .btn-danger.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-danger:focus, .btn-danger:active, .btn-danger.active {
-  background-color: rgb(206, 0, 18.3564356436);
+  background-color: rgb(80.7843137255%, 0%, 7.1986022132%);
 }
 .btn-danger.dropdown-toggle {
   background-color: #ff3547 !important;
 }
 .btn-danger.dropdown-toggle:hover, .btn-danger.dropdown-toggle:focus {
-  background-color: rgb(255, 78.5, 94.2277227723) !important;
+  background-color: rgb(100%, 30.7843137255%, 36.952048146%) !important;
 }
 .btn-danger:not([disabled]):not(.disabled):active, .btn-danger:not([disabled]):not(.disabled).active, .show > .btn-danger.dropdown-toggle {
-  background-color: rgb(206, 0, 18.3564356436) !important;
+  background-color: rgb(80.7843137255%, 0%, 7.1986022132%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-danger:not([disabled]):not(.disabled):active:focus, .btn-danger:not([disabled]):not(.disabled).active:focus, .show > .btn-danger.dropdown-toggle:focus {
@@ -2784,7 +2784,7 @@ table.table a.btn.btn-danger {
 }
 .btn-warning:hover {
   color: #fff;
-  background-color: rgb(255, 195.5, 76.5);
+  background-color: rgb(100%, 76.6666666667%, 30%);
 }
 .btn-warning:focus, .btn-warning.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
@@ -2796,7 +2796,7 @@ table.table a.btn.btn-danger {
   background-color: #fb3 !important;
 }
 .btn-warning.dropdown-toggle:hover, .btn-warning.dropdown-toggle:focus {
-  background-color: rgb(255, 195.5, 76.5) !important;
+  background-color: rgb(100%, 76.6666666667%, 30%) !important;
 }
 .btn-warning:not([disabled]):not(.disabled):active, .btn-warning:not([disabled]):not(.disabled).active, .show > .btn-warning.dropdown-toggle {
   background-color: #cc8800 !important;
@@ -2848,22 +2848,22 @@ table.table a.btn.btn-warning {
 }
 .btn-success:hover {
   color: #fff;
-  background-color: rgb(0, 225.5, 91.3275);
+  background-color: rgb(0%, 88.431372549%, 35.8147058824%);
 }
 .btn-success:focus, .btn-success.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-success:focus, .btn-success:active, .btn-success.active {
-  background-color: rgb(0, 98, 39.69);
+  background-color: rgb(0%, 38.431372549%, 15.5647058824%);
 }
 .btn-success.dropdown-toggle {
   background-color: #00c851 !important;
 }
 .btn-success.dropdown-toggle:hover, .btn-success.dropdown-toggle:focus {
-  background-color: rgb(0, 225.5, 91.3275) !important;
+  background-color: rgb(0%, 88.431372549%, 35.8147058824%) !important;
 }
 .btn-success:not([disabled]):not(.disabled):active, .btn-success:not([disabled]):not(.disabled).active, .show > .btn-success.dropdown-toggle {
-  background-color: rgb(0, 98, 39.69) !important;
+  background-color: rgb(0%, 38.431372549%, 15.5647058824%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-success:not([disabled]):not(.disabled):active:focus, .btn-success:not([disabled]):not(.disabled).active:focus, .show > .btn-success.dropdown-toggle:focus {
@@ -2912,22 +2912,22 @@ table.table a.btn.btn-success {
 }
 .btn-info:hover {
   color: #fff;
-  background-color: rgb(73.6173913043, 189.2043478261, 231.8826086957);
+  background-color: rgb(28.8695652174%, 74.1977834612%, 90.9343563512%);
 }
 .btn-info:focus, .btn-info.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-info:focus, .btn-info:active, .btn-info.active {
-  background-color: rgb(20.1217391304, 120.7304347826, 157.8782608696);
+  background-color: rgb(7.8908780904%, 47.3452685422%, 61.9130434783%);
 }
 .btn-info.dropdown-toggle {
   background-color: #33b5e5 !important;
 }
 .btn-info.dropdown-toggle:hover, .btn-info.dropdown-toggle:focus {
-  background-color: rgb(73.6173913043, 189.2043478261, 231.8826086957) !important;
+  background-color: rgb(28.8695652174%, 74.1977834612%, 90.9343563512%) !important;
 }
 .btn-info:not([disabled]):not(.disabled):active, .btn-info:not([disabled]):not(.disabled).active, .show > .btn-info.dropdown-toggle {
-  background-color: rgb(20.1217391304, 120.7304347826, 157.8782608696) !important;
+  background-color: rgb(7.8908780904%, 47.3452685422%, 61.9130434783%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-info:not([disabled]):not(.disabled):active:focus, .btn-info:not([disabled]):not(.disabled).active:focus, .show > .btn-info.dropdown-toggle:focus {
@@ -2976,22 +2976,22 @@ table.table a.btn.btn-info {
 }
 .btn-default:hover {
   color: #fff;
-  background-color: rgb(48.0804347826, 207.4195652174, 191.9282608696);
+  background-color: rgb(18.8550724638%, 81.3410059676%, 75.2659846547%);
 }
 .btn-default:focus, .btn-default.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-default:focus, .btn-default:active, .btn-default.active {
-  background-color: rgb(23.9304347826, 104.0695652174, 96.2782608696);
+  background-color: rgb(9.3844842285%, 40.8115942029%, 37.7561807332%);
 }
 .btn-default.dropdown-toggle {
   background-color: #2bbbad !important;
 }
 .btn-default.dropdown-toggle:hover, .btn-default.dropdown-toggle:focus {
-  background-color: rgb(48.0804347826, 207.4195652174, 191.9282608696) !important;
+  background-color: rgb(18.8550724638%, 81.3410059676%, 75.2659846547%) !important;
 }
 .btn-default:not([disabled]):not(.disabled):active, .btn-default:not([disabled]):not(.disabled).active, .show > .btn-default.dropdown-toggle {
-  background-color: rgb(23.9304347826, 104.0695652174, 96.2782608696) !important;
+  background-color: rgb(9.3844842285%, 40.8115942029%, 37.7561807332%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-default:not([disabled]):not(.disabled):active:focus, .btn-default:not([disabled]):not(.disabled).active:focus, .show > .btn-default.dropdown-toggle:focus {
@@ -3040,7 +3040,7 @@ table.table a.btn.btn-default {
 }
 .btn-secondary:hover {
   color: #fff;
-  background-color: rgb(180.625, 121.125, 210.375);
+  background-color: rgb(70.8333333333%, 47.5%, 82.5%);
 }
 .btn-secondary:focus, .btn-secondary.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
@@ -3052,7 +3052,7 @@ table.table a.btn.btn-default {
   background-color: #a6c !important;
 }
 .btn-secondary.dropdown-toggle:hover, .btn-secondary.dropdown-toggle:focus {
-  background-color: rgb(180.625, 121.125, 210.375) !important;
+  background-color: rgb(70.8333333333%, 47.5%, 82.5%) !important;
 }
 .btn-secondary:not([disabled]):not(.disabled):active, .btn-secondary:not([disabled]):not(.disabled).active, .show > .btn-secondary.dropdown-toggle {
   background-color: #773399 !important;
@@ -3104,7 +3104,7 @@ table.table a.btn.btn-secondary {
 }
 .btn-elegant:hover {
   color: #fff;
-  background-color: rgb(58.75, 58.75, 58.75);
+  background-color: rgb(23.0392156863%, 23.0392156863%, 23.0392156863%);
 }
 .btn-elegant:focus, .btn-elegant.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
@@ -3116,7 +3116,7 @@ table.table a.btn.btn-secondary {
   background-color: #2e2e2e !important;
 }
 .btn-elegant.dropdown-toggle:hover, .btn-elegant.dropdown-toggle:focus {
-  background-color: rgb(58.75, 58.75, 58.75) !important;
+  background-color: rgb(23.0392156863%, 23.0392156863%, 23.0392156863%) !important;
 }
 .btn-elegant:not([disabled]):not(.disabled):active, .btn-elegant:not([disabled]):not(.disabled).active, .show > .btn-elegant.dropdown-toggle {
   background-color: hsl(0, 0%, -1.9607843137%) !important;
@@ -3168,22 +3168,22 @@ table.table a.btn.btn-elegant {
 }
 .btn-unique:hover {
   color: #fff;
-  background-color: rgb(159.12, 16.38, 92.43);
+  background-color: rgb(62.4%, 6.4235294118%, 36.2470588235%);
 }
 .btn-unique:focus, .btn-unique.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-unique:focus, .btn-unique:active, .btn-unique.active {
-  background-color: rgb(43.52, 4.48, 25.28);
+  background-color: rgb(17.0666666667%, 1.7568627451%, 9.9137254902%);
 }
 .btn-unique.dropdown-toggle {
   background-color: #880e4f !important;
 }
 .btn-unique.dropdown-toggle:hover, .btn-unique.dropdown-toggle:focus {
-  background-color: rgb(159.12, 16.38, 92.43) !important;
+  background-color: rgb(62.4%, 6.4235294118%, 36.2470588235%) !important;
 }
 .btn-unique:not([disabled]):not(.disabled):active, .btn-unique:not([disabled]):not(.disabled).active, .show > .btn-unique.dropdown-toggle {
-  background-color: rgb(43.52, 4.48, 25.28) !important;
+  background-color: rgb(17.0666666667%, 1.7568627451%, 9.9137254902%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-unique:not([disabled]):not(.disabled):active:focus, .btn-unique:not([disabled]):not(.disabled).active:focus, .show > .btn-unique.dropdown-toggle:focus {
@@ -3232,22 +3232,22 @@ table.table a.btn.btn-unique {
 }
 .btn-dark-green:hover {
   color: #fff;
-  background-color: rgb(63.2121212121, 160.2878787879, 67.7272727273);
+  background-color: rgb(24.789067142%, 62.8579916815%, 26.559714795%);
 }
 .btn-dark-green:focus, .btn-dark-green.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-dark-green:focus, .btn-dark-green:active, .btn-dark-green.active {
-  background-color: rgb(27.1515151515, 68.8484848485, 29.0909090909);
+  background-color: rgb(10.6476530006%, 26.9994058229%, 11.4081996435%);
 }
 .btn-dark-green.dropdown-toggle {
   background-color: #388e3c !important;
 }
 .btn-dark-green.dropdown-toggle:hover, .btn-dark-green.dropdown-toggle:focus {
-  background-color: rgb(63.2121212121, 160.2878787879, 67.7272727273) !important;
+  background-color: rgb(24.789067142%, 62.8579916815%, 26.559714795%) !important;
 }
 .btn-dark-green:not([disabled]):not(.disabled):active, .btn-dark-green:not([disabled]):not(.disabled).active, .show > .btn-dark-green.dropdown-toggle {
-  background-color: rgb(27.1515151515, 68.8484848485, 29.0909090909) !important;
+  background-color: rgb(10.6476530006%, 26.9994058229%, 11.4081996435%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-dark-green:not([disabled]):not(.disabled):active:focus, .btn-dark-green:not([disabled]):not(.disabled).active:focus, .show > .btn-dark-green.dropdown-toggle:focus {
@@ -3296,22 +3296,22 @@ table.table a.btn.btn-dark-green {
 }
 .btn-mdb-color:hover {
   color: #fff;
-  background-color: rgb(98.9804347826, 116.6847826087, 156.5195652174);
+  background-color: rgb(38.8158567775%, 45.7587382779%, 61.3802216539%);
 }
 .btn-mdb-color:focus, .btn-mdb-color.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-mdb-color:focus, .btn-mdb-color:active, .btn-mdb-color.active {
-  background-color: rgb(49.5304347826, 58.4347826087, 78.4695652174);
+  background-color: rgb(19.4236999147%, 22.915601023%, 30.7723785166%);
 }
 .btn-mdb-color.dropdown-toggle {
   background-color: #59698d !important;
 }
 .btn-mdb-color.dropdown-toggle:hover, .btn-mdb-color.dropdown-toggle:focus {
-  background-color: rgb(98.9804347826, 116.6847826087, 156.5195652174) !important;
+  background-color: rgb(38.8158567775%, 45.7587382779%, 61.3802216539%) !important;
 }
 .btn-mdb-color:not([disabled]):not(.disabled):active, .btn-mdb-color:not([disabled]):not(.disabled).active, .show > .btn-mdb-color.dropdown-toggle {
-  background-color: rgb(49.5304347826, 58.4347826087, 78.4695652174) !important;
+  background-color: rgb(19.4236999147%, 22.915601023%, 30.7723785166%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-mdb-color:not([disabled]):not(.disabled):active:focus, .btn-mdb-color:not([disabled]):not(.disabled).active:focus, .show > .btn-mdb-color.dropdown-toggle:focus {
@@ -3360,22 +3360,22 @@ table.table a.btn.btn-mdb-color {
 }
 .btn-red:hover {
   color: #fff;
-  background-color: rgb(215.4523809524, 68.0476190476, 68.0476190476);
+  background-color: rgb(84.4911297852%, 26.685340803%, 26.685340803%);
 }
 .btn-red:focus, .btn-red.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-red:focus, .btn-red:active, .btn-red.active {
-  background-color: rgb(128.7619047619, 27.2380952381, 27.2380952381);
+  background-color: rgb(50.4948646125%, 10.6816059757%, 10.6816059757%);
 }
 .btn-red.dropdown-toggle {
   background-color: #d32f2f !important;
 }
 .btn-red.dropdown-toggle:hover, .btn-red.dropdown-toggle:focus {
-  background-color: rgb(215.4523809524, 68.0476190476, 68.0476190476) !important;
+  background-color: rgb(84.4911297852%, 26.685340803%, 26.685340803%) !important;
 }
 .btn-red:not([disabled]):not(.disabled):active, .btn-red:not([disabled]):not(.disabled).active, .show > .btn-red.dropdown-toggle {
-  background-color: rgb(128.7619047619, 27.2380952381, 27.2380952381) !important;
+  background-color: rgb(50.4948646125%, 10.6816059757%, 10.6816059757%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-red:not([disabled]):not(.disabled):active:focus, .btn-red:not([disabled]):not(.disabled).active:focus, .show > .btn-red.dropdown-toggle:focus {
@@ -3424,22 +3424,22 @@ table.table a.btn.btn-red {
 }
 .btn-pink:hover {
   color: #fff;
-  background-color: rgb(238.3071428571, 87.1928571429, 138.15);
+  background-color: rgb(93.4537815126%, 34.1932773109%, 54.1764705882%);
 }
 .btn-pink:focus, .btn-pink.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-pink:focus, .btn-pink:active, .btn-pink.active {
-  background-color: rgb(180.0857142857, 17.9142857143, 72.6);
+  background-color: rgb(70.6218487395%, 7.025210084%, 28.4705882353%);
 }
 .btn-pink.dropdown-toggle {
   background-color: #ec407a !important;
 }
 .btn-pink.dropdown-toggle:hover, .btn-pink.dropdown-toggle:focus {
-  background-color: rgb(238.3071428571, 87.1928571429, 138.15) !important;
+  background-color: rgb(93.4537815126%, 34.1932773109%, 54.1764705882%) !important;
 }
 .btn-pink:not([disabled]):not(.disabled):active, .btn-pink:not([disabled]):not(.disabled).active, .show > .btn-pink.dropdown-toggle {
-  background-color: rgb(180.0857142857, 17.9142857143, 72.6) !important;
+  background-color: rgb(70.6218487395%, 7.025210084%, 28.4705882353%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-pink:not([disabled]):not(.disabled):active:focus, .btn-pink:not([disabled]):not(.disabled).active:focus, .show > .btn-pink.dropdown-toggle:focus {
@@ -3488,22 +3488,22 @@ table.table a.btn.btn-pink {
 }
 .btn-purple:hover {
   color: #fff;
-  background-color: rgb(159.5776699029, 40.4563106796, 191.0436893204);
+  background-color: rgb(62.5794783933%, 15.8652198744%, 74.9190938511%);
 }
 .btn-purple:focus, .btn-purple.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-purple:focus, .btn-purple:active, .btn-purple.active {
-  background-color: rgb(71.6893203883, 18.1747572816, 85.8252427184);
+  background-color: rgb(28.1134589758%, 7.1273557967%, 33.6569579288%);
 }
 .btn-purple.dropdown-toggle {
   background-color: #8e24aa !important;
 }
 .btn-purple.dropdown-toggle:hover, .btn-purple.dropdown-toggle:focus {
-  background-color: rgb(159.5776699029, 40.4563106796, 191.0436893204) !important;
+  background-color: rgb(62.5794783933%, 15.8652198744%, 74.9190938511%) !important;
 }
 .btn-purple:not([disabled]):not(.disabled):active, .btn-purple:not([disabled]):not(.disabled).active, .show > .btn-purple.dropdown-toggle {
-  background-color: rgb(71.6893203883, 18.1747572816, 85.8252427184) !important;
+  background-color: rgb(28.1134589758%, 7.1273557967%, 33.6569579288%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-purple:not([disabled]):not(.disabled):active:focus, .btn-purple:not([disabled]):not(.disabled).active:focus, .show > .btn-purple.dropdown-toggle:focus {
@@ -3552,22 +3552,22 @@ table.table a.btn.btn-purple {
 }
 .btn-deep-purple:hover {
   color: #fff;
-  background-color: rgb(90.6971830986, 50.3873239437, 188.1126760563);
+  background-color: rgb(35.5675227838%, 19.7597348799%, 73.7696768848%);
 }
 .btn-deep-purple:focus, .btn-deep-purple.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-deep-purple:focus, .btn-deep-purple:active, .btn-deep-purple.active {
-  background-color: rgb(42.2112676056, 23.4507042254, 87.5492957746);
+  background-color: rgb(16.5534382767%, 9.1963545982%, 34.3330571665%);
 }
 .btn-deep-purple.dropdown-toggle {
   background-color: #512da8 !important;
 }
 .btn-deep-purple.dropdown-toggle:hover, .btn-deep-purple.dropdown-toggle:focus {
-  background-color: rgb(90.6971830986, 50.3873239437, 188.1126760563) !important;
+  background-color: rgb(35.5675227838%, 19.7597348799%, 73.7696768848%) !important;
 }
 .btn-deep-purple:not([disabled]):not(.disabled):active, .btn-deep-purple:not([disabled]):not(.disabled).active, .show > .btn-deep-purple.dropdown-toggle {
-  background-color: rgb(42.2112676056, 23.4507042254, 87.5492957746) !important;
+  background-color: rgb(16.5534382767%, 9.1963545982%, 34.3330571665%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-deep-purple:not([disabled]):not(.disabled):active:focus, .btn-deep-purple:not([disabled]):not(.disabled).active:focus, .show > .btn-deep-purple.dropdown-toggle:focus {
@@ -3616,22 +3616,22 @@ table.table a.btn.btn-deep-purple {
 }
 .btn-indigo:hover {
   color: #fff;
-  background-color: rgb(76.5963114754, 94.3381147541, 192.9036885246);
+  background-color: rgb(30.037769206%, 36.9953391193%, 75.6485053038%);
 }
 .btn-indigo:focus, .btn-indigo.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-indigo:focus, .btn-indigo:active, .btn-indigo.active {
-  background-color: rgb(36.6639344262, 47.1393442623, 105.3360655738);
+  background-color: rgb(14.3780135005%, 18.4860173578%, 41.3082610093%);
 }
 .btn-indigo.dropdown-toggle {
   background-color: #3f51b5 !important;
 }
 .btn-indigo.dropdown-toggle:hover, .btn-indigo.dropdown-toggle:focus {
-  background-color: rgb(76.5963114754, 94.3381147541, 192.9036885246) !important;
+  background-color: rgb(30.037769206%, 36.9953391193%, 75.6485053038%) !important;
 }
 .btn-indigo:not([disabled]):not(.disabled):active, .btn-indigo:not([disabled]):not(.disabled).active, .show > .btn-indigo.dropdown-toggle {
-  background-color: rgb(36.6639344262, 47.1393442623, 105.3360655738) !important;
+  background-color: rgb(14.3780135005%, 18.4860173578%, 41.3082610093%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-indigo:not([disabled]):not(.disabled):active:focus, .btn-indigo:not([disabled]):not(.disabled).active:focus, .show > .btn-indigo.dropdown-toggle:focus {
@@ -3680,22 +3680,22 @@ table.table a.btn.btn-indigo {
 }
 .btn-blue:hover {
   color: #fff;
-  background-color: rgb(32.0425531915, 130.7808510638, 228.4574468085);
+  background-color: rgb(12.5657071339%, 51.2866082603%, 89.5911556112%);
 }
 .btn-blue:focus, .btn-blue.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-blue:focus, .btn-blue:active, .btn-blue.active {
-  background-color: rgb(14.1489361702, 66.7829787234, 118.8510638298);
+  background-color: rgb(5.5486024197%, 26.1894034209%, 46.6082603254%);
 }
 .btn-blue.dropdown-toggle {
   background-color: #1976d2 !important;
 }
 .btn-blue.dropdown-toggle:hover, .btn-blue.dropdown-toggle:focus {
-  background-color: rgb(32.0425531915, 130.7808510638, 228.4574468085) !important;
+  background-color: rgb(12.5657071339%, 51.2866082603%, 89.5911556112%) !important;
 }
 .btn-blue:not([disabled]):not(.disabled):active, .btn-blue:not([disabled]):not(.disabled).active, .show > .btn-blue.dropdown-toggle {
-  background-color: rgb(14.1489361702, 66.7829787234, 118.8510638298) !important;
+  background-color: rgb(5.5486024197%, 26.1894034209%, 46.6082603254%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-blue:not([disabled]):not(.disabled):active:focus, .btn-blue:not([disabled]):not(.disabled).active:focus, .show > .btn-blue.dropdown-toggle:focus {
@@ -3744,22 +3744,22 @@ table.table a.btn.btn-blue {
 }
 .btn-light-blue:hover {
   color: #fff;
-  background-color: rgb(155.5, 192.912, 255);
+  background-color: rgb(60.9803921569%, 75.6517647059%, 100%);
 }
 .btn-light-blue:focus, .btn-light-blue.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-light-blue:focus, .btn-light-blue:active, .btn-light-blue.active {
-  background-color: rgb(28, 113.352, 255);
+  background-color: rgb(10.9803921569%, 44.4517647059%, 100%);
 }
 .btn-light-blue.dropdown-toggle {
   background-color: #82b1ff !important;
 }
 .btn-light-blue.dropdown-toggle:hover, .btn-light-blue.dropdown-toggle:focus {
-  background-color: rgb(155.5, 192.912, 255) !important;
+  background-color: rgb(60.9803921569%, 75.6517647059%, 100%) !important;
 }
 .btn-light-blue:not([disabled]):not(.disabled):active, .btn-light-blue:not([disabled]):not(.disabled).active, .show > .btn-light-blue.dropdown-toggle {
-  background-color: rgb(28, 113.352, 255) !important;
+  background-color: rgb(10.9803921569%, 44.4517647059%, 100%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-light-blue:not([disabled]):not(.disabled):active:focus, .btn-light-blue:not([disabled]):not(.disabled).active:focus, .show > .btn-light-blue.dropdown-toggle:focus {
@@ -3808,22 +3808,22 @@ table.table a.btn.btn-light-blue {
 }
 .btn-cyan:hover {
   color: #fff;
-  background-color: rgb(0, 210.6132075472, 237.5);
+  background-color: rgb(0%, 82.5934147244%, 93.137254902%);
 }
 .btn-cyan:focus, .btn-cyan.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-cyan:focus, .btn-cyan:active, .btn-cyan.active {
-  background-color: rgb(0, 97.5471698113, 110);
+  background-color: rgb(0%, 38.2537920829%, 43.137254902%);
 }
 .btn-cyan.dropdown-toggle {
   background-color: #00bcd4 !important;
 }
 .btn-cyan.dropdown-toggle:hover, .btn-cyan.dropdown-toggle:focus {
-  background-color: rgb(0, 210.6132075472, 237.5) !important;
+  background-color: rgb(0%, 82.5934147244%, 93.137254902%) !important;
 }
 .btn-cyan:not([disabled]):not(.disabled):active, .btn-cyan:not([disabled]):not(.disabled).active, .show > .btn-cyan.dropdown-toggle {
-  background-color: rgb(0, 97.5471698113, 110) !important;
+  background-color: rgb(0%, 38.2537920829%, 43.137254902%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-cyan:not([disabled]):not(.disabled):active:focus, .btn-cyan:not([disabled]):not(.disabled).active:focus, .show > .btn-cyan.dropdown-toggle:focus {
@@ -3872,22 +3872,22 @@ table.table a.btn.btn-cyan {
 }
 .btn-teal:hover {
   color: #fff;
-  background-color: rgb(0, 146.5, 129.5495867769);
+  background-color: rgb(0%, 57.4509803922%, 50.8037595203%);
 }
 .btn-teal:focus, .btn-teal.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-teal:focus, .btn-teal:active, .btn-teal.active {
-  background-color: rgb(0, 19, 16.8016528926);
+  background-color: rgb(0%, 7.4509803922%, 6.5888834873%);
 }
 .btn-teal.dropdown-toggle {
   background-color: #00796b !important;
 }
 .btn-teal.dropdown-toggle:hover, .btn-teal.dropdown-toggle:focus {
-  background-color: rgb(0, 146.5, 129.5495867769) !important;
+  background-color: rgb(0%, 57.4509803922%, 50.8037595203%) !important;
 }
 .btn-teal:not([disabled]):not(.disabled):active, .btn-teal:not([disabled]):not(.disabled).active, .show > .btn-teal.dropdown-toggle {
-  background-color: rgb(0, 19, 16.8016528926) !important;
+  background-color: rgb(0%, 7.4509803922%, 6.5888834873%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-teal:not([disabled]):not(.disabled):active:focus, .btn-teal:not([disabled]):not(.disabled).active:focus, .show > .btn-teal.dropdown-toggle:focus {
@@ -3936,22 +3936,22 @@ table.table a.btn.btn-teal {
 }
 .btn-green:hover {
   color: #fff;
-  background-color: rgb(63.2121212121, 160.2878787879, 67.7272727273);
+  background-color: rgb(24.789067142%, 62.8579916815%, 26.559714795%);
 }
 .btn-green:focus, .btn-green.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-green:focus, .btn-green:active, .btn-green.active {
-  background-color: rgb(27.1515151515, 68.8484848485, 29.0909090909);
+  background-color: rgb(10.6476530006%, 26.9994058229%, 11.4081996435%);
 }
 .btn-green.dropdown-toggle {
   background-color: #388e3c !important;
 }
 .btn-green.dropdown-toggle:hover, .btn-green.dropdown-toggle:focus {
-  background-color: rgb(63.2121212121, 160.2878787879, 67.7272727273) !important;
+  background-color: rgb(24.789067142%, 62.8579916815%, 26.559714795%) !important;
 }
 .btn-green:not([disabled]):not(.disabled):active, .btn-green:not([disabled]):not(.disabled).active, .show > .btn-green.dropdown-toggle {
-  background-color: rgb(27.1515151515, 68.8484848485, 29.0909090909) !important;
+  background-color: rgb(10.6476530006%, 26.9994058229%, 11.4081996435%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-green:not([disabled]):not(.disabled):active:focus, .btn-green:not([disabled]):not(.disabled).active:focus, .show > .btn-green.dropdown-toggle:focus {
@@ -4000,22 +4000,22 @@ table.table a.btn.btn-green {
 }
 .btn-light-green:hover {
   color: #fff;
-  background-color: rgb(151.2738589212, 201.3485477178, 93.1514522822);
+  background-color: rgb(59.3230819299%, 78.9602147913%, 36.5299812871%);
 }
 .btn-light-green:focus, .btn-light-green.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-light-green:focus, .btn-light-green:active, .btn-light-green.active {
-  background-color: rgb(86.6182572614, 125.4232365145, 41.5767634855);
+  background-color: rgb(33.9679440241%, 49.1855829469%, 16.3046131316%);
 }
 .btn-light-green.dropdown-toggle {
   background-color: #8bc34a !important;
 }
 .btn-light-green.dropdown-toggle:hover, .btn-light-green.dropdown-toggle:focus {
-  background-color: rgb(151.2738589212, 201.3485477178, 93.1514522822) !important;
+  background-color: rgb(59.3230819299%, 78.9602147913%, 36.5299812871%) !important;
 }
 .btn-light-green:not([disabled]):not(.disabled):active, .btn-light-green:not([disabled]):not(.disabled).active, .show > .btn-light-green.dropdown-toggle {
-  background-color: rgb(86.6182572614, 125.4232365145, 41.5767634855) !important;
+  background-color: rgb(33.9679440241%, 49.1855829469%, 16.3046131316%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-light-green:not([disabled]):not(.disabled):active:focus, .btn-light-green:not([disabled]):not(.disabled).active:focus, .show > .btn-light-green.dropdown-toggle:focus {
@@ -4064,22 +4064,22 @@ table.table a.btn.btn-light-green {
 }
 .btn-lime:hover {
   color: #fff;
-  background-color: rgb(195.0112107623, 200.5829596413, 47.9170403587);
+  background-color: rgb(76.4749846127%, 78.659984173%, 18.7909962191%);
 }
 .btn-lime:focus, .btn-lime.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-lime:focus, .btn-lime:active, .btn-lime.active {
-  background-color: rgb(94.9551569507, 97.668161435, 23.331838565);
+  background-color: rgb(37.2373164512%, 38.3012397784%, 9.1497406137%);
 }
 .btn-lime.dropdown-toggle {
   background-color: #afb42b !important;
 }
 .btn-lime.dropdown-toggle:hover, .btn-lime.dropdown-toggle:focus {
-  background-color: rgb(195.0112107623, 200.5829596413, 47.9170403587) !important;
+  background-color: rgb(76.4749846127%, 78.659984173%, 18.7909962191%) !important;
 }
 .btn-lime:not([disabled]):not(.disabled):active, .btn-lime:not([disabled]):not(.disabled).active, .show > .btn-lime.dropdown-toggle {
-  background-color: rgb(94.9551569507, 97.668161435, 23.331838565) !important;
+  background-color: rgb(37.2373164512%, 38.3012397784%, 9.1497406137%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-lime:not([disabled]):not(.disabled):active:focus, .btn-lime:not([disabled]):not(.disabled).active:focus, .show > .btn-lime.dropdown-toggle:focus {
@@ -4128,22 +4128,22 @@ table.table a.btn.btn-lime {
 }
 .btn-yellow:hover {
   color: #fff;
-  background-color: rgb(251.476635514, 199.5070093458, 70.023364486);
+  background-color: rgb(98.6182884369%, 78.2380428807%, 27.4601429357%);
 }
 .btn-yellow:focus, .btn-yellow.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-yellow:focus, .btn-yellow:active, .btn-yellow.active {
-  background-color: rgb(190.3738317757, 136.8878504673, 3.6261682243);
+  background-color: rgb(74.6564046179%, 53.6815099872%, 1.4220267546%);
 }
 .btn-yellow.dropdown-toggle {
   background-color: #fbc02d !important;
 }
 .btn-yellow.dropdown-toggle:hover, .btn-yellow.dropdown-toggle:focus {
-  background-color: rgb(251.476635514, 199.5070093458, 70.023364486) !important;
+  background-color: rgb(98.6182884369%, 78.2380428807%, 27.4601429357%) !important;
 }
 .btn-yellow:not([disabled]):not(.disabled):active, .btn-yellow:not([disabled]):not(.disabled).active, .show > .btn-yellow.dropdown-toggle {
-  background-color: rgb(190.3738317757, 136.8878504673, 3.6261682243) !important;
+  background-color: rgb(74.6564046179%, 53.6815099872%, 1.4220267546%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-yellow:not([disabled]):not(.disabled):active:focus, .btn-yellow:not([disabled]):not(.disabled).active:focus, .show > .btn-yellow.dropdown-toggle:focus {
@@ -4192,7 +4192,7 @@ table.table a.btn.btn-yellow {
 }
 .btn-amber:hover {
   color: #fff;
-  background-color: rgb(255, 169.5, 25.5);
+  background-color: rgb(100%, 66.4705882353%, 10%);
 }
 .btn-amber:focus, .btn-amber.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
@@ -4204,7 +4204,7 @@ table.table a.btn.btn-yellow {
   background-color: #ffa000 !important;
 }
 .btn-amber.dropdown-toggle:hover, .btn-amber.dropdown-toggle:focus {
-  background-color: rgb(255, 169.5, 25.5) !important;
+  background-color: rgb(100%, 66.4705882353%, 10%) !important;
 }
 .btn-amber:not([disabled]):not(.disabled):active, .btn-amber:not([disabled]):not(.disabled).active, .show > .btn-amber.dropdown-toggle {
   background-color: #996000 !important;
@@ -4256,22 +4256,22 @@ table.table a.btn.btn-amber {
 }
 .btn-orange:hover {
   color: #fff;
-  background-color: rgb(255, 136.7163265306, 15.5);
+  background-color: rgb(100%, 53.6142456983%, 6.0784313725%);
 }
 .btn-orange:focus, .btn-orange.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-orange:focus, .btn-orange:active, .btn-orange.active {
-  background-color: rgb(143, 72.3755102041, 0);
+  background-color: rgb(56.0784313725%, 28.3825530212%, 0%);
 }
 .btn-orange.dropdown-toggle {
   background-color: #f57c00 !important;
 }
 .btn-orange.dropdown-toggle:hover, .btn-orange.dropdown-toggle:focus {
-  background-color: rgb(255, 136.7163265306, 15.5) !important;
+  background-color: rgb(100%, 53.6142456983%, 6.0784313725%) !important;
 }
 .btn-orange:not([disabled]):not(.disabled):active, .btn-orange:not([disabled]):not(.disabled).active, .show > .btn-orange.dropdown-toggle {
-  background-color: rgb(143, 72.3755102041, 0) !important;
+  background-color: rgb(56.0784313725%, 28.3825530212%, 0%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-orange:not([disabled]):not(.disabled):active:focus, .btn-orange:not([disabled]):not(.disabled).active:focus, .show > .btn-orange.dropdown-toggle:focus {
@@ -4320,22 +4320,22 @@ table.table a.btn.btn-orange {
 }
 .btn-deep-orange:hover {
   color: #fff;
-  background-color: rgb(255, 131.3962765957, 92.5);
+  background-color: rgb(100%, 51.5279516062%, 36.2745098039%);
 }
 .btn-deep-orange:focus, .btn-deep-orange.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-deep-orange:focus, .btn-deep-orange:active, .btn-deep-orange.active {
-  background-color: rgb(220, 52.6595744681, 0);
+  background-color: rgb(86.2745098039%, 20.6508135169%, 0%);
 }
 .btn-deep-orange.dropdown-toggle {
   background-color: #ff7043 !important;
 }
 .btn-deep-orange.dropdown-toggle:hover, .btn-deep-orange.dropdown-toggle:focus {
-  background-color: rgb(255, 131.3962765957, 92.5) !important;
+  background-color: rgb(100%, 51.5279516062%, 36.2745098039%) !important;
 }
 .btn-deep-orange:not([disabled]):not(.disabled):active, .btn-deep-orange:not([disabled]):not(.disabled).active, .show > .btn-deep-orange.dropdown-toggle {
-  background-color: rgb(220, 52.6595744681, 0) !important;
+  background-color: rgb(86.2745098039%, 20.6508135169%, 0%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-deep-orange:not([disabled]):not(.disabled):active:focus, .btn-deep-orange:not([disabled]):not(.disabled).active:focus, .show > .btn-deep-orange.dropdown-toggle:focus {
@@ -4384,22 +4384,22 @@ table.table a.btn.btn-deep-orange {
 }
 .btn-brown:hover {
   color: #fff;
-  background-color: rgb(136.9870466321, 96.2305699482, 81.5129533679);
+  background-color: rgb(53.720410444%, 37.7374784111%, 31.9658640658%);
 }
 .btn-brown:focus, .btn-brown.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-brown:focus, .btn-brown:active, .btn-brown.active {
-  background-color: rgb(57.0518134715, 40.0777202073, 33.9481865285);
+  background-color: rgb(22.3732601849%, 15.7167530225%, 13.3130143249%);
 }
 .btn-brown.dropdown-toggle {
   background-color: #795548 !important;
 }
 .btn-brown.dropdown-toggle:hover, .btn-brown.dropdown-toggle:focus {
-  background-color: rgb(136.9870466321, 96.2305699482, 81.5129533679) !important;
+  background-color: rgb(53.720410444%, 37.7374784111%, 31.9658640658%) !important;
 }
 .btn-brown:not([disabled]):not(.disabled):active, .btn-brown:not([disabled]):not(.disabled).active, .show > .btn-brown.dropdown-toggle {
-  background-color: rgb(57.0518134715, 40.0777202073, 33.9481865285) !important;
+  background-color: rgb(22.3732601849%, 15.7167530225%, 13.3130143249%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-brown:not([disabled]):not(.disabled):active:focus, .btn-brown:not([disabled]):not(.disabled).active:focus, .show > .btn-brown.dropdown-toggle:focus {
@@ -4448,7 +4448,7 @@ table.table a.btn.btn-brown {
 }
 .btn-grey:hover {
   color: #fff;
-  background-color: rgb(109.75, 109.75, 109.75);
+  background-color: rgb(43.0392156863%, 43.0392156863%, 43.0392156863%);
 }
 .btn-grey:focus, .btn-grey.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
@@ -4460,7 +4460,7 @@ table.table a.btn.btn-brown {
   background-color: #616161 !important;
 }
 .btn-grey.dropdown-toggle:hover, .btn-grey.dropdown-toggle:focus {
-  background-color: rgb(109.75, 109.75, 109.75) !important;
+  background-color: rgb(43.0392156863%, 43.0392156863%, 43.0392156863%) !important;
 }
 .btn-grey:not([disabled]):not(.disabled):active, .btn-grey:not([disabled]):not(.disabled).active, .show > .btn-grey.dropdown-toggle {
   background-color: #2e2e2e !important;
@@ -4512,22 +4512,22 @@ table.table a.btn.btn-grey {
 }
 .btn-blue-grey:hover {
   color: #fff;
-  background-color: rgb(134.7115384615, 156.0961538462, 166.7884615385);
+  background-color: rgb(52.8280542986%, 61.2141779789%, 65.407239819%);
 }
 .btn-blue-grey:focus, .btn-blue-grey.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-blue-grey:focus, .btn-blue-grey:active, .btn-blue-grey.active {
-  background-color: rgb(73.6153846154, 91.4615384615, 100.3846153846);
+  background-color: rgb(28.8687782805%, 35.8672699849%, 39.3665158371%);
 }
 .btn-blue-grey.dropdown-toggle {
   background-color: #78909c !important;
 }
 .btn-blue-grey.dropdown-toggle:hover, .btn-blue-grey.dropdown-toggle:focus {
-  background-color: rgb(134.7115384615, 156.0961538462, 166.7884615385) !important;
+  background-color: rgb(52.8280542986%, 61.2141779789%, 65.407239819%) !important;
 }
 .btn-blue-grey:not([disabled]):not(.disabled):active, .btn-blue-grey:not([disabled]):not(.disabled).active, .show > .btn-blue-grey.dropdown-toggle {
-  background-color: rgb(73.6153846154, 91.4615384615, 100.3846153846) !important;
+  background-color: rgb(28.8687782805%, 35.8672699849%, 39.3665158371%) !important;
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-blue-grey:not([disabled]):not(.disabled):active:focus, .btn-blue-grey:not([disabled]):not(.disabled).active:focus, .show > .btn-blue-grey.dropdown-toggle:focus {
@@ -4576,7 +4576,7 @@ table.table a.btn.btn-blue-grey {
 }
 .btn-dark:hover {
   color: #fff;
-  background-color: rgb(45.75, 45.75, 45.75);
+  background-color: rgb(17.9411764706%, 17.9411764706%, 17.9411764706%);
 }
 .btn-dark:focus, .btn-dark.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
@@ -4588,7 +4588,7 @@ table.table a.btn.btn-blue-grey {
   background-color: #212121 !important;
 }
 .btn-dark.dropdown-toggle:hover, .btn-dark.dropdown-toggle:focus {
-  background-color: rgb(45.75, 45.75, 45.75) !important;
+  background-color: rgb(17.9411764706%, 17.9411764706%, 17.9411764706%) !important;
 }
 .btn-dark:not([disabled]):not(.disabled):active, .btn-dark:not([disabled]):not(.disabled).active, .show > .btn-dark.dropdown-toggle {
   background-color: hsl(0, 0%, -7.0588235294%) !important;
@@ -4640,7 +4640,7 @@ table.table a.btn.btn-dark {
 }
 .btn-light:hover {
   color: #000;
-  background-color: rgb(236.75, 236.75, 236.75);
+  background-color: rgb(92.8431372549%, 92.8431372549%, 92.8431372549%);
 }
 .btn-light:focus, .btn-light.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
@@ -4652,7 +4652,7 @@ table.table a.btn.btn-dark {
   background-color: #e0e0e0 !important;
 }
 .btn-light.dropdown-toggle:hover, .btn-light.dropdown-toggle:focus {
-  background-color: rgb(236.75, 236.75, 236.75) !important;
+  background-color: rgb(92.8431372549%, 92.8431372549%, 92.8431372549%) !important;
 }
 .btn-light:not([disabled]):not(.disabled):active, .btn-light:not([disabled]):not(.disabled).active, .show > .btn-light.dropdown-toggle {
   background-color: #adadad !important;
@@ -4768,7 +4768,7 @@ table.table a.btn.btn-white {
 }
 .btn-black:hover {
   color: #fff;
-  background-color: rgb(12.75, 12.75, 12.75);
+  background-color: rgb(5%, 5%, 5%);
 }
 .btn-black:focus, .btn-black.focus {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
@@ -4780,7 +4780,7 @@ table.table a.btn.btn-white {
   background-color: #000 !important;
 }
 .btn-black.dropdown-toggle:hover, .btn-black.dropdown-toggle:focus {
-  background-color: rgb(12.75, 12.75, 12.75) !important;
+  background-color: rgb(5%, 5%, 5%) !important;
 }
 .btn-black:not([disabled]):not(.disabled):active, .btn-black:not([disabled]):not(.disabled).active, .show > .btn-black.dropdown-toggle {
   background-color: hsl(0, 0%, -20%) !important;
@@ -4831,7 +4831,7 @@ table.table a.btn.btn-black {
   transition: 0.5s ease;
 }
 .btn.purple-gradient:hover, .btn.purple-gradient:focus, .btn.purple-gradient:active, .btn.purple-gradient:active:focus .btn.purple-gradient.active {
-  background: linear-gradient(rgb(255, 135.5, 206.375862069), rgb(142.95, 138.8, 246.7));
+  background: linear-gradient(rgb(100%, 53.137254902%, 80.9317106153%), rgb(56.0588235294%, 54.431372549%, 96.7450980392%));
 }
 
 .btn.peach-gradient {
@@ -4839,7 +4839,7 @@ table.table a.btn.btn-black {
   transition: 0.5s ease;
 }
 .btn.peach-gradient:hover, .btn.peach-gradient:focus, .btn.peach-gradient:active, .btn.peach-gradient:active:focus .btn.peach-gradient.active {
-  background: linear-gradient(rgb(255, 222.90625, 136.5), rgb(252.478125, 123.021875, 123.021875));
+  background: linear-gradient(rgb(100%, 87.4142156863%, 53.5294117647%), rgb(99.0110294118%, 48.243872549%, 48.243872549%));
 }
 
 .btn.aqua-gradient {
@@ -4847,7 +4847,7 @@ table.table a.btn.btn-black {
   transition: 0.5s ease;
 }
 .btn.aqua-gradient:hover, .btn.aqua-gradient:focus, .btn.aqua-gradient:active, .btn.aqua-gradient:active:focus .btn.aqua-gradient.active {
-  background: linear-gradient(rgb(57.5, 162.0067264574, 255), rgb(30.5, 255, 172.384));
+  background: linear-gradient(rgb(22.5490196078%, 63.5320495911%, 100%), rgb(11.9607843137%, 100%, 67.6015686275%));
 }
 
 .btn.blue-gradient {
@@ -4855,7 +4855,7 @@ table.table a.btn.btn-black {
   transition: 0.5s ease;
 }
 .btn.blue-gradient:hover, .btn.blue-gradient:focus, .btn.blue-gradient:active, .btn.blue-gradient:active:focus .btn.blue-gradient.active {
-  background: linear-gradient(rgb(94.0952380952, 209.1507936508, 252.4047619048), rgb(53.9130434783, 70.7608695652, 178.5869565217));
+  background: linear-gradient(rgb(36.9000933707%, 82.0199190787%, 98.9822595705%), rgb(21.1423699915%, 27.7493606138%, 70.0341005968%));
 }
 
 .btn-warning:focus,
