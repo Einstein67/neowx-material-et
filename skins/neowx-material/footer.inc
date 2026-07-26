@@ -29,11 +29,11 @@
                     #if $Extras.Footer.show_uptime == "yes"
                         <tr>
                             <td>$gettext("station_uptime"):</td>
-                            <td id="footer-station-uptime">$station.uptime.long_form</td>
+                            <td>$station.uptime.long_form</td>
                         </tr>
                         <tr>
                             <td>$gettext("server_uptime"):</td>
-                            <td id="footer-server-uptime">$station.os_uptime.long_form</td>
+                            <td>$station.os_uptime.long_form</td>
                         </tr>
                     #end if
                     #if $Extras.Footer.show_telemetry == "yes"
@@ -110,24 +110,22 @@
 
     ## Copyright
     <div class="footer-copyright text-center py-3">
-        ## Server values are the page's build-time values (fallback); on non-current
-        ## pages neowx-live.js overwrites the id'd spans with current values from live.json.
-        &copy; <span id="footer-year">$current.dateTime.format("%Y")</span> $Extras.Footer.name
+        &copy; $current.dateTime.format("%Y") $Extras.Footer.name
 
         #if $Extras.Footer.support_weewx == "yes"
             <span class="mx-2">&bull;</span>
-            Powered by <a href="https://weewx.com" target="_blank">weewx</a>
+            Powered by <a href="https://weewx.com" target="_blank">weewx</a> - 
             #if $Extras.Footer.show_version == "yes"
-                v<span id="footer-weewx-version">$station.version</span>
+                v$station.version
             #end if
         #end if
 
         #if $Extras.Footer.support_skin == "yes"
             <span class="mx-2">&bull;</span>
-            <a href="https://github.com/seehase/neowx-material" target="_blank">Fork of NeoWX Material</a> skin
+            <a href="https://github.com/Einstein67/neowx-material-et" target="_blank">Fork of NeoWX-Skin by Seehase</a> - 
 
             #if $Extras.Footer.show_version == "yes"
-                v<span id="footer-skin-version">$Extras.version</span>
+                v$Extras.version
             #end if
         #end if
 
