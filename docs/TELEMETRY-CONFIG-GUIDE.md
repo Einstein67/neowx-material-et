@@ -119,6 +119,13 @@ blocks sit alongside scalar settings like `chart_days` without confusion.
             content = telemetry_chart
 ```
 
+**Placement matters:** `[[[sections]]]` must be the *last* thing under
+`[[Appearance]]`. configobj treats any plain `[[Appearance]]` setting
+written after it (`mode`, `panelColor`, `defaultChartBehavior`, ...) as
+belonging to whichever `[[[[...]]]]` block was opened last, not to
+`[[Appearance]]` itself. Add or edit other Appearance settings above
+`[[[sections]]]`, never below it.
+
 ### Per-field block structure
 
 ```ini
@@ -402,6 +409,11 @@ automatic; delete any `pad` lines from your config.
 ---
 
 ## Complete examples
+
+Each example below shows `[[[sections]]]` as the only thing under
+`[[Appearance]]`. If your `[[Appearance]]` block already has other settings
+(`mode`, `panelColor`, `enablePanels`, ...), keep `[[[sections]]]` after all
+of them - see the placement note above.
 
 ### Example 1: Mixed sensors (status + voltage + signal)
 

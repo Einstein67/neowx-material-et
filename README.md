@@ -308,9 +308,11 @@ Get 7-day forecasts from Open-Meteo:
 ```ini
 [Extras]
     [[Appearance]]
-        # Add "forecast" to a card section's items:
+        # Add "forecast" to the shipped "card" section's items (patching a
+        # section merges into the shipped id with the same name - see
+        # docs/CONFIG-PATCHER.md - so reuse "card" rather than a new id):
         [[[sections]]]
-            [[[[main]]]]
+            [[[[card]]]]
                 items = forecast, outTemp, outHumidity, ...
 
     [[Forecast]]

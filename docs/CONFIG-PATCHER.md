@@ -111,6 +111,21 @@ The patcher reads your **patch file** (e.g., `skin.conf.patch`) and applies only
 - ✅ **Comments** - Preserved from original file
 - ⚠️ **Deletions** - Settings not in patch file remain unchanged
 
+> ⚠️ **`[[[sections]]]` is a section, not a value - it merges, it doesn't replace.**
+> A `[[[[card]]]]` block in your patch merges INTO the shipped `[[[[card]]]]`
+> block (so patching its `items` replaces that section's item list exactly,
+> as you'd expect). But a section id that ISN'T one of the shipped ones is
+> merged in as a brand-new, *additional* section - it does not take over an
+> existing panel, and its items get de-duplicated away if a shipped section
+> already lists them (items are first-occurrence-wins, in section order).
+> Always reuse one of the nine shipped ids to override a panel:
+> `card`, `external_sensors`, `chart`, `custom_charts`, `additional_charts`,
+> `external_sensor_charts`, `other_charts`, `telemetry`, `telemetry_chart`.
+> The same rule means **a patch can never remove a shipped section** -
+> `merge_configs` has no delete path. If you don't want the
+> `external_sensors` panel at all, edit `skin.conf` directly instead of
+> patching.
+
 ---
 
 ## 📝 Creating a Patch File
@@ -140,8 +155,11 @@ A patch file follows the **same structure** as the file you want to patch, but c
     [[Appearance]]
         enable_hover_effect = true
         defaultChartBehavior = pan
+        # [[[sections]]] must stay the LAST thing under [[Appearance]] -
+        # configobj reparents anything written after it into the last
+        # [[[[...]]]] block instead of into [[Appearance]].
         [[[sections]]]
-            [[[[main]]]]
+            [[[[card]]]]
                 items = outTemp, outHumidity, forecast, barometer, windSpeed, rain
 
     [[Forecast]]
@@ -291,10 +309,11 @@ Fill in only the values you've changed from defaults:
         enable_hover_effect = false
         defaultChartBehavior = pan
         [[[sections]]]
-            [[[[main]]]]
+            [[[[card]]]]
                 items = forecast, outTemp, outHumidity, barometer, windSpeed
-            [[[[charts]]]]
+            [[[[custom_charts]]]]
                 items = outTemp, windSpeed, barometer, rain
+                title = Custom Charts
                 content = chart
 ```
 
@@ -357,10 +376,11 @@ cat skin.conf | grep "custom1_label"
 [Extras]
     [[Appearance]]
         [[[sections]]]
-            [[[[main]]]]
+            [[[[card]]]]
                 items = forecast, outTemp, outHumidity, barometer, windSpeed, rain, UV
-            [[[[charts]]]]
+            [[[[custom_charts]]]]
                 items = outTemp, barometer, windSpeed, rain, windDir
+                title = Custom Charts
                 content = chart
 
     [[Forecast]]
@@ -451,7 +471,7 @@ You can patch multiple sections at once:
     [[Appearance]]
         enable_hover_effect = false
         [[[sections]]]
-            [[[[main]]]]
+            [[[[card]]]]
                 items = forecast, outTemp, outHumidity
 
     [[Forecast]]
@@ -681,12 +701,17 @@ Here's a complete example patch file with common customizations:
         lo_value_color = "#03a9f4"
         hi_value_color = "#f44336"
 
-        # Card and chart order (with forecast enabled)
+        # Card and chart order (with forecast enabled). [[[sections]]] must
+        # come after every other [[Appearance]] setting above, and each
+        # [[[[...]]]] id below must be one of the shipped ids (here: card,
+        # custom_charts) so it overrides that panel instead of being
+        # appended as an unused extra section - see "What Gets Patched?".
         [[[sections]]]
-            [[[[main]]]]
+            [[[[card]]]]
                 items = forecast, outTemp, outHumidity, barometer, windSpeed, windGust, windrun, rain, UV, radiation, dewpoint, heatindex, inTemp
-            [[[[charts]]]]
+            [[[[custom_charts]]]]
                 items = outTemp, barometer, windSpeed, windDir, rain, UV, radiation, outHumidity, inTemp
+                title = Custom Charts
                 content = chart
 
     [[Embedded]]
