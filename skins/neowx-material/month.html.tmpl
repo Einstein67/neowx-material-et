@@ -315,9 +315,9 @@
 
 
 ## --- Build layout segments -------------------------------------------------
-## Parsing lives in bin/user/panelorder.py: {Title: a, b} is an expanded
-## collapsible panel, {{Title: a, b}} a collapsed one, anything outside a
-## group renders loose.
+## Parsing lives in bin/user/panelorder.py, which reads [[[sections]]] from
+## skin.conf. Sections with a title become collapsible panels; those without
+## render loose in the surrounding row.
 #set $val_segments   = $panelSegments('card')
 #set $chart_segments = $panelSegments('chart')
 

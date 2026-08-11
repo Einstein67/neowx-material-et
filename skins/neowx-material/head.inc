@@ -305,4 +305,21 @@ href="img/splash/splash_1536x2048.png"
     .nwm-panel-static {
         cursor: default;
     }
+
+    /* A static panel (collapsed = none) has no toggle, so it should not
+       hover-highlight as if it were clickable. css/style.css always applies
+       .nwm-panel-header:hover (and the two dark-mode !important variants);
+       these guards win on specificity and come later in the cascade to
+       cancel the hover treatment specifically for static headers. */
+    .nwm-panel-header.nwm-panel-static:hover {
+        background-color: transparent;
+    }
+    .dark-theme .nwm-panel-header.nwm-panel-static:hover {
+        background-color: transparent !important;
+    }
+    @media (prefers-color-scheme: dark) {
+        .auto-theme .nwm-panel-header.nwm-panel-static:hover {
+            background-color: transparent !important;
+        }
+    }
 </style>
