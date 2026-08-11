@@ -325,16 +325,14 @@
 ## | Collapsible Expansion Panels – pre-processing                           |
 ## +-------------------------------------------------------------------------+
 ##
-## enablePanels: read from skin.conf [[Appearance]], default true
-#set $enablePanels = str($Extras.Appearance.get('enablePanels', 'true')).strip().lower() not in ['false', 'no', '0']
 
 
 ## --- Build layout segments -------------------------------------------------
 ## Parsing lives in bin/user/panelorder.py: {Title: a, b} is an expanded
 ## collapsible panel, {{Title: a, b}} a collapsed one, anything outside a
 ## group renders loose, and '//' is a blank full-width row break.
-#set $val_segments   = $panelSegments($Extras.Appearance.values_order, $enablePanels)
-#set $chart_segments = $panelSegments($Extras.Appearance.charts_order, $enablePanels)
+#set $val_segments   = $panelSegments('card')
+#set $chart_segments = $panelSegments('chart')
 
 ## +-------------------------------------------------------------------------+
 ## | The main page layout                                                    |
@@ -443,7 +441,7 @@
         #def getChartJsCode($name, $id, $type, $series1, $series2 = "", $column = "avg", $series3 = "", $series4 = "", $series5 = "", $series6 = "", $series7 = "", $series8 = "")
 
             ## Only add JS chart code if in array
-            #if $name in $panelItems($Extras.Appearance.charts_order)
+            #if $name in $panelItems('chart')
                 #set global $cc_name  = $name
                 #set global $cc_scope = ''
                 #include "chart_colors_setup.inc"
@@ -736,7 +734,7 @@
             // Series1 field overrides for charts where the series field name differs from the chart name
             #set $default_chart_series = {'windDir': 'wind'}
 
-            #for $x in $panelItems($Extras.Appearance.charts_order)
+            #for $x in $panelItems('chart')
                 #if not $x.startswith('customChart') and $x not in $processed_charts
                     #silent $processed_charts.add($x)
                     #if $getVar('week.' + $x + '.has_data')
@@ -751,7 +749,7 @@
 
             // Custom charts (dynamically generated from skin.conf [[Appearance]] [[[customChart*]]] sections)
             #set $seen_custom_charts = set()
-            #for $x in $panelItems($Extras.Appearance.charts_order)
+            #for $x in $panelItems('chart')
                 #if $x.startswith('customChart') and $x not in $seen_custom_charts
                     #silent $seen_custom_charts.add($x)
                     #set $cc = $Extras.Appearance.get($x, {})
@@ -870,7 +868,7 @@
                         ##
                         ## Render the chart JS
                         ## Render chart JS
-                        #if len($cc_series_pairs) > 0 and $x in $panelItems($Extras.Appearance.charts_order)
+                        #if len($cc_series_pairs) > 0 and $x in $panelItems('chart')
                             #set $cc_id = $x + "chart"
                             #try
                                 #set $_ = $axes_list
