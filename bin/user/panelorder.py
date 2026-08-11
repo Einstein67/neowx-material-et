@@ -4,30 +4,27 @@
 # Distributed under the terms of the GNU GENERAL PUBLIC LICENSE
 #
 
-"""Panel-aware parsing of the skin's *_order settings.
+"""Section-based layout parsing for the skin.
 
-Used by values_order, charts_order, embedded_order, telemetry_order and
-telemetry_chart_order.  Syntax:
+Layout lives in [Extras][[Appearance]][[[sections]]].  Each section names its
+items and, optionally, how to present them:
 
-    {Title: a, b, c}      collapsible panel, initially EXPANDED
-    {{Title: a, b, c}}    collapsible panel, initially COLLAPSED
-    {a, b, c}             panel with no title
-    //                    blank full-width row break (see below)
-    anything else         a plain item, rendered outside any panel
+    [[[[soil]]]]
+        items = soilMoist1, soilMoist2
+        title = Soil Moisture
+        collapsed = true
+        content = card
 
-Everything outside a {...} group renders loose, so a panel can be followed by
-ungrouped items - the groups are self-delimiting.
+  items      ordered list of cards/charts.  Required.
+  title      omit for no panel - the items render loose in the surrounding row
+             and 'collapsed' is ignored.
+  collapsed  true  -> panel, starts collapsed
+             false -> panel, starts expanded (the default)
+             none  -> panel chrome, always open, no toggle
+  content    card (default), chart, embedded, telemetry, telemetry_chart
 
-"//" is not panel syntax: it is a full-width spacer that ends the current row so
-the next card starts on a new line.  It may appear inside or outside a group and,
-unlike real items, may be repeated.
-
-configobj splits unquoted values on commas, so a group reaches us either as a
-single element (when the user quoted it) or spread over several elements (when
-they did not).  Both forms are accepted:
-
-    "{Wind: a, b}"  ->  ['{Wind: a, b}']
-     {Wind: a, b}   ->  ['{Wind: a', 'b}']
+Sections render in declaration order within each content value.  Items are
+de-duplicated, first occurrence winning, separately per content value.
 
 To use, add to the [CheetahGenerator] section of skin.conf:
 
@@ -35,8 +32,8 @@ To use, add to the [CheetahGenerator] section of skin.conf:
 
 Then, in a template:
 
-    #set $segments = $panelSegments($Extras.Appearance.values_order, $enablePanels)
-    #set $flat     = $panelItems($Extras.Appearance.charts_order)
+    #set $segments = $panelSegments('card')
+    #set $flat     = $panelItems('chart')
 """
 
 import logging
@@ -45,117 +42,178 @@ from weewx.cheetahgenerator import SearchList
 
 log = logging.getLogger(__name__)
 
-VERSION = "1.0.0"
+VERSION = "2.0.0"
 
-# Segment types.  A segment is a dict: {'type': ..., 'title': str, 'items': list}
-# 'type' is None for loose items that are not wrapped in a panel.
+# Segment types.  'type' is None for a section with no title, whose items
+# render loose rather than inside a panel.
 EXPANDED = "expanded"
 COLLAPSED = "collapsed"
+STATIC = "static"
 
-SPACER = "//"
+CARD = "card"
+CONTENTS = (CARD, "chart", "embedded", "telemetry", "telemetry_chart")
+
+# Keys a section may carry that are settings rather than typos.
+SETTING_KEYS = ("items", "title", "collapsed", "content")
+
+# Order settings from 1.68.x.  Only used to recognise an unmigrated config.
+LEGACY_KEYS = (
+    "values_order",
+    "charts_order",
+    "embedded_order",
+    "telemetry_order",
+    "telemetry_chart_order",
+)
+
+TRUE_WORDS = ("true", "yes", "1")
+FALSE_WORDS = ("false", "no", "0")
+
+# The unmigrated-config error is worth saying once per process, not once per
+# region per page.
+_legacy_reported = False
 
 
-def _elements(order):
-    """Normalise a skin.conf setting to a list of non-empty strings.
+def _as_list(value):
+    """Normalise a configobj value to a list of non-empty strings.
 
     configobj yields a list when the value contained commas and a bare string
     when it did not; an unset value comes through as None or "".
     """
-    if order is None:
+    if value is None:
         return []
-    if isinstance(order, (list, tuple)):
-        parts = list(order)
+    if isinstance(value, (list, tuple)):
+        parts = list(value)
     else:
-        parts = str(order).split(",")
+        parts = str(value).split(",")
     return [str(p).strip() for p in parts if str(p).strip()]
 
 
-def parse_order(order, enable_panels=True):
-    """Return a list of segments describing how to lay out `order`.
+def _appearance(skin_dict):
+    return skin_dict.get("Extras", {}).get("Appearance", {})
 
-    With enable_panels false the grouping is discarded but the items are kept,
-    so turning panels off degrades to a flat row rather than losing cards.
-    """
-    segments = []
-    current = {"type": None, "title": "", "items": []}
-    seen = set()
-    in_group = False
 
-    def add_items(segment, text):
-        # A quoted group arrives whole, so its body may still hold commas.
-        for token in str(text).split(","):
-            token = token.strip()
-            if not token:
-                continue
-            if token.lower() == SPACER:
-                # Spacers are deliberately exempt from de-duplication.
-                segment["items"].append(SPACER)
-            elif token not in seen:
-                seen.add(token)
-                segment["items"].append(token)
-
-    for element in _elements(order):
-        if not in_group and element.startswith("{"):
-            collapsed = element.startswith("{{")
-            body = element.lstrip("{").rstrip()
-            closed_here = body.endswith("}")
-            if closed_here:
-                body = body.rstrip("}").rstrip()
-            title, _, rest = body.partition(":") if ":" in body else ("", "", body)
-
-            if enable_panels:
-                segments.append(current)
-                current = {
-                    "type": COLLAPSED if collapsed else EXPANDED,
-                    "title": title.strip(),
-                    "items": [],
-                }
-            add_items(current, rest)
-
-            if closed_here:
-                if enable_panels:
-                    segments.append(current)
-                    current = {"type": None, "title": "", "items": []}
-            else:
-                in_group = True
-            continue
-
-        if in_group:
-            body = element.rstrip()
-            closed_here = body.endswith("}")
-            if closed_here:
-                body = body.rstrip("}").rstrip()
-            add_items(current, body)
-            if closed_here:
-                in_group = False
-                if enable_panels:
-                    segments.append(current)
-                    current = {"type": None, "title": "", "items": []}
-            continue
-
-        add_items(current, element)
-
-    if in_group:
-        log.info(
-            "panelorder: unterminated '{' group in order setting; "
-            "treating the remaining items as part of it"
+def _report_unmigrated(appearance):
+    """Complain once if this looks like a 1.68.x config that was never migrated."""
+    global _legacy_reported
+    if _legacy_reported:
+        return
+    stale = [k for k in LEGACY_KEYS if appearance.get(k) is not None]
+    if stale:
+        _legacy_reported = True
+        log.error(
+            "panelorder: no [[[sections]]] found, but %s still present. "
+            "These settings were replaced by [[[sections]]] and are no longer "
+            "read, so no cards or charts will render. See the [[Appearance]] "
+            "comments in skin.conf for the new syntax.",
+            ", ".join(stale),
         )
 
-    segments.append(current)
+
+def _panel_type(section, section_id):
+    """Map a section's 'collapsed' setting to a segment type."""
+    raw = section.get("collapsed")
+    if raw is None:
+        return EXPANDED
+    word = str(raw).strip().lower()
+    if word in TRUE_WORDS:
+        return COLLAPSED
+    if word in FALSE_WORDS:
+        return EXPANDED
+    if word == "none":
+        return STATIC
+    log.warning(
+        "panelorder: section '%s' has collapsed = %s, which is not "
+        "true, false or none; treating it as false.",
+        section_id,
+        raw,
+    )
+    return EXPANDED
+
+
+def _warn_unknown_keys(section, section_id):
+    for key in getattr(section, "scalars", list(section.keys())):
+        if key not in SETTING_KEYS:
+            log.warning(
+                "panelorder: section '%s' has unknown setting '%s'; ignoring "
+                "it. Items belong in 'items'.",
+                section_id,
+                key,
+            )
+
+
+def enable_panels_setting(skin_dict):
+    """Read [[Appearance]] enablePanels, defaulting to true."""
+    raw = _appearance(skin_dict).get("enablePanels", "true")
+    return str(raw).strip().lower() not in FALSE_WORDS
+
+
+def parse_sections(skin_dict, content=CARD, enable_panels=True):
+    """Return the layout segments for one content region.
+
+    With enable_panels false the grouping is discarded but every item is kept,
+    so turning panels off degrades to a flat row rather than losing cards.
+    """
+    appearance = _appearance(skin_dict)
+    sections = appearance.get("sections")
+    if not sections:
+        _report_unmigrated(appearance)
+        return []
+
+    wanted = str(content).strip().lower()
+    segments = []
+    seen = set()
+
+    for section_id in getattr(sections, "sections", list(sections.keys())):
+        section = sections[section_id]
+
+        section_content = str(section.get("content", CARD)).strip().lower()
+        if section_content not in CONTENTS:
+            log.warning(
+                "panelorder: section '%s' has content = %s, which is not one "
+                "of %s; skipping the section.",
+                section_id,
+                section.get("content"),
+                ", ".join(CONTENTS),
+            )
+            continue
+        if section_content != wanted:
+            continue
+
+        _warn_unknown_keys(section, section_id)
+
+        items = []
+        for item in _as_list(section.get("items")):
+            if item not in seen:
+                seen.add(item)
+                items.append(item)
+        if not items:
+            continue
+
+        title = str(section.get("title", "")).strip()
+        if enable_panels and title:
+            segments.append(
+                {
+                    "type": _panel_type(section, section_id),
+                    "title": title,
+                    "items": items,
+                }
+            )
+        else:
+            segments.append({"type": None, "title": "", "items": items})
+
     return segments
 
 
-def order_items(order, enable_panels=True):
-    """Flat list of real item names - no titles, no spacers, de-duplicated.
+def order_items(skin_dict, content=CARD):
+    """Flat, de-duplicated item names for one content region.
 
-    For loops that need the items themselves rather than the layout, such as the
-    chart JavaScript generation.
+    For loops that need the items themselves rather than the layout, such as
+    the chart JavaScript generation.
     """
     return [
         item
-        for segment in parse_order(order, enable_panels)
+        for segment in parse_sections(skin_dict, content, True)
         for item in segment["items"]
-        if item.lower() != SPACER
     ]
 
 
@@ -167,4 +225,14 @@ class PanelOrder(SearchList):
         log.info("PanelOrder version %s", VERSION)
 
     def get_extension_list(self, timespan, db_lookup):
-        return [{"panelSegments": parse_order, "panelItems": order_items}]
+        skin_dict = self.generator.skin_dict
+
+        def panel_segments(content=CARD, enable_panels=None):
+            if enable_panels is None:
+                enable_panels = enable_panels_setting(skin_dict)
+            return parse_sections(skin_dict, content, enable_panels)
+
+        def panel_items(content=CARD):
+            return order_items(skin_dict, content)
+
+        return [{"panelSegments": panel_segments, "panelItems": panel_items}]
