@@ -68,9 +68,9 @@ LEGACY_KEYS = (
 TRUE_WORDS = ("true", "yes", "1")
 FALSE_WORDS = ("false", "no", "0")
 
-# The unmigrated-config error is worth saying once per process, not once per
+# The unmigrated-config error is worth saying once per config, not once per
 # region per page.
-_legacy_reported = False
+_legacy_reported = set()
 
 
 def _as_list(value):
@@ -93,13 +93,13 @@ def _appearance(skin_dict):
 
 
 def _report_unmigrated(appearance):
-    """Complain once if this looks like a 1.68.x config that was never migrated."""
-    global _legacy_reported
-    if _legacy_reported:
+    """Complain once per config if this looks like an unmigrated 1.68.x setup."""
+    key = id(appearance)
+    if key in _legacy_reported:
         return
     stale = [k for k in LEGACY_KEYS if appearance.get(k) is not None]
     if stale:
-        _legacy_reported = True
+        _legacy_reported.add(key)
         log.error(
             "panelorder: no [[[sections]]] found, but %s still present. "
             "These settings were replaced by [[[sections]]] and are no longer "
