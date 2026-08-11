@@ -139,8 +139,10 @@ A patch file follows the **same structure** as the file you want to patch, but c
 
     [[Appearance]]
         enable_hover_effect = true
-        values_order = outTemp, outHumidity, forecast, barometer, windSpeed, rain
         defaultChartBehavior = pan
+        [[[sections]]]
+            [[[[main]]]]
+                items = outTemp, outHumidity, forecast, barometer, windSpeed, rain
 
     [[Forecast]]
         days = 7
@@ -227,7 +229,7 @@ update_interval = 1440
 
 **Lists (comma-separated):**
 ```ini
-values_order = outTemp, outHumidity, barometer, windSpeed
+items = outTemp, outHumidity, barometer, windSpeed
 variables = temperature, precipitation, wind
 ```
 
@@ -286,10 +288,14 @@ Fill in only the values you've changed from defaults:
         support_skin = yes
 
     [[Appearance]]
-        values_order = forecast, outTemp, outHumidity, barometer, windSpeed
-        charts_order = outTemp, windSpeed, barometer, rain
         enable_hover_effect = false
         defaultChartBehavior = pan
+        [[[sections]]]
+            [[[[main]]]]
+                items = forecast, outTemp, outHumidity, barometer, windSpeed
+            [[[[charts]]]]
+                items = outTemp, windSpeed, barometer, rain
+                content = chart
 ```
 
 ### Step 5: Save and Test
@@ -350,8 +356,12 @@ cat skin.conf | grep "custom1_label"
 ```ini
 [Extras]
     [[Appearance]]
-        values_order = forecast, outTemp, outHumidity, barometer, windSpeed, rain, UV
-        charts_order = outTemp, barometer, windSpeed, rain, windDir
+        [[[sections]]]
+            [[[[main]]]]
+                items = forecast, outTemp, outHumidity, barometer, windSpeed, rain, UV
+            [[[[charts]]]]
+                items = outTemp, barometer, windSpeed, rain, windDir
+                content = chart
 
     [[Forecast]]
         days = 7
@@ -439,8 +449,10 @@ You can patch multiple sections at once:
         name = My Station
 
     [[Appearance]]
-        values_order = forecast, outTemp, outHumidity
         enable_hover_effect = false
+        [[[sections]]]
+            [[[[main]]]]
+                items = forecast, outTemp, outHumidity
 
     [[Forecast]]
         days = 7
@@ -662,16 +674,20 @@ Here's a complete example patch file with common customizations:
         # Enable hover effects
         enable_hover_effect = true
 
-        # Card and chart order (with forecast enabled)
-        values_order = forecast, outTemp, outHumidity, barometer, windSpeed, windGust, windrun, rain, UV, radiation, dewpoint, heatindex, inTemp
-        charts_order = outTemp, barometer, windSpeed, windDir, rain, UV, radiation, outHumidity, inTemp
-
         # Chart behavior
         defaultChartBehavior = pan
 
         # Custom value colors
         lo_value_color = "#03a9f4"
         hi_value_color = "#f44336"
+
+        # Card and chart order (with forecast enabled)
+        [[[sections]]]
+            [[[[main]]]]
+                items = forecast, outTemp, outHumidity, barometer, windSpeed, windGust, windrun, rain, UV, radiation, dewpoint, heatindex, inTemp
+            [[[[charts]]]]
+                items = outTemp, barometer, windSpeed, windDir, rain, UV, radiation, outHumidity, inTemp
+                content = chart
 
     [[Embedded]]
         # Custom embedded content

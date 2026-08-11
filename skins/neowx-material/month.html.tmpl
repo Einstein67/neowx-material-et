@@ -786,7 +786,7 @@
             }
             #silent $processed_charts.add("windvec")
 
-            // --- Default single-series charts: loop over charts_order ---
+            // --- Default single-series charts: loop over the chart sections ---
             // Charts added to $processed_charts above are skipped here
             // Chart type overrides for charts that are not 'area' (default)
             #set $default_chart_types = {'windDir': 'line', 'rain': 'bar', 'ET': 'bar', 'windrun': 'bar', 'snowDepth': 'bar', 'lightning_strike_count': 'bar', 'lightning_noise_count': 'bar', 'lightning_disturber_count': 'bar', 'lightning_distance': 'bar'}

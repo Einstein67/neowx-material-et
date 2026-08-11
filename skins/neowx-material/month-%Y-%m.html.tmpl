@@ -673,7 +673,7 @@
             }
             #silent $processed_charts.add("windvec")
 
-            // --- Default single-series charts: loop over charts_order ---
+            // --- Default single-series charts: loop over the chart sections ---
             #set $default_chart_types = {'windDir': 'line', 'rain': 'bar', 'ET': 'bar', 'windrun': 'bar', 'snowDepth': 'bar', 'lightning_strike_count': 'bar', 'lightning_noise_count': 'bar', 'lightning_disturber_count': 'bar', 'lightning_distance': 'bar'}
             #set $default_chart_columns = {'windDir': 'vecdir', 'ET': 'sum', 'rain': 'sum', 'windrun': 'sum', 'UV': 'max', 'radiation': 'max', 'luminosity': 'max', 'snowDepth': 'sum', 'lightning_strike_count': 'sum'}
             #set $default_chart_series = {'windDir': 'wind'}

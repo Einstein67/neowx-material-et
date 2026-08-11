@@ -36,13 +36,13 @@ This is an **actively maintained** continuation of the NeoWX Material skin. The 
 - Group cards and charts into **collapsible Material Design expansion panels**
 - Panels can be expanded or collapsed by default
 - Optional panel titles for clear labelling
-- Wrap items in braces inside `values_order`, `charts_order`, `embedded_order`, `telemetry_order` and `telemetry_chart_order`:
-   - `{My Title: a, b, c}` — expanded panel
-   - `{{My Title: a, b, c}}` — collapsed panel
-   - `{a, b, c}` — panel with no title
-- Groups are self-delimiting, so a panel can be followed by ungrouped items
+- Lay out cards and charts with `[[[sections]]]` in `skin.conf`:
+   - `items` — the ordered list of cards or charts
+   - `title` — omit it for a plain row, add it for a collapsible panel
+   - `collapsed` — `true`, `false`, or `none` for a panel that never collapses
+   - `content` — `card`, `chart`, `embedded`, `telemetry` or `telemetry_chart`
+- Sections render in the order they are written, so a panel can be followed by an ungrouped row
 - Panels whose items all lack data are hidden rather than drawn empty
-- `//` inserts a blank full-width row break between cards
 - Fully configurable panel header color and title color for both light and dark mode
 
 ### 📡 Advanced Telemetry & Battery Monitoring
@@ -51,7 +51,7 @@ This is an **actively maintained** continuation of the NeoWX Material skin. The 
 - Historical battery trend charts with configurable display order and chart interval
 - Signal quality monitoring (`rxCheckPercent`)
 - Per-field chart interval override — set different resolutions for different sensors
-- Customizable card and chart ordering via `telemetry_order` and `telemetry_chart_order`
+- Customizable card and chart ordering via `telemetry` and `telemetry_chart` sections
 
 ### 🔴 Real-Time MQTT Updates
 - **Live data updates** without page refresh
@@ -308,8 +308,10 @@ Get 7-day forecasts from Open-Meteo:
 ```ini
 [Extras]
     [[Appearance]]
-        # Add "forecast" to this list:
-        values_order = forecast, outTemp, outHumidity, ...
+        # Add "forecast" to a card section's items:
+        [[[sections]]]
+            [[[[main]]]]
+                items = forecast, outTemp, outHumidity, ...
 
     [[Forecast]]
         # Optional: Override coordinates for forecast

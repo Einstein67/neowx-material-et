@@ -9,8 +9,12 @@
     link1_url = https://www.lightningmaps.org/#m=ses;t=3;s=0;o=0;b=;ts=0;y=48.7750;x=11.4550;z=8;d=2;dl=2;dc=0;
 
   [[Appearance]]
-    values_order = outTemp, outHumidity, barometer, forecast, altimeter, pressure, windSpeed, windrun, rain, snowDepth, dewpoint, windchill, heatindex, inTemp, inHumidity, UV, ET, radiation, appTemp, cloudbase, extraTemp1, extraHumid1, extraTemp2, extraHumid2, extraTemp3, extraHumid3, extraTemp4, extraHumid4, extraTemp5, extraHumid5, extraTemp6, extraHumid6, extraTemp7, extraHumid7, extraTemp8, extraHumid8, lightning_strike_count, lightning_noise_count, lightning_disturber_count, lightning_distance, lightning_energy, pm2_5, co2, temperatureThresholdDays
-    embedded_order = iFrame_windy
+    [[[sections]]]
+      [[[[main]]]]
+        items = outTemp, outHumidity, barometer, forecast, altimeter, pressure, windSpeed, windrun, rain, snowDepth, dewpoint, windchill, heatindex, inTemp, inHumidity, UV, ET, radiation, appTemp, cloudbase, extraTemp1, extraHumid1, extraTemp2, extraHumid2, extraTemp3, extraHumid3, extraTemp4, extraHumid4, extraTemp5, extraHumid5, extraTemp6, extraHumid6, extraTemp7, extraHumid7, extraTemp8, extraHumid8, lightning_strike_count, lightning_noise_count, lightning_disturber_count, lightning_distance, lightning_energy, pm2_5, co2, temperatureThresholdDays
+      [[[[embedded]]]]
+        items = iFrame_windy
+        content = embedded
 
   [[Embedded]]
      [[[iFrame_windy]]]

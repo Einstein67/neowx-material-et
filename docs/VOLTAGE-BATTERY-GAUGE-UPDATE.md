@@ -237,7 +237,7 @@ All three modes side by side:
 **Card missing entirely?**
 - Set `allow_zero_values = yes` — many healthy sensors report 0 all day, and
   without this the card is hidden
-- The sensor must also be listed in `telemetry_order` under `[[Appearance]]`
+- The sensor must also be listed in a telemetry section's `items` under `[[Appearance]]`
 
 **Values shown with commas (e.g., "4,5 V")?**
 - Handled automatically — units are stripped and both comma and period decimal

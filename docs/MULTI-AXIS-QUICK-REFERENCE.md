@@ -204,7 +204,7 @@ values = outTemp, inTemp, dewpoint
 ## Testing Steps
 
 1. Add chart config to `[[Appearance]]` section
-2. Add chart name to `charts_order` list
+2. Add chart name to a chart section's `items`
 3. Restart WeeWX: `sudo systemctl restart weewx`
 4. Navigate to Yesterday page
 5. Check chart appears with multiple axes
@@ -221,6 +221,6 @@ values = outTemp, inTemp, dewpoint
 1. Copy example above
 2. Replace field names with your sensors
 3. Add to skin.conf [[Appearance]]
-4. Add to charts_order list
+4. Add to a chart section's `items`
 5. Restart WeeWX
 
