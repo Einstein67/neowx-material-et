@@ -173,6 +173,7 @@ class BasicInstaller(ExtensionInstaller):
                         "skins/neowx-material/manifest.json.tmpl",
                         "skins/neowx-material/month-%Y-%m.html.tmpl",
                         "skins/neowx-material/month.html.tmpl",
+                        "skins/neowx-material/panel_header.inc",
                         "skins/neowx-material/skin.conf",
                         "skins/neowx-material/telemetry.html.tmpl",
                         "skins/neowx-material/trend_indicator.inc",

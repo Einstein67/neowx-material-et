@@ -301,4 +301,8 @@ href="img/splash/splash_1536x2048.png"
         user-select: none;         /* Standard */
         -webkit-tap-highlight-color: transparent; /* Removes the gray flash on mobile tap */
     }
+
+    .nwm-panel-static {
+        cursor: default;
+    }
 </style>
