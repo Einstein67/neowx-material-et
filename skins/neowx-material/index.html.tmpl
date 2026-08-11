@@ -102,9 +102,7 @@
 
     #def valuesCard($name)
         ## ET requires a valid positive sum to be shown
-        #if $name.strip().lower() == '//'
-            <div class="col-12 mb-4"></div>
-        #else if $getVar('day.' + name + '.has_data') and ($name != 'ET' or ($day.ET.sum.raw is not None and $day.ET.sum.raw >= 0.0))
+        #if $getVar('day.' + name + '.has_data') and ($name != 'ET' or ($day.ET.sum.raw is not None and $day.ET.sum.raw >= 0.0))
             <div class="col-12 col-md-6 col-xl-4 mb-4">
                 <div class="card card-value" id="${name}-value" data-name="$name">
                     <div class="card-body text-center">
@@ -232,9 +230,7 @@
 ## +-------------------------------------------------------------------------+
 
 #def chartCard($name, $name2 = "XX")
-    #if $name.strip().lower() == '//'
-        <div class="col-12 mb-4"></div>
-    #else if $name.startswith('customChart')
+    #if $name.startswith('customChart')
         ## Custom chart: read config from Extras.Appearance
         #set $cc = $Extras.Appearance.get($name, {})
         #if $cc
@@ -286,12 +282,7 @@
     ## #set global vars - so its placement flags are handed over as globals.
     ## is_first / is_last refer to the cards actually rendered in this segment,
     ## and drive the forecast_separator rules inside forecast.inc.
-    #if $x.strip().lower() == '//'
-        ## Full-width blank spacer: ends the current Bootstrap row so the next
-        ## card starts on a new line, and leaves a gap - same break as
-        ## forecast_separator, without drawing the rule.
-        <div class="col-12 mb-4"></div>
-    #else if $x == "forecast"
+    #if $x == "forecast"
         #set global $forecast_in_panel = $in_panel
         #set global $forecast_is_first = $is_first
         #set global $forecast_is_last  = $is_last
@@ -318,46 +309,23 @@
     #set $vis_items = []
     #set $f_first = False
     #set $f_last  = False
-    #if $seg['type'] is not None or 'forecast' in $items_l or '//' in $items_l
+    #if $seg['type'] is not None or 'forecast' in $items_l
         #for $x in $seg['items']
-            ## Skip markers that never produce a card: panel markers kept as plain
-            ## items (enablePanels = false), and '//' row-break spacers.
-            #set $_nm = $x.strip().lower()
-            #if $_nm != '//'
-                #if $x == "forecast"
-                    #if $forecast is not None
-                        #silent $vis_items.append($x)
-                    #end if
-                #else if $getVar('day.' + $x + '.has_data') and ($x != 'ET' or ($day.ET.sum.raw is not None and $day.ET.sum.raw >= 0.0))
+            #if $x == "forecast"
+                #if $forecast is not None
                     #silent $vis_items.append($x)
                 #end if
+            #else if $getVar('day.' + $x + '.has_data') and ($x != 'ET' or ($day.ET.sum.raw is not None and $day.ET.sum.raw >= 0.0))
+                #silent $vis_items.append($x)
             #end if
         #end for
         #set $f_first = (len($vis_items) > 0 and $vis_items[0] == 'forecast')
         #set $f_last  = (len($vis_items) > 0 and $vis_items[-1] == 'forecast')
     #end if
 
-    ## Drop any '//' that has no rendered card ahead of it in this segment, so a
-    ## spacer never opens a row with a stray gap (e.g. when the forecast it was
-    ## meant to follow is disabled or has no data).
-    #set $render_items = []
-    #set $seen_card = False
-    #for $x in $seg['items']
-        #if $x.strip().lower() == '//'
-            #if $seen_card
-                #silent $render_items.append($x)
-            #end if
-        #else
-            #silent $render_items.append($x)
-            #if $x in $vis_items
-                #set $seen_card = True
-            #end if
-        #end if
-    #end for
-
     #if $seg['type'] is None
         ## No panel – render cards directly into the surrounding row
-        #for $x in $render_items
+        #for $x in $seg['items']
             $renderValueItem($x, False, $f_first, $f_last)
         #end for
     #else
@@ -377,7 +345,7 @@
                     <div id="${p_id}" class="collapse${p_show}">
                         <div class="nwm-panel-body">
                             <div class="row">
-                                #for $x in $render_items
+                                #for $x in $seg['items']
                                     $renderValueItem($x, True, $f_first, $f_last)
                                 #end for
                             </div>
@@ -401,10 +369,7 @@
     #else
         #set $any_has_data = False
         #for $x in $seg['items']
-            ## '//' row-break spacers never carry data - skip the lookup
-            #if $x.strip().lower() == '//'
-                #pass
-            #else if $x.startswith('customChart')
+            #if $x.startswith('customChart')
                 #set $cc = $Extras.Appearance.get($x, {})
                 #if $cc
                     #set $cc_values_raw = $cc.get('values', '')
@@ -454,9 +419,7 @@
 ## +-------------------------------------------------------------------------+
 
 #def renderEmbItem($x)
-    #if $x.strip().lower() == '//'
-        <div class="col-12 mb-4"></div>
-    #else if $x.startswith("iFrame")
+    #if $x.startswith("iFrame")
         $iframeCard($x)
     #else if $x.startswith("image")
         $imageCard($x)

@@ -189,9 +189,7 @@
 
 
 #def renderTeleItem($x, $kind)
-    #if $x.strip().lower() == '//'
-        <div class="col-12 mb-4"></div>
-    #else if $kind == 'chart'
+    #if $kind == 'chart'
         $chartCard($x)
     #else
         $batteryCard($x)
@@ -203,10 +201,8 @@
     ## items all lack data is hidden instead of drawing an empty box.
     #set $vis_items = []
     #for $x in $seg['items']
-        #if $x.strip().lower() != '//'
-            #if $getVar('day.' + $x + '.has_data') and ($getVar('day.' + $x + '.max.raw') > 0 or $Extras.Telemetry.allow_zero_values == "yes")
-                #silent $vis_items.append($x)
-            #end if
+        #if $getVar('day.' + $x + '.has_data') and ($getVar('day.' + $x + '.max.raw') > 0 or $Extras.Telemetry.allow_zero_values == "yes")
+            #silent $vis_items.append($x)
         #end if
     #end for
 
