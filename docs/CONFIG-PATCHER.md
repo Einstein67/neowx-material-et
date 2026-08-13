@@ -708,9 +708,9 @@ Here's a complete example patch file with common customizations:
         # appended as an unused extra section - see "What Gets Patched?".
         [[[sections]]]
             [[[[card]]]]
-                items = forecast, outTemp, outHumidity, barometer, windSpeed, windGust, windrun, rain, UV, radiation, dewpoint, heatindex, inTemp
+                items = forecast, outTemp, outHumidity, barometer, windSpeed, rain, UV, radiation
             [[[[custom_charts]]]]
-                items = outTemp, barometer, windSpeed, windDir, rain, UV, radiation, outHumidity, inTemp
+                items = outTemp, barometer, windSpeed, windDir, rain, UV, radiation, outHumidity
                 title = Custom Charts
                 content = chart
 

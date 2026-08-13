@@ -25,7 +25,7 @@
     # no shipped section uses, so nothing claims those items first.
     [[[sections]]]
       [[[[card]]]]
-        items = outHumidity, outTemp, barometer, forecast, altimeter, pressure, windSpeed, windrun, rain, snowDepth, dewpoint, windchill, heatindex, inTemp, inHumidity, UV, ET, radiation, appTemp, cloudbase, lightning_noise_count, lightning_disturber_count, lightning_distance, lightning_energy, pm2_5, co2, temperatureThresholdDays
+        items = forecast, outTemp, outHumidity, barometer, windSpeed, rain, inTemp, inHumidity
       [[[[embedded]]]]
         items = iFrame_windy
         content = embedded

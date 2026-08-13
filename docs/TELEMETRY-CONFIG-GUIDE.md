@@ -514,7 +514,7 @@ page. Only fields listed in the section's `items` are shown.
 [[Appearance]]
     [[[sections]]]
         [[[[telemetry]]]]
-            items = rxCheckPercent, txBatteryStatus, windBatteryStatus, rainBatteryStatus, outTempBatteryStatus, inTempBatteryStatus, consBatteryVoltage, heatingVoltage, supplyVoltage
+            items = rxCheckPercent, txBatteryStatus, windBatteryStatus, rainBatteryStatus, outTempBatteryStatus, consBatteryVoltage
             content = telemetry
 ```
 
