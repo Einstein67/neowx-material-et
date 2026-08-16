@@ -83,7 +83,7 @@ from weewx.cheetahgenerator import SearchList
 from user.panelorder import order_items
 from weewx.units import ValueHelper, ValueTuple
 
-VERSION = "1.0.7"
+VERSION = "1.0.8"
 
 log = logging.getLogger(__name__)
 

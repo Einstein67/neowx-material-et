@@ -4,7 +4,28 @@
 # Distributed under the terms of the GNU GENERAL PUBLIC LICENSE
 #
 
-"""Section-based layout parsing for the skin.
+"""Parses the skin's page layout out of skin.conf so the templates don't have to.
+
+Every page has to answer the same question: which cards and charts appear here,
+in what order, and which of them are grouped into a collapsible panel?  The
+answer lives in skin.conf, and getting it out takes more work than it looks.
+configobj returns a list when a value contains commas and a bare string when it
+doesn't.  Sections have to be filtered down to the part of the site being
+rendered.  An item named twice has to be resolved rather than drawn twice.
+
+Cheetah gives you nowhere good to put that.  A #def is private to the template
+that declares it, and an #include does not export its defs to the file that
+included it, so any parsing helper written in a template can only spread by
+copy-paste.  That is what this module replaced: the same marker-parsing code
+inlined into all eight page templates, kept in step by hand.  A SearchList gives
+every page one parser, and a layout bug one place to be fixed.
+
+Layout is entirely in this module's hands.  When parse_sections returns nothing,
+the page renders no cards and no charts, which is the intended outcome for a
+config that was never migrated off the old *_order settings (reported once by
+_report_unmigrated).  The side effect is that a parsing bug here surfaces as a
+blank page rather than a traceback, so prefer degrading with a warning over
+raising.
 
 Layout lives in [Extras][[Appearance]][[[sections]]].  Each section names its
 items and, optionally, how to present them:
@@ -26,14 +47,20 @@ items and, optionally, how to present them:
 Sections render in declaration order within each content value.  Items are
 de-duplicated, first occurrence winning, separately per content value.
 
-To use, add to the [CheetahGenerator] section of skin.conf:
+Registration is not optional.  Without this, the templates call names that were
+never added to the search list and the pages fail to generate:
 
-    search_list_extensions = user.panelorder.PanelOrder
+    [CheetahGenerator]
+        search_list_extensions = user.panelorder.PanelOrder
 
 Then, in a template:
 
     #set $segments = $panelSegments('card')
     #set $flat     = $panelItems('chart')
+
+panelSegments carries the grouping and is what you loop over to draw a row or a
+panel.  panelItems flattens the same data to bare names, for the places that
+only need to know whether an item is present, such as the chart JavaScript.
 """
 
 import logging
@@ -43,7 +70,7 @@ from weewx.cheetahgenerator import SearchList
 
 log = logging.getLogger(__name__)
 
-VERSION = "2.0.0"
+VERSION = "2.0.1"
 
 # Segment types.  'type' is None for a section with no title, whose items
 # render loose rather than inside a panel.
