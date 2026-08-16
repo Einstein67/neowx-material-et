@@ -13,7 +13,8 @@
     # it does not replace it, and it cannot delete it. Reuse one of the nine
     # shipped [[[sections]]] ids to override its items/title/etc.: card,
     # external_sensors, chart, custom_charts, additional_charts,
-    # external_sensor_charts, other_charts, telemetry, telemetry_chart. A
+    # external_sensor_charts, other_charts, telemetry_cards,
+    # telemetry_charts. A
     # section id that ISN'T one of those (like "main" below in an older
     # version of this sample) is instead APPENDED after the shipped
     # sections, and every one of its items gets de-duplicated away by

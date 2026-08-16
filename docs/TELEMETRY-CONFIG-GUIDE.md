@@ -111,10 +111,10 @@ blocks sit alongside scalar settings like `chart_days` without confusion.
 ```ini
 [[Appearance]]
     [[[sections]]]
-        [[[[telemetry]]]]
+        [[[[telemetry_cards]]]]
             items = consBatteryVoltage, outTempBatteryStatus, rxCheckPercent
             content = telemetry
-        [[[[telemetry_chart]]]]
+        [[[[telemetry_charts]]]]
             items = consBatteryVoltage, outTempBatteryStatus
             content = telemetry_chart
 ```
@@ -420,10 +420,10 @@ of them - see the placement note above.
 ```ini
 [[Appearance]]
     [[[sections]]]
-        [[[[telemetry]]]]
+        [[[[telemetry_cards]]]]
             items = consBatteryVoltage, outTempBatteryStatus, rxCheckPercent
             content = telemetry
-        [[[[telemetry_chart]]]]
+        [[[[telemetry_charts]]]]
             items = consBatteryVoltage, outTempBatteryStatus
             content = telemetry_chart
 
@@ -462,7 +462,7 @@ of them - see the placement note above.
 ```ini
 [[Appearance]]
     [[[sections]]]
-        [[[[telemetry]]]]
+        [[[[telemetry_cards]]]]
             items = extraBattery7, supplyVoltage
             content = telemetry
 
@@ -513,7 +513,7 @@ page. Only fields listed in the section's `items` are shown.
 ```ini
 [[Appearance]]
     [[[sections]]]
-        [[[[telemetry]]]]
+        [[[[telemetry_cards]]]]
             items = rxCheckPercent, txBatteryStatus, windBatteryStatus, rainBatteryStatus, outTempBatteryStatus, consBatteryVoltage
             content = telemetry
 ```
@@ -526,7 +526,7 @@ Controls the order of historical charts. Only fields listed in the section's
 ```ini
 [[Appearance]]
     [[[sections]]]
-        [[[[telemetry_chart]]]]
+        [[[[telemetry_charts]]]]
             items = outTempBatteryStatus, inTempBatteryStatus, consBatteryVoltage, supplyVoltage
             content = telemetry_chart
 ```

@@ -120,7 +120,8 @@ The patcher reads your **patch file** (e.g., `skin.conf.patch`) and applies only
 > already lists them (items are first-occurrence-wins, in section order).
 > Always reuse one of the nine shipped ids to override a panel:
 > `card`, `external_sensors`, `chart`, `custom_charts`, `additional_charts`,
-> `external_sensor_charts`, `other_charts`, `telemetry`, `telemetry_chart`.
+> `external_sensor_charts`, `other_charts`, `telemetry_cards`,
+> `telemetry_charts`.
 > The same rule means **a patch can never remove a shipped section** -
 > `merge_configs` has no delete path. If you don't want the
 > `external_sensors` panel at all, edit `skin.conf` directly instead of
