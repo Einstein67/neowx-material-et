@@ -34,11 +34,22 @@
 99: "wi-day-thunderstorm"
 }
 
-## Set by renderValueItem() in the calling template. Inside an expansion panel the
-## forecast already has its own frame, so the row separators are suppressed.
+## Set by renderValueItem() in the calling template.
+##
+## A Bootstrap row is a flex container and a col-12 fills a whole line, so the
+## div below is what forces the forecast onto its own line. That matters:
+## forecast cards are far taller than value cards, and a flex line is as tall as
+## its tallest item, so a value card sharing a line with one gets stretched. The
+## break is therefore emitted whenever the forecast has a neighbour, whatever
+## forecast_separator says. forecast_separator only decides whether an <hr> is
+## drawn on it, and a panel suppresses the <hr> because it already has a frame.
+##
 ## is_first / is_last refer to the cards actually rendered next to the forecast,
-## so a neighbour without data no longer strands a separator. Defaults suppress
-## the separators when the flags were never set.
+## so a neighbour without data no longer strands a separator, and the flags
+## default to suppressing both breaks when the caller never set them.
+##
+## The error branch further down needs none of this: its card is col-12, so it
+## already breaks the row on both sides.
 #set $in_panel = $getVar('forecast_in_panel', False)
 #set $is_first = $getVar('forecast_is_first', True)
 #set $is_last  = $getVar('forecast_is_last', True)
@@ -60,8 +71,12 @@
 
 #if $fcast is not None
     #if $fcast.error is None
-        #if $Extras.Forecast.forecast_separator == "yes" and not $in_panel and not $is_first
-            <div class="col-12"><hr class="m-0 mb-4" /></div>
+        #if not $is_first
+            #if $Extras.Forecast.forecast_separator == "yes" and not $in_panel
+                <div class="col-12"><hr class="m-0 mb-4" /></div>
+            #else
+                <div class="col-12"></div>
+            #end if
         #end if
         #for $i, $x in $enumerate($fcast.daily)
             <div class="col-12 col-md-6 col-xl-4 mb-4">
@@ -257,8 +272,12 @@
                 </div>
             </div>
         #end for
-        #if $Extras.Forecast.forecast_separator == "yes" and not $in_panel and not $is_last
-            <div class="col-12"><hr class="m-0 mb-4" /></div>
+        #if not $is_last
+            #if $Extras.Forecast.forecast_separator == "yes" and not $in_panel
+                <div class="col-12"><hr class="m-0 mb-4" /></div>
+            #else
+                <div class="col-12"></div>
+            #end if
         #end if
     #else
         #if $Extras.Forecast.forecast_separator == "yes" and not $in_panel and not $is_first
