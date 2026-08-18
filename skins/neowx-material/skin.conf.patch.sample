@@ -27,6 +27,12 @@
     #
     # See docs/CONFIG-PATCHER.md for the full explanation.
     #
+    # IMPORTANT: keep [[[sections]]] LAST inside [[Appearance]], here and in
+    # skin.conf.  It is a subsection, so configobj treats every plain setting
+    # written below it as belonging to whichever [[[[...]]]] block came last.
+    # A setting that lands there silently stops working, and panelorder logs
+    # it as an 'unknown setting' on that section.
+    #
     # Here we override the shipped "card" section's item order/selection,
     # and add a brand-new "embedded" section for content = embedded, which
     # no shipped section uses, so nothing claims those items first.
