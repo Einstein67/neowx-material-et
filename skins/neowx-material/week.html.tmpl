@@ -344,9 +344,15 @@
 
                 <div class="row mt-3 temprow align-content-start">
                     #set $val_panel_idx = 0
-                    #for $seg in $val_segments
+                    #for $seg_i, $seg in $enumerate($val_segments)
                         #if $seg['type'] is not None
                             #set $val_panel_idx = $val_panel_idx + 1
+                        #end if
+                        ## Section boundary. A col-12 fills a whole flex line, so this is
+                        ## what makes each section start on a fresh row. Panels are col-12
+                        ## already; plain sections need it emitted explicitly.
+                        #if $seg_i > 0
+                            <div class="col-12"></div>
                         #end if
                         $renderValSegment($seg, $val_panel_idx)
                     #end for
@@ -356,9 +362,15 @@
 
                 <div class="row mt-3 graphrow align-content-start">
                     #set $chart_panel_idx = 0
-                    #for $seg in $chart_segments
+                    #for $seg_i, $seg in $enumerate($chart_segments)
                         #if $seg['type'] is not None
                             #set $chart_panel_idx = $chart_panel_idx + 1
+                        #end if
+                        ## Section boundary. A col-12 fills a whole flex line, so this is
+                        ## what makes each section start on a fresh row. Panels are col-12
+                        ## already; plain sections need it emitted explicitly.
+                        #if $seg_i > 0
+                            <div class="col-12"></div>
                         #end if
                         $renderChartSegment($seg, $chart_panel_idx)
                     #end for

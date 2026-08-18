@@ -632,9 +632,15 @@
 
                     #set $tele_val_segments = $panelSegments('telemetry')
                     #set $tele_val_idx = 0
-                    #for $seg in $tele_val_segments
+                    #for $seg_i, $seg in $enumerate($tele_val_segments)
                         #if $seg['type'] is not None
                             #set $tele_val_idx = $tele_val_idx + 1
+                        #end if
+                        ## Section boundary. A col-12 fills a whole flex line, so this is
+                        ## what makes each section start on a fresh row. Panels are col-12
+                        ## already; plain sections need it emitted explicitly.
+                        #if $seg_i > 0
+                            <div class="col-12"></div>
                         #end if
                         $renderTeleSegment($seg, $tele_val_idx, 'value')
                     #end for
@@ -647,9 +653,15 @@
 
                     #set $tele_chart_segments = $panelSegments('telemetry_chart')
                     #set $tele_chart_idx = 0
-                    #for $seg in $tele_chart_segments
+                    #for $seg_i, $seg in $enumerate($tele_chart_segments)
                         #if $seg['type'] is not None
                             #set $tele_chart_idx = $tele_chart_idx + 1
+                        #end if
+                        ## Section boundary. A col-12 fills a whole flex line, so this is
+                        ## what makes each section start on a fresh row. Panels are col-12
+                        ## already; plain sections need it emitted explicitly.
+                        #if $seg_i > 0
+                            <div class="col-12"></div>
                         #end if
                         $renderTeleSegment($seg, $tele_chart_idx, 'chart')
                     #end for
