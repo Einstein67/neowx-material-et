@@ -112,7 +112,7 @@ The patcher reads your **patch file** (e.g., `skin.conf.patch`) and applies only
 - ⚠️ **Deletions** - Settings not in patch file remain unchanged
 
 > ⚠️ **`[[[sections]]]` is a section, not a value - it merges, it doesn't replace.**
-> A `[[[[card]]]]` block in your patch merges INTO the shipped `[[[[card]]]]`
+> A `[[[[cards]]]]` block in your patch merges INTO the shipped `[[[[cards]]]]`
 > block (so patching its `items` replaces that section's item list exactly,
 > as you'd expect). But a section id that ISN'T one of the shipped ones is
 > merged in as a brand-new, *additional* section - it does not take over an
@@ -173,7 +173,7 @@ A patch file follows the **same structure** as the file you want to patch, but c
         # configobj reparents anything written after it into the last
         # [[[[...]]]] block instead of into [[Appearance]].
         [[[sections]]]
-            [[[[card]]]]
+            [[[[cards]]]]
                 items = outTemp, outHumidity, forecast, barometer, windSpeed, rain
 
     [[Forecast]]
@@ -323,7 +323,7 @@ Fill in only the values you've changed from defaults:
         enable_hover_effect = false
         defaultChartBehavior = pan
         [[[sections]]]
-            [[[[card]]]]
+            [[[[cards]]]]
                 items = forecast, outTemp, outHumidity, barometer, windSpeed
             [[[[custom_charts]]]]
                 items = outTemp, windSpeed, barometer, rain
@@ -390,7 +390,7 @@ cat skin.conf | grep "custom1_label"
 [Extras]
     [[Appearance]]
         [[[sections]]]
-            [[[[card]]]]
+            [[[[cards]]]]
                 items = forecast, outTemp, outHumidity, barometer, windSpeed, rain, UV
             [[[[custom_charts]]]]
                 items = outTemp, barometer, windSpeed, rain, windDir
@@ -485,7 +485,7 @@ You can patch multiple sections at once:
     [[Appearance]]
         enable_hover_effect = false
         [[[sections]]]
-            [[[[card]]]]
+            [[[[cards]]]]
                 items = forecast, outTemp, outHumidity
 
     [[Forecast]]
@@ -721,7 +721,7 @@ Here's a complete example patch file with common customizations:
         # custom_charts) so it overrides that panel instead of being
         # appended as an unused extra section - see "What Gets Patched?".
         [[[sections]]]
-            [[[[card]]]]
+            [[[[cards]]]]
                 items = forecast, outTemp, outHumidity, barometer, windSpeed, rain, UV, radiation
             [[[[custom_charts]]]]
                 items = outTemp, barometer, windSpeed, windDir, rain, UV, radiation, outHumidity
