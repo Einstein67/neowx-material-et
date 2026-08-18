@@ -122,10 +122,23 @@ The patcher reads your **patch file** (e.g., `skin.conf.patch`) and applies only
 > `card`, `external_sensors`, `chart`, `custom_charts`, `additional_charts`,
 > `external_sensor_charts`, `other_charts`, `telemetry_cards`,
 > `telemetry_charts`.
-> The same rule means **a patch can never remove a shipped section** -
-> `merge_configs` has no delete path. If you don't want the
-> `external_sensors` panel at all, edit `skin.conf` directly instead of
-> patching.
+> `merge_configs` has no delete path, so a patch cannot remove a shipped
+> section outright. You can still **suppress** one without touching
+> `skin.conf`: override its `items` with an empty value, and the section is
+> skipped because a section with no items never renders. To drop the
+> `external_sensors` panel, patch it to nothing:
+>
+> ```ini
+> [Extras]
+>   [[Appearance]]
+>     [[[sections]]]
+>       [[[[external_sensors]]]]
+>         items =
+> ```
+>
+> The section node survives in the merged config but produces no output, and
+> its former items are left for later sections to claim, since a skipped
+> section never enters the de-duplication set.
 
 ---
 

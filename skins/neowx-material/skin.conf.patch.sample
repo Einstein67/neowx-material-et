@@ -9,17 +9,23 @@
     link1_url = https://www.lightningmaps.org/#m=ses;t=3;s=0;o=0;b=;ts=0;y=48.7750;x=11.4550;z=8;d=2;dl=2;dc=0;
 
   [[Appearance]]
-    # A patch section merges INTO the shipped section with the same id -
-    # it does not replace it, and it cannot delete it. Reuse one of the nine
-    # shipped [[[sections]]] ids to override its items/title/etc.: card,
-    # external_sensors, chart, custom_charts, additional_charts,
-    # external_sensor_charts, other_charts, telemetry_cards,
-    # telemetry_charts. A
-    # section id that ISN'T one of those (like "main" below in an older
-    # version of this sample) is instead APPENDED after the shipped
-    # sections, and every one of its items gets de-duplicated away by
-    # whichever shipped section already claims them - see
-    # docs/CONFIG-PATCHER.md for the full explanation.
+    # A patch section merges INTO the shipped section with the same id; it
+    # does not replace the section, and it cannot delete it. Reuse one of the
+    # nine shipped [[[sections]]] ids to override its items/title/etc.:
+    # card, external_sensors, chart, custom_charts, additional_charts,
+    # external_sensor_charts, other_charts, telemetry_cards, telemetry_charts.
+    #
+    # A section id that ISN'T one of those (like "main" below in an older
+    # version of this sample) is instead APPENDED after the shipped sections,
+    # and every one of its items gets de-duplicated away by whichever shipped
+    # section already claims them.
+    #
+    # To hide a shipped panel, override its items with an empty value - a
+    # section with no items never renders:
+    #     [[[[external_sensors]]]]
+    #         items =
+    #
+    # See docs/CONFIG-PATCHER.md for the full explanation.
     #
     # Here we override the shipped "card" section's item order/selection,
     # and add a brand-new "embedded" section for content = embedded, which
