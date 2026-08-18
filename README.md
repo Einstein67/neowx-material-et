@@ -42,6 +42,7 @@ This is an **actively maintained** continuation of the NeoWX Material skin. The 
    - `collapsed` — `true`, `false`, or `none` for a panel that never collapses
    - `content` — `card`, `chart`, `embedded`, `telemetry` or `telemetry_chart`
 - Sections render in the order they are written, so a panel can be followed by an ungrouped row
+- Each section starts on a new line, so grouping is meaningful even without a title
 - Panels whose items all lack data are hidden rather than drawn empty
 - Fully configurable panel header color and title color for both light and dark mode
 
