@@ -481,6 +481,17 @@ footer.page-footer {
 }
 
 #neowx-popup {
+  // modal-xl caps the dialog at 1140px, which leaves most of a wide screen
+  // unused. The whole point of the pop-up is room, so take nearly all of it
+  // and let the margins be the only gutter. Only from the sm breakpoint up:
+  // below it Bootstrap gives the dialog .5rem margins and full width, and
+  // capping at 100vw - 4rem there would make it narrower, not wider.
+  @media (min-width: 576px) {
+    .modal-dialog {
+      max-width: calc(100vw - 4rem);
+    }
+  }
+
   .modal-body {
     // A copied chart is created with height: '100%' and ApexCharts measures
     // that against this element (minus its padding), so the dialog needs a

@@ -6870,6 +6870,11 @@ footer.page-footer .row > .col-md-3 ul {
   outline-offset: 1px;
 }
 
+@media (min-width: 576px) {
+  #neowx-popup .modal-dialog {
+    max-width: calc(100vw - 4rem);
+  }
+}
 #neowx-popup .modal-body {
   height: calc(100vh - 11rem);
   min-height: 280px;
