@@ -170,63 +170,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// --- CHART POP-UP ---------------------------------------------------------
-// Opens a copy of a chart in a large modal window. Wired up as an ApexCharts
-// toolbar customIcon in js.inc when Appearance.enableChartPopup is on, so the
-// button appears on every chart without touching the individual templates.
-// ApexCharts 5 binds the click as click(chartCtx, w, event).
+// --- POP-UP WINDOW --------------------------------------------------------
+// One shared modal, used by two things:
+//
+//   - charts, through an ApexCharts toolbar customIcon registered in js.inc
+//     when Appearance/enableChartPopup is on (ApexCharts 5 binds the click as
+//     click(chartCtx, w, event));
+//   - [[Embedded]] iFrame and image cards, through the toolbar button the
+//     templates emit when Appearance/enableEmbeddedPopup is on.
 
-var NEOWX_POPUP_ID = 'neowx-chart-popup';
-var _neowxPopupChart = null;
+var NEOWX_POPUP_ID = 'neowx-popup';
 var _neowxPopupActive = false;
+var _neowxPopupTeardown = null;
 
-// Deep copy that keeps functions (axis formatters, chart event handlers) by
-// reference. A JSON round-trip would drop them, and handing the new chart the
-// source chart's own sub-objects would let ApexCharts mutate the card chart
-// while normalising the copy.
-function neowxCloneChartConfig(value, seen) {
-    if (value === null || typeof value !== 'object') {
-        return value;
-    }
-    if (value instanceof Date) {
-        return new Date(value.getTime());
-    }
-    seen = seen || new WeakMap();
-    if (seen.has(value)) {
-        return seen.get(value);
-    }
-    var copy = Array.isArray(value) ? [] : {};
-    seen.set(value, copy);
-    for (var key in value) {
-        if (Object.prototype.hasOwnProperty.call(value, key)) {
-            copy[key] = neowxCloneChartConfig(value[key], seen);
-        }
-    }
-    return copy;
-}
-
-// The chart config carries no title, so reuse the heading of the card the
-// chart sits in. Charts outside a card (telemetry) fall back to series names.
-function neowxPopupTitle(chartCtx) {
-    try {
-        var card = chartCtx.el.closest('.card-chart');
-        var heading = card ? card.querySelector('h5') : null;
-        if (heading && heading.textContent.trim() !== '') {
-            return heading.textContent.trim();
-        }
-    } catch (e) {}
-    try {
-        var names = chartCtx.w.config.series.map(function (s) {
-            return s.name;
-        }).filter(Boolean);
-        if (names.length > 0) {
-            return names.join(' & ');
-        }
-    } catch (e) {}
-    return '';
-}
-
-// Builds the shared modal on first use and returns it on every call.
+// Builds the modal on first use and returns it on every call.
 function neowxPopupModal() {
     var existing = document.getElementById(NEOWX_POPUP_ID);
     if (existing) {
@@ -258,14 +215,11 @@ function neowxPopupModal() {
     document.body.appendChild(modal);
 
     // Bootstrap already closes on ESC and on a click outside the dialog, so
-    // all that is left here is tearing the copied chart down again.
+    // all that is left here is emptying the dialog out again.
     $(modal).on('hidden.bs.modal', function () {
-        if (_neowxPopupChart) {
-            try {
-                delete NEOWX_ALIGNED[_neowxPopupChart.w.globals.chartID];
-            } catch (e) {}
-            _neowxPopupChart.destroy();
-            _neowxPopupChart = null;
+        if (_neowxPopupTeardown) {
+            _neowxPopupTeardown();
+            _neowxPopupTeardown = null;
         }
         document.getElementById(NEOWX_POPUP_ID + '-mount').innerHTML = '';
         _neowxPopupActive = false;
@@ -274,14 +228,87 @@ function neowxPopupModal() {
     return modal;
 }
 
-function neowxChartPopup(chartCtx) {
+// onShown is handed the (empty) mount point once the dialog is on screen, and
+// onHidden - if given - runs when it closes, before the mount is emptied.
+function neowxOpenPopup(title, onShown, onHidden) {
     if (_neowxPopupActive) {
         return;
     }
     _neowxPopupActive = true;
+    _neowxPopupTeardown = onHidden || null;
 
     var modal = neowxPopupModal();
+    document.getElementById(NEOWX_POPUP_ID + '-title').textContent = title;
 
+    // Fill the dialog only once it is on screen: both an ApexCharts chart and
+    // an iframe size themselves from their container, and a hidden or
+    // still-animating one reports zero.
+    $(modal).one('shown.bs.modal', function () {
+        onShown(document.getElementById(NEOWX_POPUP_ID + '-mount'));
+    });
+    $(modal).modal('show');
+}
+
+// The card heading is the only title either kind of pop-up has to work with.
+function neowxCardTitle(el) {
+    try {
+        var card = el.closest('.card');
+        var heading = card ? card.querySelector('h5') : null;
+        if (heading && heading.textContent.trim() !== '') {
+            return heading.textContent.trim();
+        }
+    } catch (e) {}
+    return '';
+}
+
+// --- Charts ---------------------------------------------------------------
+
+var _neowxPopupChart = null;
+
+// Deep copy that keeps functions (axis formatters, chart event handlers) by
+// reference. A JSON round-trip would drop them, and handing the new chart the
+// source chart's own sub-objects would let ApexCharts mutate the card chart
+// while normalising the copy.
+function neowxCloneChartConfig(value, seen) {
+    if (value === null || typeof value !== 'object') {
+        return value;
+    }
+    if (value instanceof Date) {
+        return new Date(value.getTime());
+    }
+    seen = seen || new WeakMap();
+    if (seen.has(value)) {
+        return seen.get(value);
+    }
+    var copy = Array.isArray(value) ? [] : {};
+    seen.set(value, copy);
+    for (var key in value) {
+        if (Object.prototype.hasOwnProperty.call(value, key)) {
+            copy[key] = neowxCloneChartConfig(value[key], seen);
+        }
+    }
+    return copy;
+}
+
+// The chart config carries no title, so reuse the card heading. Charts outside
+// a card (telemetry) fall back to their series names.
+function neowxPopupTitle(chartCtx) {
+    var heading = neowxCardTitle(chartCtx.el);
+    if (heading !== '') {
+        return heading;
+    }
+    try {
+        var names = chartCtx.w.config.series.map(function (s) {
+            return s.name;
+        }).filter(Boolean);
+        if (names.length > 0) {
+            return names.join(' & ');
+        }
+    } catch (e) {}
+    return '';
+}
+
+function neowxChartPopup(chartCtx) {
     var config = neowxCloneChartConfig(chartCtx.w.config);
     // '100%' measures the mount point's parent, i.e. the modal body, which the
     // stylesheet gives a viewport-relative height.
@@ -296,13 +323,49 @@ function neowxChartPopup(chartCtx) {
         config.chart.toolbar.tools.customIcons = [];
     }
 
-    document.getElementById(NEOWX_POPUP_ID + '-title').textContent = neowxPopupTitle(chartCtx);
-
-    // Render only once the dialog is on screen: ApexCharts sizes itself from
-    // its container, and a hidden or still-animating one reports zero.
-    $(modal).one('shown.bs.modal', function () {
-        _neowxPopupChart = new ApexCharts(document.getElementById(NEOWX_POPUP_ID + '-mount'), config);
+    neowxOpenPopup(neowxPopupTitle(chartCtx), function (mount) {
+        _neowxPopupChart = new ApexCharts(mount, config);
         _neowxPopupChart.render();
+    }, function () {
+        if (_neowxPopupChart) {
+            try {
+                delete NEOWX_ALIGNED[_neowxPopupChart.w.globals.chartID];
+            } catch (e) {}
+            _neowxPopupChart.destroy();
+            _neowxPopupChart = null;
+        }
     });
-    $(modal).modal('show');
 }
+
+// --- Embedded iFrames and images ------------------------------------------
+
+// Copies the card's own iframe/img rather than rebuilding one from the config,
+// so the src (including the cache-busting timestamp on images) and the alt
+// text come along for free. Any link around the image is left on the card.
+function neowxEmbedPopup(button) {
+    var card = button.closest('.card');
+    var media = card ? card.querySelector('iframe, img') : null;
+    if (!media) {
+        return;
+    }
+
+    var copy = media.cloneNode(true);
+    // On the card the media is a flex child pinned to a fixed aspect ratio;
+    // in the dialog the stylesheet sizes it instead.
+    copy.classList.remove('flex-grow-1', 'w-100');
+    copy.classList.add('nwm-embed-popup-media');
+    copy.style.removeProperty('aspect-ratio');
+
+    var title = neowxCardTitle(button) || media.getAttribute('alt') || '';
+    neowxOpenPopup(title, function (mount) {
+        mount.appendChild(copy);
+    });
+}
+
+document.addEventListener('click', function (e) {
+    var button = e.target.closest ? e.target.closest('[data-nwm-embed-popup]') : null;
+    if (button) {
+        e.preventDefault();
+        neowxEmbedPopup(button);
+    }
+});

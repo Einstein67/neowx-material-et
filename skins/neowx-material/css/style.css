@@ -6824,33 +6824,108 @@ footer.page-footer .row > .col-md-3 ul {
   color: #fff;
 }
 
-#neowx-chart-popup .modal-body {
+.nwm-embed-toolbar {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 11;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 3px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.nwm-embed-toolbar-icon {
+  cursor: pointer;
+  width: 26px;
+  height: 24px;
+  color: #6e8192;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.nwm-embed-toolbar-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  pointer-events: none;
+}
+.nwm-embed-toolbar-icon:hover {
+  background: rgba(15, 23, 42, 0.06);
+  color: #1f2937;
+}
+.nwm-embed-toolbar-icon:focus-visible {
+  outline: 2px solid #008ffb;
+  outline-offset: 1px;
+}
+
+#neowx-popup .modal-body {
   height: calc(100vh - 11rem);
   min-height: 280px;
 }
+#neowx-popup .nwm-embed-popup-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+#neowx-popup img.nwm-embed-popup-media {
+  object-fit: contain;
+}
 
 @media (prefers-color-scheme: dark) {
-  .auto-theme #neowx-chart-popup .modal-content {
+  .auto-theme .nwm-embed-toolbar {
+    background: rgba(28, 28, 31, 0.82);
+  }
+  .auto-theme .nwm-embed-toolbar-icon {
+    color: #d4d6dc;
+  }
+  .auto-theme .nwm-embed-toolbar-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  .auto-theme #neowx-popup .modal-content {
     background-color: #444 !important;
     color: #ddd !important;
   }
-  .auto-theme #neowx-chart-popup .modal-header {
+  .auto-theme #neowx-popup .modal-header {
     border-bottom-color: rgba(255, 255, 255, 0.15);
   }
-  .auto-theme #neowx-chart-popup .close {
+  .auto-theme #neowx-popup .close {
     color: #ddd;
     text-shadow: none;
     opacity: 0.75;
   }
 }
-.dark-theme #neowx-chart-popup .modal-content {
+.dark-theme .nwm-embed-toolbar {
+  background: rgba(28, 28, 31, 0.82);
+}
+.dark-theme .nwm-embed-toolbar-icon {
+  color: #d4d6dc;
+}
+.dark-theme .nwm-embed-toolbar-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.dark-theme #neowx-popup .modal-content {
   background-color: #444 !important;
   color: #ddd !important;
 }
-.dark-theme #neowx-chart-popup .modal-header {
+.dark-theme #neowx-popup .modal-header {
   border-bottom-color: rgba(255, 255, 255, 0.15);
 }
-.dark-theme #neowx-chart-popup .close {
+.dark-theme #neowx-popup .close {
   color: #ddd;
   text-shadow: none;
   opacity: 0.75;

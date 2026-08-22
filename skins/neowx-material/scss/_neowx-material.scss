@@ -391,12 +391,11 @@ footer.page-footer {
 
 // ==============================================================================
 
-// Chart pop-up
+// Pop-up window
 // ---------------------------------------------------------------------------
-// The "expand" button added to every ApexCharts toolbar (Appearance /
-// enableChartPopup) and the modal it opens. ApexCharts already styles
-// .apexcharts-toolbar-custom-icon itself, but its icon sizing and hover rules
-// only name the built-in buttons, so both are repeated here.
+// The "expand" buttons - one added to every ApexCharts toolbar (Appearance /
+// enableChartPopup), one on every [[Embedded]] card (enableEmbeddedPopup) -
+// and the modal they share.
 
 // ApexCharts appends custom icons after the hamburger menu, and its `index`
 // option cannot move ours reliably: the zoom buttons are left out on charts
@@ -408,6 +407,8 @@ footer.page-footer {
   order: 1;
 }
 
+// ApexCharts styles .apexcharts-toolbar-custom-icon itself, but its icon
+// sizing and hover rules only name the built-in buttons, so both are repeated.
 .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon {
   svg {
     width: 18px;
@@ -425,21 +426,135 @@ footer.page-footer {
   color: #fff;
 }
 
-#neowx-chart-popup {
+// Embedded cards have no toolbar of their own, so this rebuilds the look of
+// the ApexCharts one. Those values are deliberately copied rather than reused
+// through .apexcharts-* selectors: that stylesheet is vendored, and leaning on
+// it would turn the next ApexCharts upgrade into a silent restyling here.
+.nwm-embed-toolbar {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 11;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 3px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.nwm-embed-toolbar-icon {
+  cursor: pointer;
+  // WCAG 2.5.8 Target Size (Minimum): 24x24 CSS px hit target.
+  width: 26px;
+  height: 24px;
+  color: #6e8192;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.12s ease, color 0.12s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    pointer-events: none;
+  }
+
+  &:hover {
+    background: rgba(15, 23, 42, 0.06);
+    color: #1f2937;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #008ffb;
+    outline-offset: 1px;
+  }
+}
+
+#neowx-popup {
   .modal-body {
-    // The copied chart is created with height: '100%', which ApexCharts
-    // measures against this element (minus its padding), so the dialog needs
-    // a real height. The subtracted space covers the dialog margins and the
+    // A copied chart is created with height: '100%' and ApexCharts measures
+    // that against this element (minus its padding), so the dialog needs a
+    // real height. The subtracted space covers the dialog margins and the
     // header, keeping the modal itself inside the viewport.
     height: calc(100vh - 11rem);
     min-height: 280px;
   }
+
+  // Embedded media fills the dialog; an image keeps its own proportions
+  // instead of the card's cropped aspect ratio.
+  .nwm-embed-popup-media {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  img.nwm-embed-popup-media {
+    object-fit: contain;
+  }
 }
 
-// Dark mode – the modal is appended to <body>, outside any .card, so it needs
+// Dark mode - the modal is appended to <body>, outside any .card, so it needs
 // the same treatment the cards get above.
 @media (prefers-color-scheme: dark) {
-  .auto-theme #neowx-chart-popup {
+  .auto-theme {
+    .nwm-embed-toolbar {
+      background: rgba(28, 28, 31, 0.82);
+    }
+
+    .nwm-embed-toolbar-icon {
+      color: #d4d6dc;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+    }
+
+    #neowx-popup {
+      .modal-content {
+        background-color: #444 !important;
+        color: #ddd !important;
+      }
+
+      .modal-header {
+        border-bottom-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .close {
+        color: #ddd;
+        text-shadow: none;
+        opacity: 0.75;
+      }
+    }
+  }
+}
+
+.dark-theme {
+  .nwm-embed-toolbar {
+    background: rgba(28, 28, 31, 0.82);
+  }
+
+  .nwm-embed-toolbar-icon {
+    color: #d4d6dc;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+  }
+
+  #neowx-popup {
     .modal-content {
       background-color: #444 !important;
       color: #ddd !important;
@@ -454,22 +569,5 @@ footer.page-footer {
       text-shadow: none;
       opacity: 0.75;
     }
-  }
-}
-
-.dark-theme #neowx-chart-popup {
-  .modal-content {
-    background-color: #444 !important;
-    color: #ddd !important;
-  }
-
-  .modal-header {
-    border-bottom-color: rgba(255, 255, 255, 0.15);
-  }
-
-  .close {
-    color: #ddd;
-    text-shadow: none;
-    opacity: 0.75;
   }
 }

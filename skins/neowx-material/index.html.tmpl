@@ -21,6 +21,22 @@
     </div>
 #end def
 
+## +-------------------------------------------------------------------------+
+## | Maximize button for [[Embedded]] cards. Styled to match the ApexCharts  |
+## | chart toolbars; neowxEmbedPopup in js/app.js handles the click.         |
+## +-------------------------------------------------------------------------+
+
+#def embedToolbar()
+    #if $Extras.Appearance.get('enableEmbeddedPopup') != "false"
+        <div class="nwm-embed-toolbar">
+            <button type="button" class="nwm-embed-toolbar-icon" data-nwm-embed-popup
+                    title="$gettext('expand')" aria-label="$gettext('expand')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+            </button>
+        </div>
+    #end if
+#end def
+
 #def iframeCard($name)
     #set iframe_url = $getVar('Extras.Embedded.' + name + '.url', "")
     #set iframe_title = $getVar('Extras.Embedded.' + name + '.title', "")
@@ -28,6 +44,7 @@
     #if iframe_url != ""
         <div class="col-12 col-md-6 col-xl-4 mb-4">
             <div class="card overflow-hidden">
+                $embedToolbar()
                 <div class="card-body text-center d-flex flex-column px-0 ${'pb-0' if iframe_title != '' else 'py-0'} overflow-hidden">
                     #if iframe_title != ""
                         <h5 class="h5-responsive $Extras.color-text">
@@ -74,6 +91,7 @@
     #if image_url != ""
         <div class="col-12 col-md-6 col-xl-4 mb-4">
             <div class="card overflow-hidden">
+                $embedToolbar()
                 <div class="card-body text-center d-flex flex-column ${padding_x} ${padding_y} overflow-hidden">
                     #if image_title != ""
                         <h5 class="h5-responsive $Extras.color-text">
