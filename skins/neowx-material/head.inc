@@ -301,4 +301,33 @@ href="img/splash/splash_1536x2048.png"
         user-select: none;         /* Standard */
         -webkit-tap-highlight-color: transparent; /* Removes the gray flash on mobile tap */
     }
+
+    .nwm-panel-static {
+        cursor: default;
+    }
+
+    /* A static panel (collapsed = none) has no toggle, so it must not
+       hover-highlight as if it were clickable. css/style.css applies
+       .nwm-panel-header:hover plus two dark-mode !important variants; the
+       rules below are more specific and come later, so they win.
+
+       "Cancel the hover" means repaint whatever the header shows when it is
+       NOT hovered, which is not always transparent. In light mode the
+       configured panelColor rule is !important and this one is not, so the
+       configured colour already wins and transparent only applies when
+       nothing is configured. In dark mode both carry !important, so this
+       rule wins on specificity and has to repaint panelColorDark itself -
+       otherwise hovering a static header erases the configured fill. */
+    #set $_static_dark = $_panel_color_dark if $_panel_color_dark != '' else 'transparent'
+    .nwm-panel-header.nwm-panel-static:hover {
+        background-color: transparent;
+    }
+    .dark-theme .nwm-panel-header.nwm-panel-static:hover {
+        background-color: $_static_dark !important;
+    }
+    @media (prefers-color-scheme: dark) {
+        .auto-theme .nwm-panel-header.nwm-panel-static:hover {
+            background-color: $_static_dark !important;
+        }
+    }
 </style>

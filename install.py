@@ -10,7 +10,7 @@ def loader():
 class BasicInstaller(ExtensionInstaller):
     def __init__(self):
         super(BasicInstaller, self).__init__(
-            version="1.68.8",
+            version="1.70.1",
             name="neowx-material",
             description="The most versatile and modern weewx skin",
             author="Neoweewx",
@@ -173,6 +173,7 @@ class BasicInstaller(ExtensionInstaller):
                         "skins/neowx-material/manifest.json.tmpl",
                         "skins/neowx-material/month-%Y-%m.html.tmpl",
                         "skins/neowx-material/month.html.tmpl",
+                        "skins/neowx-material/panel_header.inc",
                         "skins/neowx-material/skin.conf",
                         "skins/neowx-material/telemetry.html.tmpl",
                         "skins/neowx-material/trend_indicator.inc",
@@ -413,6 +414,15 @@ class BasicInstaller(ExtensionInstaller):
                         "skins/neowx-material/config_patcher.py",
                     ],
                 ),
-                ("bin/user", ["bin/user/historygenerator.py", "bin/user/openmeteo.py", "bin/user/updatecheck.py", "bin/user/onlinecheck.py"]),
+                (
+                    "bin/user",
+                    [
+                        "bin/user/historygenerator.py",
+                        "bin/user/openmeteo.py",
+                        "bin/user/updatecheck.py",
+                        "bin/user/onlinecheck.py",
+                        "bin/user/panelorder.py"
+                    ]
+                ),
             ],
         )

@@ -111,6 +111,35 @@ The patcher reads your **patch file** (e.g., `skin.conf.patch`) and applies only
 - ✅ **Comments** - Preserved from original file
 - ⚠️ **Deletions** - Settings not in patch file remain unchanged
 
+> ⚠️ **`[[[sections]]]` is a section, not a value - it merges, it doesn't replace.**
+> A `[[[[cards]]]]` block in your patch merges INTO the shipped `[[[[cards]]]]`
+> block (so patching its `items` replaces that section's item list exactly,
+> as you'd expect). But a section id that ISN'T one of the shipped ones is
+> merged in as a brand-new, *additional* section - it does not take over an
+> existing panel, and its items get de-duplicated away if a shipped section
+> already lists them (items are first-occurrence-wins, in section order).
+> Always reuse one of the nine shipped ids to override a panel:
+> `card`, `external_sensors`, `chart`, `custom_charts`, `additional_charts`,
+> `external_sensor_charts`, `other_charts`, `telemetry_cards`,
+> `telemetry_charts`.
+> `merge_configs` has no delete path, so a patch cannot remove a shipped
+> section outright. You can still **suppress** one without touching
+> `skin.conf`: override its `items` with an empty value, and the section is
+> skipped because a section with no items never renders. To drop the
+> `external_sensors` panel, patch it to nothing:
+>
+> ```ini
+> [Extras]
+>   [[Appearance]]
+>     [[[sections]]]
+>       [[[[external_sensors]]]]
+>         items =
+> ```
+>
+> The section node survives in the merged config but produces no output, and
+> its former items are left for later sections to claim, since a skipped
+> section never enters the de-duplication set.
+
 ---
 
 ## 📝 Creating a Patch File
@@ -139,8 +168,13 @@ A patch file follows the **same structure** as the file you want to patch, but c
 
     [[Appearance]]
         enable_hover_effect = true
-        values_order = outTemp, outHumidity, forecast, barometer, windSpeed, rain
         defaultChartBehavior = pan
+        # [[[sections]]] must stay the LAST thing under [[Appearance]] -
+        # configobj reparents anything written after it into the last
+        # [[[[...]]]] block instead of into [[Appearance]].
+        [[[sections]]]
+            [[[[cards]]]]
+                items = outTemp, outHumidity, forecast, barometer, windSpeed, rain
 
     [[Forecast]]
         days = 7
@@ -227,7 +261,7 @@ update_interval = 1440
 
 **Lists (comma-separated):**
 ```ini
-values_order = outTemp, outHumidity, barometer, windSpeed
+items = outTemp, outHumidity, barometer, windSpeed
 variables = temperature, precipitation, wind
 ```
 
@@ -286,10 +320,15 @@ Fill in only the values you've changed from defaults:
         support_skin = yes
 
     [[Appearance]]
-        values_order = forecast, outTemp, outHumidity, barometer, windSpeed
-        charts_order = outTemp, windSpeed, barometer, rain
         enable_hover_effect = false
         defaultChartBehavior = pan
+        [[[sections]]]
+            [[[[cards]]]]
+                items = forecast, outTemp, outHumidity, barometer, windSpeed
+            [[[[custom_charts]]]]
+                items = outTemp, windSpeed, barometer, rain
+                title = Custom Charts
+                content = chart
 ```
 
 ### Step 5: Save and Test
@@ -350,8 +389,13 @@ cat skin.conf | grep "custom1_label"
 ```ini
 [Extras]
     [[Appearance]]
-        values_order = forecast, outTemp, outHumidity, barometer, windSpeed, rain, UV
-        charts_order = outTemp, barometer, windSpeed, rain, windDir
+        [[[sections]]]
+            [[[[cards]]]]
+                items = forecast, outTemp, outHumidity, barometer, windSpeed, rain, UV
+            [[[[custom_charts]]]]
+                items = outTemp, barometer, windSpeed, rain, windDir
+                title = Custom Charts
+                content = chart
 
     [[Forecast]]
         days = 7
@@ -439,8 +483,10 @@ You can patch multiple sections at once:
         name = My Station
 
     [[Appearance]]
-        values_order = forecast, outTemp, outHumidity
         enable_hover_effect = false
+        [[[sections]]]
+            [[[[cards]]]]
+                items = forecast, outTemp, outHumidity
 
     [[Forecast]]
         days = 7
@@ -662,16 +708,25 @@ Here's a complete example patch file with common customizations:
         # Enable hover effects
         enable_hover_effect = true
 
-        # Card and chart order (with forecast enabled)
-        values_order = forecast, outTemp, outHumidity, barometer, windSpeed, windGust, windrun, rain, UV, radiation, dewpoint, heatindex, inTemp
-        charts_order = outTemp, barometer, windSpeed, windDir, rain, UV, radiation, outHumidity, inTemp
-
         # Chart behavior
         defaultChartBehavior = pan
 
         # Custom value colors
         lo_value_color = "#03a9f4"
         hi_value_color = "#f44336"
+
+        # Card and chart order (with forecast enabled). [[[sections]]] must
+        # come after every other [[Appearance]] setting above, and each
+        # [[[[...]]]] id below must be one of the shipped ids (here: card,
+        # custom_charts) so it overrides that panel instead of being
+        # appended as an unused extra section - see "What Gets Patched?".
+        [[[sections]]]
+            [[[[cards]]]]
+                items = forecast, outTemp, outHumidity, barometer, windSpeed, rain, UV, radiation
+            [[[[custom_charts]]]]
+                items = outTemp, barometer, windSpeed, windDir, rain, UV, radiation, outHumidity
+                title = Custom Charts
+                content = chart
 
     [[Embedded]]
         # Custom embedded content

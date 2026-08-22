@@ -424,8 +424,8 @@ Pages and charts you didn't touch render exactly as before.
   Cards need a `datetime_custom_card_*` (strftime) name.
 - **Minutes show the month** - you wrote `MM` instead of `mm` in a moment format somewhere other than
   after a colon (the auto-fix only covers `:MM`).
-- **Nothing changed** - did you regenerate the report and hard-refresh? Is the chart actually in
-  `charts_order`? Try deleting the html file and letting the report generator recreate it.
+- **Nothing changed** - did you regenerate the report and hard-refresh? Is the chart actually
+  listed in a chart section's `items`? Try deleting the html file and letting the report generator recreate it.
 - **The wrong page scope is matching** - per-page label/tooltip and card scopes are: `day` (index +
   yesterday share it), `week`, `month`, `year`, `telemetry`. There are no archive scopes; archive pages
   (month-YYYY-MM, year-YYYY) use the `month` / `year` keys respectively. (Per-**chart** override

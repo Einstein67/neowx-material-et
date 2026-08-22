@@ -105,7 +105,7 @@
 #
 # - Each field needs ONE block directly under [[Telemetry]]
 # - sensor_type picks the gauge: voltage | signal | percent | status | none
-# - Being listed in Appearance.telemetry_order opts the field in —
+# - Being listed in a telemetry section's items under Appearance.[[[sections]]] opts the field in —
 #   no "enabled" key needed
 # - Per-field chart_interval overrides the global default_interval
 # - For the full reference and migration guide see docs/TELEMETRY-CONFIG-GUIDE.md

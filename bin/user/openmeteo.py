@@ -20,7 +20,8 @@
     # IMPORTANT, READ BEFORE ENABLING FORECAST:
     # After installing skin you need to restart weewx service to make it work
 
-    # To enable forecast add lowercase "forecast" without quotes to the values_order list above in the [[Appearance]] section
+    # To enable forecast add lowercase "forecast" without quotes to the items of
+    # a card section in [[Appearance]] [[[sections]]]
 
     # Coordinate override (optional)
     # By default, coordinates from weewx.conf [Station] section are used
@@ -76,9 +77,13 @@ import logging
 from collections import Counter
 
 from weewx.cheetahgenerator import SearchList
+
+# Layout lives in [[[sections]]], so "forecast" is not a bare element of any
+# list any more - ask the parser the same way the templates do.
+from user.panelorder import order_items
 from weewx.units import ValueHelper, ValueTuple
 
-VERSION = "1.0.7"
+VERSION = "1.0.8"
 
 log = logging.getLogger(__name__)
 
@@ -174,18 +179,11 @@ class Forecast(SearchList):
             )
 
         self.base_url = "https://api.open-meteo.com/v1/forecast"
-        self.values_order = (
-            generator.skin_dict.get("Extras", {})
-            .get("Appearance", {})
-            .get("values_order", [])
-        )
         self.generator = generator
 
     def forecast(self):
 
-        enabled = False
-        if "forecast" in self.values_order:
-            enabled = True
+        enabled = "forecast" in order_items(self.generator.skin_dict, "card")
 
         if enabled != True:
             log.debug("Forecast is disabled")

@@ -36,9 +36,14 @@ This is an **actively maintained** continuation of the NeoWX Material skin. The 
 - Group cards and charts into **collapsible Material Design expansion panels**
 - Panels can be expanded or collapsed by default
 - Optional panel titles for clear labelling
-- Add separator markers directly inside `values_order` and `charts_order`:
-   - `hr` / `hr:My Title` — expanded panel (with or without title)
-   - `hrc` / `hrc:My Title` — collapsed panel (with or without title)
+- Lay out cards and charts with `[[[sections]]]` in `skin.conf`:
+   - `items` — the ordered list of cards or charts
+   - `title` — omit it for a plain row, add it for a collapsible panel
+   - `collapsed` — `true`, `false`, or `none` for a panel that never collapses
+   - `content` — `card`, `chart`, `embedded`, `telemetry` or `telemetry_chart`
+- Sections render in the order they are written, so a panel can be followed by an ungrouped row
+- Each section starts on a new line, so grouping is meaningful even without a title
+- Panels whose items all lack data are hidden rather than drawn empty
 - Fully configurable panel header color and title color for both light and dark mode
 
 ### 📡 Advanced Telemetry & Battery Monitoring
@@ -47,7 +52,7 @@ This is an **actively maintained** continuation of the NeoWX Material skin. The 
 - Historical battery trend charts with configurable display order and chart interval
 - Signal quality monitoring (`rxCheckPercent`)
 - Per-field chart interval override — set different resolutions for different sensors
-- Customizable card and chart ordering via `telemetry_order` and `telemetry_chart_order`
+- Customizable card and chart ordering via `telemetry` and `telemetry_chart` sections
 
 ### 🔴 Real-Time MQTT Updates
 - **Live data updates** without page refresh
@@ -304,8 +309,12 @@ Get 7-day forecasts from Open-Meteo:
 ```ini
 [Extras]
     [[Appearance]]
-        # Add "forecast" to this list:
-        values_order = forecast, outTemp, outHumidity, ...
+        # Add "forecast" to the shipped "card" section's items (patching a
+        # section merges into the shipped id with the same name - see
+        # docs/CONFIG-PATCHER.md - so reuse "card" rather than a new id):
+        [[[sections]]]
+            [[[[card]]]]
+                items = forecast, outTemp, outHumidity, ...
 
     [[Forecast]]
         # Optional: Override coordinates for forecast

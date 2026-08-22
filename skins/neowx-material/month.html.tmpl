@@ -20,8 +20,6 @@
 ## +-------------------------------------------------------------------------+
 
 #def valuesCard($name)
-    #set $_nm = $name.strip().lower()
-    #if not ($_nm in ('hr', 'hrc') or $_nm[:3] in ('hr:', 'hr ') or $_nm[:4] in ('hrc:', 'hrc '))
     ## ET requires a valid positive sum to be shown
     #if $getVar('month.' + name + '.has_data') and ($name != 'ET' or ($month.ET.sum.raw is not None and $month.ET.sum.raw > 0.0))
         <div class="col-12 col-md-6 col-xl-4 mb-4">
@@ -90,7 +88,6 @@
             </div>
         </div>
     #end if
-    #end if  ## panel-marker guard
 #end def
 
 ## +-------------------------------------------------------------------------+
@@ -98,8 +95,6 @@
 ## +-------------------------------------------------------------------------+
 
 #def chartCard($name, $id, $name2="XX")
-    #set $_nm = $name.strip().lower()
-    #if not ($_nm in ('hr', 'hrc') or $_nm[:3] in ('hr:', 'hr ') or $_nm[:4] in ('hrc:', 'hrc '))
     #if $name.startswith('customChart')
         #set $cc = $Extras.Appearance.get($name, {})
         #if $cc
@@ -140,7 +135,6 @@
             </div>
         </div>
     #end if
-    #end if  ## panel-marker guard
 #end def
 
 
@@ -235,17 +229,15 @@
             #end if
         #end for
         #if $any_has_data
-            #set $p_exp   = ($seg['type'] == 'hr')
-            #set $p_exp_s = 'true' if $p_exp else 'false'
+            #set $p_exp   = ($seg['type'] != 'collapsed')
             #set $p_show  = ' show' if $p_exp else ''
             #set $p_id    = 'nwm-val-panel-' + str($panel_idx)
             <div class="col-12 mb-3">
                 <div class="card nwm-expansion-panel">
-                    <div class="nwm-panel-header" data-toggle="collapse"
-                         data-target="#${p_id}" aria-expanded="${p_exp_s}">
-                        <span class="nwm-panel-title">${seg['title']}</span>
-                        <span class="mdi mdi-chevron-down nwm-panel-icon"></span>
-                    </div>
+                    #set global $panel_title = $seg['title']
+                    #set global $panel_id    = $p_id
+                    #set global $panel_type  = $seg['type']
+                    #include "panel_header.inc"
                     <div id="${p_id}" class="collapse${p_show}">
                         <div class="nwm-panel-body">
                             <div class="row">
@@ -292,17 +284,15 @@
             #end if
         #end for
         #if $any_has_data
-            #set $p_exp   = ($seg['type'] == 'hr')
-            #set $p_exp_s = 'true' if $p_exp else 'false'
+            #set $p_exp   = ($seg['type'] != 'collapsed')
             #set $p_show  = ' show' if $p_exp else ''
             #set $p_id    = 'nwm-chart-panel-' + str($panel_idx)
             <div class="col-12 mb-3">
                 <div class="card nwm-expansion-panel">
-                    <div class="nwm-panel-header" data-toggle="collapse"
-                         data-target="#${p_id}" aria-expanded="${p_exp_s}">
-                        <span class="nwm-panel-title">${seg['title']}</span>
-                        <span class="mdi mdi-chevron-down nwm-panel-icon"></span>
-                    </div>
+                    #set global $panel_title = $seg['title']
+                    #set global $panel_id    = $p_id
+                    #set global $panel_type  = $seg['type']
+                    #include "panel_header.inc"
                     <div id="${p_id}" class="collapse${p_show}">
                         <div class="nwm-panel-body">
                             <div class="row">
@@ -322,69 +312,14 @@
 ## | Collapsible Expansion Panels – pre-processing                           |
 ## +-------------------------------------------------------------------------+
 ##
-## enablePanels: read from skin.conf [[Appearance]], default true
-#set $enablePanels = str($Extras.Appearance.get('enablePanels', 'true')).strip().lower() not in ['false', 'no', '0']
 
-## isPanelMarker: returns True when item is hr / hrc / hr:Title / hrc:Title
-#set $isPanelMarker = lambda x: (x.strip().lower() in ('hr', 'hrc') or x.strip().lower()[:3] in ('hr:', 'hr ') or x.strip().lower()[:4] in ('hrc:', 'hrc '))
 
-## --- Build value-card segments from values_order ---
-#if isinstance($Extras.Appearance.values_order, list)
-    #set $vo_list = [x.strip() for x in $Extras.Appearance.values_order if x.strip()]
-#else
-    #set $vo_list = [x.strip() for x in str($Extras.Appearance.values_order).split(',') if x.strip()]
-#end if
-
-#set $val_segments = []
-#set $val_cur     = {'type': None, 'title': '', 'items': []}
-#set $val_seen    = set()
-
-#for $vi in $vo_list
-    #set $vi_l = $vi.strip().lower()
-    #if $enablePanels and ($vi_l == 'hr' or ($vi_l[:3] in ('hr:', 'hr ') and $vi_l[:3] != 'hrc'))
-        #silent $val_segments.append($val_cur)
-        ## Extract title: strip the 'hr' prefix (2 chars) + separator (: or space)
-        #set $p_title_v = $vi.strip()[3:].strip()
-        #set $val_cur = {'type': 'hr', 'title': $p_title_v, 'items': []}
-    #else if $enablePanels and ($vi_l == 'hrc' or $vi_l[:4] in ('hrc:', 'hrc '))
-        #silent $val_segments.append($val_cur)
-        ## Extract title: strip the 'hrc' prefix (3 chars) + separator (: or space)
-        #set $p_title_v = $vi.strip()[4:].strip()
-        #set $val_cur = {'type': 'hrc', 'title': $p_title_v, 'items': []}
-    #else if $vi not in $val_seen
-        #silent $val_seen.add($vi)
-        #silent $val_cur['items'].append($vi)
-    #end if
-#end for
-#silent $val_segments.append($val_cur)
-
-## --- Build chart segments from charts_order ---
-#if isinstance($Extras.Appearance.charts_order, list)
-    #set $co_list = [x.strip() for x in $Extras.Appearance.charts_order if x.strip()]
-#else
-    #set $co_list = [x.strip() for x in str($Extras.Appearance.charts_order).split(',') if x.strip()]
-#end if
-
-#set $chart_segments = []
-#set $chart_cur     = {'type': None, 'title': '', 'items': []}
-#set $chart_seen    = set()
-
-#for $ci in $co_list
-    #set $ci_l = $ci.strip().lower()
-    #if $enablePanels and ($ci_l == 'hr' or ($ci_l[:3] in ('hr:', 'hr ') and $ci_l[:3] != 'hrc'))
-        #silent $chart_segments.append($chart_cur)
-        #set $p_title_c = $ci.strip()[3:].strip()
-        #set $chart_cur = {'type': 'hr', 'title': $p_title_c, 'items': []}
-    #else if $enablePanels and ($ci_l == 'hrc' or $ci_l[:4] in ('hrc:', 'hrc '))
-        #silent $chart_segments.append($chart_cur)
-        #set $p_title_c = $ci.strip()[4:].strip()
-        #set $chart_cur = {'type': 'hrc', 'title': $p_title_c, 'items': []}
-    #else if $ci not in $chart_seen
-        #silent $chart_seen.add($ci)
-        #silent $chart_cur['items'].append($ci)
-    #end if
-#end for
-#silent $chart_segments.append($chart_cur)
+## --- Build layout segments -------------------------------------------------
+## Parsing lives in bin/user/panelorder.py, which reads [[[sections]]] from
+## skin.conf. Sections with a title become collapsible panels; those without
+## render loose in the surrounding row.
+#set $val_segments   = $panelSegments('card')
+#set $chart_segments = $panelSegments('chart')
 
 ## +-------------------------------------------------------------------------+
 ## | The main page layout                                                    |
@@ -410,9 +345,15 @@
 
                 <div class="row mt-3 temprow align-content-start">
                     #set $val_panel_idx = 0
-                    #for $seg in $val_segments
+                    #for $seg_i, $seg in $enumerate($val_segments)
                         #if $seg['type'] is not None
                             #set $val_panel_idx = $val_panel_idx + 1
+                        #end if
+                        ## Section boundary. A col-12 fills a whole flex line, so this is
+                        ## what makes each section start on a fresh row. Panels are col-12
+                        ## already; plain sections need it emitted explicitly.
+                        #if $seg_i > 0
+                            <div class="col-12"></div>
                         #end if
                         $renderValSegment($seg, $val_panel_idx)
                     #end for
@@ -422,9 +363,15 @@
 
                 <div class="row mt-3 graphrow align-content-start">
                     #set $chart_panel_idx = 0
-                    #for $seg in $chart_segments
+                    #for $seg_i, $seg in $enumerate($chart_segments)
                         #if $seg['type'] is not None
                             #set $chart_panel_idx = $chart_panel_idx + 1
+                        #end if
+                        ## Section boundary. A col-12 fills a whole flex line, so this is
+                        ## what makes each section start on a fresh row. Panels are col-12
+                        ## already; plain sections need it emitted explicitly.
+                        #if $seg_i > 0
+                            <div class="col-12"></div>
                         #end if
                         $renderChartSegment($seg, $chart_panel_idx)
                     #end for
@@ -493,7 +440,7 @@
         #def getChartJsCode($name, $id, $type, $series1, $series2 = "", $column = "avg", $series3 = "", $series4 = "", $series5 = "", $series6 = "", $series7 = "", $series8 = "")
 
             ## Only add JS chart code if in array
-            #if $name in $Extras.Appearance.charts_order
+            #if $name in $panelItems('chart')
 
                 #set global $cc_name  = $name
                 #set global $cc_scope = ''
@@ -851,7 +798,7 @@
             }
             #silent $processed_charts.add("windvec")
 
-            // --- Default single-series charts: loop over charts_order ---
+            // --- Default single-series charts: loop over the chart sections ---
             // Charts added to $processed_charts above are skipped here
             // Chart type overrides for charts that are not 'area' (default)
             #set $default_chart_types = {'windDir': 'line', 'rain': 'bar', 'ET': 'bar', 'windrun': 'bar', 'snowDepth': 'bar', 'lightning_strike_count': 'bar', 'lightning_noise_count': 'bar', 'lightning_disturber_count': 'bar', 'lightning_distance': 'bar'}
@@ -860,9 +807,8 @@
             // Series1 field overrides for charts where the series field name differs from the chart name
             #set $default_chart_series = {'windDir': 'wind'}
 
-            #for $x in $Extras.Appearance.charts_order
-                #set $x_nm = $x.strip().lower()
-                #if not $x.startswith('customChart') and $x not in $processed_charts and not ($x_nm in ('hr', 'hrc') or $x_nm[:3] in ('hr:', 'hr ') or $x_nm[:4] in ('hrc:', 'hrc '))
+            #for $x in $panelItems('chart')
+                #if not $x.startswith('customChart') and $x not in $processed_charts
                     #silent $processed_charts.add($x)
                     #if $getVar('month.' + $x + '.has_data')
                         #set $c_type = $default_chart_types.get($x, 'area')
@@ -876,7 +822,7 @@
 
             // Custom charts (dynamically generated from skin.conf [[Appearance]] [[[customChart*]]] sections)
             #set $seen_custom_charts = set()
-            #for $x in $Extras.Appearance.charts_order
+            #for $x in $panelItems('chart')
                 #if $x.startswith('customChart') and $x not in $seen_custom_charts
                     #silent $seen_custom_charts.add($x)
                     #set $cc = $Extras.Appearance.get($x, {})
@@ -978,7 +924,7 @@
                         #include "chart_colors_setup.inc"
 
                         ## Render chart JS
-                        #if len($cc_series_pairs) > 0 and $x in $Extras.Appearance.charts_order
+                        #if len($cc_series_pairs) > 0 and $x in $panelItems('chart')
                             #set $cc_id = $x + "chart"
                             #try
                                 #set $_ = $axes_list

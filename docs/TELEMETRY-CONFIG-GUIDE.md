@@ -7,9 +7,10 @@ by your weather station. Each field is configured in a single block under
 `[[Telemetry]]` in `skin.conf`. A `sensor_type` key picks the gauge style; without
 one the field shows its raw value with no gauge.
 
-Which fields appear is controlled by `Extras.Appearance.telemetry_order` (cards)
-and `telemetry_chart_order` (charts). Only fields listed there are displayed —
-the per-field config blocks are just configuration, not opt-in.
+Which fields appear is controlled by the `items` of `telemetry` and
+`telemetry_chart` sections under `Extras.Appearance.[[[sections]]]`. Only
+fields listed there are displayed — the per-field config blocks are just
+configuration, not opt-in.
 
 | sensor_type | What renders | Typical sensor |
 |---|---|---|
@@ -34,8 +35,8 @@ Both are gone. Every field now has a single block directly under `[[Telemetry]]`
 2. Add `sensor_type` to every gauge field. Anything left without `sensor_type`
    now defaults to `none` — a plain raw-value display with no gauge. Voltage,
    signal, percent, and status fields all need to declare themselves.
-3. Delete the `enabled` lines. Being listed in `telemetry_order` is what opts a
-   field in.
+3. Delete the `enabled` lines. Being listed in a telemetry section's `items` is
+   what opts a field in.
 4. Delete any `show_value = pad` lines. Bottom spacing is now automatic; `pad`
    is gone. Use `show_value = no` if you want to hide the value.
 
@@ -102,16 +103,28 @@ Both are gone. Every field now has a single block directly under `[[Telemetry]]`
 
 ### Field discovery
 
-Fields are shown only when they appear in `telemetry_order` (cards) or
-`telemetry_chart_order` (charts) under `[[Appearance]]`. The skin does not walk
-`[[Telemetry]]` sub-sections looking for fields, so the per-field blocks sit
-alongside scalar settings like `chart_days` without confusion.
+Fields are shown only when they appear in the `items` of a `telemetry` or
+`telemetry_chart` section under `[[Appearance]] [[[sections]]]`. The skin does
+not walk `[[Telemetry]]` sub-sections looking for fields, so the per-field
+blocks sit alongside scalar settings like `chart_days` without confusion.
 
 ```ini
 [[Appearance]]
-    telemetry_order = consBatteryVoltage, outTempBatteryStatus, rxCheckPercent
-    telemetry_chart_order = consBatteryVoltage, outTempBatteryStatus
+    [[[sections]]]
+        [[[[telemetry_cards]]]]
+            items = consBatteryVoltage, outTempBatteryStatus, rxCheckPercent
+            content = telemetry
+        [[[[telemetry_charts]]]]
+            items = consBatteryVoltage, outTempBatteryStatus
+            content = telemetry_chart
 ```
+
+**Placement matters:** `[[[sections]]]` must be the *last* thing under
+`[[Appearance]]`. configobj treats any plain `[[Appearance]]` setting
+written after it (`mode`, `panelColor`, `defaultChartBehavior`, ...) as
+belonging to whichever `[[[[...]]]]` block was opened last, not to
+`[[Appearance]]` itself. Add or edit other Appearance settings above
+`[[[sections]]]`, never below it.
 
 ### Per-field block structure
 
@@ -397,12 +410,22 @@ automatic; delete any `pad` lines from your config.
 
 ## Complete examples
 
+Each example below shows `[[[sections]]]` as the only thing under
+`[[Appearance]]`. If your `[[Appearance]]` block already has other settings
+(`mode`, `panelColor`, `enablePanels`, ...), keep `[[[sections]]]` after all
+of them - see the placement note above.
+
 ### Example 1: Mixed sensors (status + voltage + signal)
 
 ```ini
 [[Appearance]]
-    telemetry_order = consBatteryVoltage, outTempBatteryStatus, rxCheckPercent
-    telemetry_chart_order = consBatteryVoltage, outTempBatteryStatus
+    [[[sections]]]
+        [[[[telemetry_cards]]]]
+            items = consBatteryVoltage, outTempBatteryStatus, rxCheckPercent
+            content = telemetry
+        [[[[telemetry_charts]]]]
+            items = consBatteryVoltage, outTempBatteryStatus
+            content = telemetry_chart
 
 [[Telemetry]]
     allow_zero_values = yes
@@ -438,7 +461,10 @@ automatic; delete any `pad` lines from your config.
 
 ```ini
 [[Appearance]]
-    telemetry_order = extraBattery7, supplyVoltage
+    [[[sections]]]
+        [[[[telemetry_cards]]]]
+            items = extraBattery7, supplyVoltage
+            content = telemetry
 
 [[Telemetry]]
     allow_zero_values = yes
@@ -479,28 +505,35 @@ automatic; delete any `pad` lines from your config.
 
 ## Organizing telemetry display
 
-### `telemetry_order` (cards)
+### Telemetry card sections
 
 Controls the order of telemetry value cards on the left side of the telemetry
-page. Only fields listed here are shown.
+page. Only fields listed in the section's `items` are shown.
 
 ```ini
 [[Appearance]]
-    telemetry_order = rxCheckPercent, txBatteryStatus, windBatteryStatus, rainBatteryStatus, outTempBatteryStatus, inTempBatteryStatus, consBatteryVoltage, heatingVoltage, supplyVoltage
+    [[[sections]]]
+        [[[[telemetry_cards]]]]
+            items = rxCheckPercent, txBatteryStatus, windBatteryStatus, rainBatteryStatus, outTempBatteryStatus, consBatteryVoltage
+            content = telemetry
 ```
 
-### `telemetry_chart_order` (charts)
+### Telemetry chart sections
 
-Controls the order of historical charts. Only fields listed here get a chart.
+Controls the order of historical charts. Only fields listed in the section's
+`items` get a chart.
 
 ```ini
 [[Appearance]]
-    telemetry_chart_order = outTempBatteryStatus, inTempBatteryStatus, consBatteryVoltage, supplyVoltage
+    [[[sections]]]
+        [[[[telemetry_charts]]]]
+            items = outTempBatteryStatus, inTempBatteryStatus, consBatteryVoltage, supplyVoltage
+            content = telemetry_chart
 ```
 
 **Usage tips:**
 - List fields in the order you want them to appear
-- Only fields listed in `telemetry_order` / `telemetry_chart_order` are shown
+- Only fields listed in a telemetry or telemetry_chart section's `items` are shown
 - Separate field names with commas
 
 ---
@@ -563,7 +596,7 @@ Controls the order of historical charts. Only fields listed here get a chart.
 ## Troubleshooting
 
 **Problem:** A field is not showing on the telemetry page
-- Check it is listed in `telemetry_order` under `[[Appearance]]`
+- Check it is listed in a telemetry section's `items` under `[[Appearance]]`
 - If the sensor can report 0, set `allow_zero_values = yes`
 
 **Problem:** A gauge field shows as a plain number with no gauge
