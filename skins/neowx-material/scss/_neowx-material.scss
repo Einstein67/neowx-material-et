@@ -398,6 +398,16 @@ footer.page-footer {
 // .apexcharts-toolbar-custom-icon itself, but its icon sizing and hover rules
 // only name the built-in buttons, so both are repeated here.
 
+// ApexCharts appends custom icons after the hamburger menu, and its `index`
+// option cannot move ours reliably: the zoom buttons are left out on charts
+// with chart.zoom.enabled = false (the line charts), so a fixed position lands
+// somewhere different depending on the chart. Reordering the flex container
+// does not care how many buttons there are. This is a no-op when the pop-up
+// button is switched off, since the menu is last already.
+.apexcharts-toolbar .apexcharts-menu-icon {
+  order: 1;
+}
+
 .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon {
   svg {
     width: 18px;

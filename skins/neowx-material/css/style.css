@@ -6806,6 +6806,10 @@ footer.page-footer .row > .col-md-3 ul {
   margin: 0;
 }
 
+.apexcharts-toolbar .apexcharts-menu-icon {
+  order: 1;
+}
+
 .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon svg {
   width: 18px;
   height: 18px;
