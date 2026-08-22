@@ -55,6 +55,18 @@
     #set $defaultChartBehavior = "pan"
 #end if
 
+#set $enableChartPopup = "true"
+#if $Extras.Appearance.get('enableChartPopup') == "false"
+    #set $enableChartPopup = "false"
+#end if
+
+## Strings needed by js/app.js, which is a plain .js file with no template access
+<script type="text/javascript">
+    window.NEOWX_TEXTS = {
+        close: "$gettext('close')"
+    };
+</script>
+
 ## Global apexcharts config
 <script type="text/javascript">
     // Charts drawn in "align" mode (the only ones with xaxis.min+max set) keep
@@ -165,6 +177,19 @@
             },
             toolbar: {
                 autoSelected: '$defaultChartBehavior',
+#if $enableChartPopup == "true"
+                // Opens a copy of the chart in a pop-up window. Set as a global
+                // default so every chart gets the button; neowxChartPopup lives
+                // in js/app.js, which is loaded above.
+                tools: {
+                    customIcons: [{
+                        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>',
+                        title: "$gettext('expand_chart')",
+                        class: 'neowx-chart-popup-icon',
+                        click: neowxChartPopup
+                    }]
+                },
+#end if
                 export: {
                     csv: {
                         headerCategory: 'DateTime',

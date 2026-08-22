@@ -388,3 +388,78 @@ footer.page-footer {
   }
 }
 
+
+// ==============================================================================
+
+// Chart pop-up
+// ---------------------------------------------------------------------------
+// The "expand" button added to every ApexCharts toolbar (Appearance /
+// enableChartPopup) and the modal it opens. ApexCharts already styles
+// .apexcharts-toolbar-custom-icon itself, but its icon sizing and hover rules
+// only name the built-in buttons, so both are repeated here.
+
+.apexcharts-toolbar-custom-icon.neowx-chart-popup-icon {
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: rgba(15, 23, 42, 0.06);
+    color: #1f2937;
+  }
+}
+
+.apexcharts-theme-dark .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+#neowx-chart-popup {
+  .modal-body {
+    // The copied chart is created with height: '100%', which ApexCharts
+    // measures against this element (minus its padding), so the dialog needs
+    // a real height. The subtracted space covers the dialog margins and the
+    // header, keeping the modal itself inside the viewport.
+    height: calc(100vh - 11rem);
+    min-height: 280px;
+  }
+}
+
+// Dark mode – the modal is appended to <body>, outside any .card, so it needs
+// the same treatment the cards get above.
+@media (prefers-color-scheme: dark) {
+  .auto-theme #neowx-chart-popup {
+    .modal-content {
+      background-color: #444 !important;
+      color: #ddd !important;
+    }
+
+    .modal-header {
+      border-bottom-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .close {
+      color: #ddd;
+      text-shadow: none;
+      opacity: 0.75;
+    }
+  }
+}
+
+.dark-theme #neowx-chart-popup {
+  .modal-content {
+    background-color: #444 !important;
+    color: #ddd !important;
+  }
+
+  .modal-header {
+    border-bottom-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .close {
+    color: #ddd;
+    text-shadow: none;
+    opacity: 0.75;
+  }
+}

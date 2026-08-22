@@ -6806,4 +6806,50 @@ footer.page-footer .row > .col-md-3 ul {
   margin: 0;
 }
 
+.apexcharts-toolbar-custom-icon.neowx-chart-popup-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover {
+  background: rgba(15, 23, 42, 0.06);
+  color: #1f2937;
+}
+
+.apexcharts-theme-dark .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+#neowx-chart-popup .modal-body {
+  height: calc(100vh - 11rem);
+  min-height: 280px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .auto-theme #neowx-chart-popup .modal-content {
+    background-color: #444 !important;
+    color: #ddd !important;
+  }
+  .auto-theme #neowx-chart-popup .modal-header {
+    border-bottom-color: rgba(255, 255, 255, 0.15);
+  }
+  .auto-theme #neowx-chart-popup .close {
+    color: #ddd;
+    text-shadow: none;
+    opacity: 0.75;
+  }
+}
+.dark-theme #neowx-chart-popup .modal-content {
+  background-color: #444 !important;
+  color: #ddd !important;
+}
+.dark-theme #neowx-chart-popup .modal-header {
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+.dark-theme #neowx-chart-popup .close {
+  color: #ddd;
+  text-shadow: none;
+  opacity: 0.75;
+}
+
 /*# sourceMappingURL=style.css.map */
