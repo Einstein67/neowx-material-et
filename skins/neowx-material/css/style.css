@@ -6874,6 +6874,9 @@ footer.page-footer .row > .col-md-3 ul {
   height: calc(100vh - 11rem);
   min-height: 280px;
 }
+#neowx-popup #neowx-popup-mount {
+  height: 100%;
+}
 #neowx-popup .nwm-embed-popup-media {
   display: block;
   width: 100%;

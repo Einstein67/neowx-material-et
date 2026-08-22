@@ -490,6 +490,15 @@ footer.page-footer {
     min-height: 280px;
   }
 
+  // The media below is sized in percentages, and a percentage height only
+  // resolves when every element up to the one with a real height has a
+  // definite height too. Without this the mount point is auto-height and an
+  // iframe silently falls back to its 150px default. (A chart is unaffected
+  // either way: ApexCharts measures the mount's parent itself.)
+  #neowx-popup-mount {
+    height: 100%;
+  }
+
   // Embedded media fills the dialog; an image keeps its own proportions
   // instead of the card's cropped aspect ratio.
   .nwm-embed-popup-media {
