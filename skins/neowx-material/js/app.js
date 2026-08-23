@@ -649,8 +649,8 @@ function neowxAlignChartToolbar(chartContext) {
 // "center-adjusted" and "left" also need to know how much room that control
 // takes, and that is not a number the templates can know: it is one 32 px
 // button on an [[Embedded]] card or a chart in "separate" mode, a whole toolbar
-// in "align" mode, and nothing at all on a value card, on a chart in "default"
-// mode, or wherever the pop-up buttons are switched off. So it is measured from
+// in "align" mode, and nothing at all on a value card, on a chart in
+// "chart_default" mode, or wherever the pop-up buttons are switched off. So it is measured from
 // whatever is actually in the corner, and written to the card as
 // --nwm-title-reserve for the stylesheet to use.
 

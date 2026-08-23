@@ -362,8 +362,9 @@ href="img/splash/splash_1536x2048.png"
 ## Per-card overrides, keyed by the name the card carries as data-name:
 ##   - [[[TitleAlign]]] maps names to values, for value cards and built-in
 ##     charts, which have no section of their own
-##   - an "align" key inside an [[Embedded]] card's or a [[[customChart...]]]
-##     section, which is where those two are configured anyway
+##   - a "title_align" key inside an [[Embedded]] card's or a
+##     [[[customChart...]]] section, which is where those two are configured
+##     anyway
 #set $_title_overrides = {}
 #if $varExists('Extras.Appearance.TitleAlign')
     #for $_key in $Extras.Appearance.TitleAlign.keys()
@@ -376,7 +377,7 @@ href="img/splash/splash_1536x2048.png"
 #for $_key in $Extras.Appearance.keys()
     #set $_sub = $Extras.Appearance[$_key]
     #if hasattr($_sub, 'get')
-        #set $_a = str($_sub.get('align', '')).strip().lower()
+        #set $_a = str($_sub.get('title_align', '')).strip().lower()
         #if $_a in $_ALIGNS
             #silent $_title_overrides.update({str($_key): $_a})
         #end if
@@ -386,7 +387,7 @@ href="img/splash/splash_1536x2048.png"
     #for $_key in $Extras.Embedded.keys()
         #set $_sub = $Extras.Embedded[$_key]
         #if hasattr($_sub, 'get')
-            #set $_a = str($_sub.get('align', '')).strip().lower()
+            #set $_a = str($_sub.get('title_align', '')).strip().lower()
             #if $_a in $_ALIGNS
                 #silent $_title_overrides.update({str($_key): $_a})
             #end if
