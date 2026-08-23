@@ -347,6 +347,11 @@ href="img/splash/splash_1536x2048.png"
 ## ones are built in JavaScript - so js/app.js measures it and sets
 ## --nwm-title-reserve on the card. The fallback of 0px is what a card with no
 ## control gets, which makes center-adjusted behave as center there.
+##
+## It sets --nwm-title-inset the same way: how far a left-aligned heading has
+## to be pushed off the card's edge, on top of whatever the card body's own
+## padding already contributes. That differs by card - the [[Embedded]] ones
+## have none at all - so it cannot be a constant here.
 #set $_ALIGNS = ('center', 'left', 'center-adjusted')
 
 #set $_title_align = str($Extras.Appearance.get('title_align', 'center')).strip().lower()
@@ -404,12 +409,14 @@ href="img/splash/splash_1536x2048.png"
     $_card > .card-body > .h5-responsive {
         #if $_align == 'left'
         text-align: left;
+        padding-left: var(--nwm-title-inset, 0px);
         padding-right: var(--nwm-title-reserve, 0px);
         #else if $_align == 'center-adjusted'
         text-align: center;
         padding-right: var(--nwm-title-reserve, 0px);
         #else
         text-align: center;
+        padding-left: 0;
         padding-right: 0;
         #end if
     }

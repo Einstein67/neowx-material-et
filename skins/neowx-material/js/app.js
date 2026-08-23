@@ -572,7 +572,7 @@ function neowxSeparateExpandButton(chartContext) {
         // A direct child of .card, which is what the stylesheet positions it
         // against - the templates place the [[Embedded]] one the same way.
         card.appendChild(toolbar);
-        neowxSetTitleReserve(card);
+        neowxSetTitleSpacing(card);
     } catch (e) {
         console.error('neowx-material: could not add the chart expand button', e);
     }
@@ -630,7 +630,7 @@ function neowxAlignChartToolbar(chartContext) {
         host.appendChild(toolbar);
         // The card's heading may have to leave room for what just arrived.
         if (host.classList.contains('card')) {
-            neowxSetTitleReserve(host);
+            neowxSetTitleSpacing(host);
         }
     } catch (e) {
         // Nothing here is load-bearing - a chart whose toolbar stayed where
@@ -656,6 +656,14 @@ function neowxAlignChartToolbar(chartContext) {
 // Gap between the heading and the control, so the two never quite touch.
 var NEOWX_TITLE_GUTTER = 8;
 
+// How far a left-aligned heading sits from the card's edge. The card body's
+// own padding is not enough on its own and is not even the same everywhere -
+// half a rem on most cards, none at all on the [[Embedded]] ones, whose body
+// is px-0 so the media can run to the edge - which would leave their headings
+// flush against it. This is the dialog header's padding, so a heading starts
+// on the same line whether it is on a card or in the pop-up that card opens.
+var NEOWX_TITLE_INSET = 16;
+
 // The control a card carries in its top-right corner, if it has one at all:
 // the [[Embedded]] cards' expand button, the one app.js adds to a chart card in
 // "separate" mode, or a toolbar hosted there in "align" mode.
@@ -663,7 +671,7 @@ function neowxCardCorner(card) {
     return card.querySelector(':scope > .nwm-embed-toolbar, :scope > .nwm-hosted-toolbar');
 }
 
-function neowxSetTitleReserve(card) {
+function neowxSetTitleSpacing(card) {
     try {
         if (!card || !card.querySelector) {
             return;
@@ -673,6 +681,23 @@ function neowxSetTitleReserve(card) {
         if (!heading) {
             return;
         }
+        var bodyBox = body.getBoundingClientRect();
+        if (bodyBox.width === 0) {
+            return;
+        }
+        var bodyStyle = window.getComputedStyle(body);
+
+        // Left-aligned headings start on NEOWX_TITLE_INSET from the card's
+        // edge, whatever the card body contributes towards it. Taken off the
+        // heading's own box, which is where the text starts from and is not
+        // affected by the padding being set here - reading the body's padding
+        // instead would miss that an [[Embedded]] card's body is not only
+        // unpadded but sits slightly inside the card.
+        var cardBox = card.getBoundingClientRect();
+        var headingLeft = heading.getBoundingClientRect().left;
+        var inset = Math.max(0, NEOWX_TITLE_INSET - (headingLeft - cardBox.left));
+        card.style.setProperty('--nwm-title-inset', inset + 'px');
+
         var corner = neowxCardCorner(card);
         // No control, or one that is laid out but not shown: nothing to leave
         // room for, and center-adjusted then behaves as center.
@@ -681,14 +706,13 @@ function neowxSetTitleReserve(card) {
             return;
         }
         var cornerBox = corner.getBoundingClientRect();
-        var bodyBox = body.getBoundingClientRect();
-        if (cornerBox.width === 0 || bodyBox.width === 0) {
+        if (cornerBox.width === 0) {
             return;
         }
         // Measured against the card body's content edge rather than the
         // heading's own, which already carries whatever reserve was set last
         // time and would creep outwards on every pass.
-        var contentRight = bodyBox.right - (parseFloat(window.getComputedStyle(body).paddingRight) || 0);
+        var contentRight = bodyBox.right - (parseFloat(bodyStyle.paddingRight) || 0);
         var reserve = Math.max(0, contentRight - cornerBox.left + NEOWX_TITLE_GUTTER);
         card.style.setProperty('--nwm-title-reserve', reserve + 'px');
     } catch (e) {
@@ -707,7 +731,7 @@ function neowxCardTitleAlign(card) {
     return (align === 'left' || align === 'center-adjusted') ? align : 'center';
 }
 
-// The dialog's counterpart of neowxSetTitleReserve. What sits in its corner is
+// The dialog's counterpart of neowxSetTitleSpacing. What sits in its corner is
 // either the chart toolbar - "align" mode hosts it on the header row - or the
 // dialog's own close button, and both are in the header.
 function neowxSetPopupTitleReserve(modal) {
@@ -738,12 +762,12 @@ function neowxSetPopupTitleReserve(modal) {
     }
 }
 
-// Every card on the page. Charts call neowxSetTitleReserve themselves once
+// Every card on the page. Charts call neowxSetTitleSpacing themselves once
 // their toolbar exists, which is after this has run for them.
-function neowxSetTitleReserves() {
+function neowxSetTitleSpacings() {
     var cards = document.querySelectorAll('.card');
     for (var i = 0; i < cards.length; i++) {
-        neowxSetTitleReserve(cards[i]);
+        neowxSetTitleSpacing(cards[i]);
     }
 }
 
@@ -752,16 +776,36 @@ function neowxSetTitleReserves() {
 // changes the measurement afterwards: a card still parsing when this ran, web
 // fonts settling on load, and a resize, which can change the card body's own
 // padding at a breakpoint. All idempotent - each pass recomputes from scratch.
-neowxSetTitleReserves();
+neowxSetTitleSpacings();
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', neowxSetTitleReserves);
+    document.addEventListener('DOMContentLoaded', neowxSetTitleSpacings);
 }
 
-window.addEventListener('load', neowxSetTitleReserves);
+window.addEventListener('load', neowxSetTitleSpacings);
 
 var _neowxTitleResizeTimer = null;
 window.addEventListener('resize', function () {
     clearTimeout(_neowxTitleResizeTimer);
-    _neowxTitleResizeTimer = setTimeout(neowxSetTitleReserves, 250);
+    _neowxTitleResizeTimer = setTimeout(neowxSetTitleSpacings, 250);
 });
+
+// A card's own box can move without the window changing at all: an
+// [[Embedded]] card's image arrives and lays its body out differently, a chart
+// finishes rendering, a panel is expanded. The measurement comes off that box,
+// so watch it rather than hope the first pass caught it settled.
+if (typeof ResizeObserver !== 'undefined') {
+    var _neowxTitleObserver = new ResizeObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+            var target = entries[i].target;
+            neowxSetTitleSpacing(target.classList.contains('card')
+                ? target : target.closest('.card'));
+        }
+    });
+    // The body as well as the card: an image arriving can move the body inside
+    // a card whose own box never changes.
+    var _neowxWatched = document.querySelectorAll('.card, .card > .card-body');
+    for (var _c = 0; _c < _neowxWatched.length; _c++) {
+        _neowxTitleObserver.observe(_neowxWatched[_c]);
+    }
+}
