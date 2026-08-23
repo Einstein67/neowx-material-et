@@ -6820,7 +6820,7 @@ footer.page-footer .row > .col-md-3 ul {
 }
 
 .apexcharts-theme-dark .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 
@@ -6900,7 +6900,7 @@ footer.page-footer .row > .col-md-3 ul {
     color: #d4d6dc;
   }
   .auto-theme .nwm-embed-toolbar-icon:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
     color: #fff;
   }
   .auto-theme #neowx-popup .modal-content {
@@ -6923,7 +6923,7 @@ footer.page-footer .row > .col-md-3 ul {
   color: #d4d6dc;
 }
 .dark-theme .nwm-embed-toolbar-icon:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 .dark-theme #neowx-popup .modal-content {

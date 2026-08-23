@@ -55,12 +55,17 @@
     #set $defaultChartBehavior = "pan"
 #end if
 
+## Default-on, so an unrecognised value must not leave the feature switched on
+## with no way to turn it off. Normalised the way bin/user/panelorder.py reads
+## enablePanels, rather than the exact-match the opt-in settings above use.
 #set $enableChartPopup = "true"
-#if $Extras.Appearance.get('enableChartPopup') == "false"
+#if str($Extras.Appearance.get('enableChartPopup', 'true')).strip().lower() in ('false', 'no', '0')
     #set $enableChartPopup = "false"
 #end if
 
-## Strings needed by js/app.js, which is a plain .js file with no template access
+## Strings for js/app.js, which is a plain .js file with no template access.
+## Emitted after app.js is loaded above, so app.js must only read these lazily
+## (at click time) - anything read at its top level would still be undefined.
 <script type="text/javascript">
     window.NEOWX_TEXTS = {
         close: "$gettext('close')"

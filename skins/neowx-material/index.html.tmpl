@@ -22,12 +22,20 @@
 #end def
 
 ## +-------------------------------------------------------------------------+
-## | Maximize button for [[Embedded]] cards. Styled to match the ApexCharts  |
-## | chart toolbars; neowxEmbedPopup in js/app.js handles the click.         |
+## | Expand button for [[Embedded]] cards. Styled to match the ApexCharts    |
+## | chart toolbars. The data-nwm-embed-popup attribute is the contract: a   |
+## | delegated click handler in js/app.js keys on it, so renaming it here    |
+## | silently stops the button working.                                      |
+## |                                                                         |
+## | The toolbar must stay a direct child of .card, next to .card-body -     |
+## | it anchors against Bootstrap's .card { position: relative }, and the    |
+## | handler walks up to .card to find the heading and the media.            |
 ## +-------------------------------------------------------------------------+
 
 #def embedToolbar()
-    #if $Extras.Appearance.get('enableEmbeddedPopup') != "false"
+    ## Default-on, so normalise rather than exact-match - see the same handling
+    ## of enableChartPopup in js.inc.
+    #if str($Extras.Appearance.get('enableEmbeddedPopup', 'true')).strip().lower() not in ('false', 'no', '0')
         <div class="nwm-embed-toolbar">
             <button type="button" class="nwm-embed-toolbar-icon" data-nwm-embed-popup
                     title="$gettext('expand')" aria-label="$gettext('expand')">

@@ -408,7 +408,10 @@ footer.page-footer {
 }
 
 // ApexCharts styles .apexcharts-toolbar-custom-icon itself, but its icon
-// sizing and hover rules only name the built-in buttons, so both are repeated.
+// sizing and hover rules only name the built-in buttons, so both are repeated
+// here at the vendor's own values - this button sits in the vendor's toolbar,
+// so a near-miss on the hover shade shows up next to the buttons either side
+// of it. fill/stroke come from attributes on the inline SVG in js.inc.
 .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon {
   svg {
     width: 18px;
@@ -422,7 +425,7 @@ footer.page-footer {
 }
 
 .apexcharts-theme-dark .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 
@@ -495,8 +498,9 @@ footer.page-footer {
   .modal-body {
     // A copied chart is created with height: '100%' and ApexCharts measures
     // that against this element (minus its padding), so the dialog needs a
-    // real height. The subtracted space covers the dialog margins and the
-    // header, keeping the modal itself inside the viewport.
+    // real height. 11rem covers 3.5rem of dialog margins plus a ~4rem header,
+    // and the remaining slack keeps a taller header from pushing the modal
+    // past the viewport.
     height: calc(100vh - 11rem);
     min-height: 280px;
   }
@@ -510,8 +514,7 @@ footer.page-footer {
     height: 100%;
   }
 
-  // Embedded media fills the dialog; an image keeps its own proportions
-  // instead of the card's cropped aspect ratio.
+  // An image keeps its own proportions rather than the card's cropped ratio.
   .nwm-embed-popup-media {
     display: block;
     width: 100%;
@@ -536,7 +539,7 @@ footer.page-footer {
       color: #d4d6dc;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.08);
         color: #fff;
       }
     }
@@ -569,7 +572,7 @@ footer.page-footer {
     color: #d4d6dc;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
       color: #fff;
     }
   }
