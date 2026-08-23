@@ -63,13 +63,31 @@
     #set $enableChartPopup = "false"
 #end if
 
+## Where the chart buttons sit - see chart_toolbar in skin.conf. Anything not
+## recognised falls back to the ApexCharts placement rather than to a guess.
+#set $chartToolbar = str($Extras.Appearance.get('chart_toolbar', 'default')).strip().lower()
+#if $chartToolbar not in ('default', 'separate', 'align')
+    #set $chartToolbar = "default"
+#end if
+## "separate" moves the expand button out of the toolbar, so with the pop-up
+## switched off there is nothing left for it to do.
+#if $chartToolbar == "separate" and $enableChartPopup == "false"
+    #set $chartToolbar = "default"
+#end if
+
 ## Strings for js/app.js, which is a plain .js file with no template access.
 ## Emitted after app.js is loaded above, so app.js must only read these lazily
 ## (at click time) - anything read at its top level would still be undefined.
 <script type="text/javascript">
     window.NEOWX_TEXTS = {
-        close: "$gettext('close')"
+        close: "$gettext('close')",
+        // Used when app.js builds the expand button itself, in "separate" mode.
+        expand_chart: "$gettext('expand_chart')"
     };
+
+    // Where a chart's buttons go: default / separate / align. Read lazily, at
+    // mount time - see neowxChartToolbarMode in js/app.js.
+    window.NEOWX_CHART_TOOLBAR = "$chartToolbar";
 
     // Card headings are <h5 class="h5-responsive $Extras.color-text">. The
     // pop-up builds its title in JS, so it is given the same classes from here
@@ -95,6 +113,9 @@
                     { min: x.min, max: x.max, tickAmount: x.tickAmount };
             }
         } catch (e) {}
+        // Puts the chart's buttons where chart_toolbar asks for them. Lives
+        // in js/app.js, which is loaded above.
+        neowxSetupChartToolbar(chartContext);
     }
     function neowxAlignAxis(minMs, maxMs) {
         var secs = (maxMs - minMs) / 1000;
@@ -188,13 +209,15 @@
             },
             toolbar: {
                 autoSelected: '$defaultChartBehavior',
-#if $enableChartPopup == "true"
+#if $enableChartPopup == "true" and $chartToolbar != "separate"
                 // Opens a copy of the chart in a pop-up window. Set as a global
-                // default so every chart gets the button; neowxChartPopup lives
-                // in js/app.js, which is loaded above.
+                // default so every chart gets the button; neowxChartPopup and
+                // the icon both live in js/app.js, which is loaded above. In
+                // "separate" mode app.js puts this button in the card's corner
+                // instead, so it is left out of the toolbar here.
                 tools: {
                     customIcons: [{
-                        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>',
+                        icon: NEOWX_EXPAND_ICON,
                         title: "$gettext('expand_chart')",
                         class: 'neowx-chart-popup-icon',
                         click: neowxChartPopup
@@ -219,6 +242,10 @@
             },
             events: {
                 mounted: neowxMountedHandler,
+                // ApexCharts rebuilds the toolbar on a re-render, and a
+                // re-render is also how it answers a resize - which is when
+                // the heading above the chart can change height.
+                updated: neowxSetupChartToolbar,
                 zoomed: neowxZoomHandler,
                 beforeResetZoom: neowxBeforeResetHandler
             },

@@ -6810,21 +6810,41 @@ footer.page-footer .row > .col-md-3 ul {
   order: 1;
 }
 
-.apexcharts-toolbar-custom-icon.neowx-chart-popup-icon svg {
+.apexcharts-toolbar .neowx-chart-close-icon {
+  order: 2;
+}
+
+.apexcharts-toolbar-custom-icon.neowx-chart-popup-icon svg,
+.apexcharts-toolbar-custom-icon.neowx-chart-close-icon svg {
   width: 18px;
   height: 18px;
 }
-.apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover {
+.apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover,
+.apexcharts-toolbar-custom-icon.neowx-chart-close-icon:hover {
   background: rgba(15, 23, 42, 0.06);
   color: #1f2937;
 }
 
-.apexcharts-theme-dark .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover {
+.nwm-hosted-toolbar .apexcharts-pan-icon.apexcharts-selected,
+.nwm-hosted-toolbar .apexcharts-reset-zoom-icon.apexcharts-selected,
+.nwm-hosted-toolbar .apexcharts-selection-icon.apexcharts-selected,
+.nwm-hosted-toolbar .apexcharts-zoom-icon.apexcharts-selected {
+  background: rgba(0, 143, 251, 0.12);
+  color: #008ffb;
+}
+.nwm-hosted-toolbar button:hover {
+  background: rgba(15, 23, 42, 0.06);
+  color: #1f2937;
+}
+
+.apexcharts-theme-dark .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover,
+.apexcharts-theme-dark .apexcharts-toolbar-custom-icon.neowx-chart-close-icon:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 
-.nwm-embed-toolbar {
+.nwm-embed-toolbar,
+.card > .nwm-hosted-toolbar {
   position: absolute;
   top: 6px;
   right: 6px;
@@ -6879,11 +6899,14 @@ footer.page-footer .row > .col-md-3 ul {
   position: relative;
   justify-content: center;
 }
-#neowx-popup .modal-header .close {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 0;
+#neowx-popup .modal-header .nwm-popup-close,
+#neowx-popup .modal-header .nwm-hosted-toolbar {
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+}
+#neowx-popup.nwm-popup-own-close .modal-header .nwm-popup-close {
+  display: none;
 }
 #neowx-popup .modal-title {
   font-weight: 400;
@@ -6909,15 +6932,26 @@ footer.page-footer .row > .col-md-3 ul {
 }
 
 @media (prefers-color-scheme: dark) {
-  .auto-theme .nwm-embed-toolbar {
+  .auto-theme .nwm-embed-toolbar,
+  .auto-theme .nwm-hosted-toolbar {
     background: rgba(28, 28, 31, 0.82);
   }
-  .auto-theme .nwm-embed-toolbar-icon {
+  .auto-theme .nwm-embed-toolbar-icon,
+  .auto-theme .nwm-hosted-toolbar button {
     color: #d4d6dc;
   }
-  .auto-theme .nwm-embed-toolbar-icon:hover {
+  .auto-theme .nwm-embed-toolbar-icon:hover,
+  .auto-theme .nwm-hosted-toolbar button:hover {
     background: rgba(255, 255, 255, 0.08);
     color: #fff;
+  }
+  .auto-theme .nwm-hosted-toolbar .apexcharts-menu {
+    background: rgba(28, 28, 31, 0.92);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #f3f4f6;
+  }
+  .auto-theme .nwm-hosted-toolbar .apexcharts-menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
   }
   .auto-theme #neowx-popup .modal-content {
     background-color: #444 !important;
@@ -6926,21 +6960,27 @@ footer.page-footer .row > .col-md-3 ul {
   .auto-theme #neowx-popup .modal-header {
     border-bottom-color: rgba(255, 255, 255, 0.15);
   }
-  .auto-theme #neowx-popup .close {
-    color: #ddd;
-    text-shadow: none;
-    opacity: 0.75;
-  }
 }
-.dark-theme .nwm-embed-toolbar {
+.dark-theme .nwm-embed-toolbar,
+.dark-theme .nwm-hosted-toolbar {
   background: rgba(28, 28, 31, 0.82);
 }
-.dark-theme .nwm-embed-toolbar-icon {
+.dark-theme .nwm-embed-toolbar-icon,
+.dark-theme .nwm-hosted-toolbar button {
   color: #d4d6dc;
 }
-.dark-theme .nwm-embed-toolbar-icon:hover {
+.dark-theme .nwm-embed-toolbar-icon:hover,
+.dark-theme .nwm-hosted-toolbar button:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
+}
+.dark-theme .nwm-hosted-toolbar .apexcharts-menu {
+  background: rgba(28, 28, 31, 0.92);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #f3f4f6;
+}
+.dark-theme .nwm-hosted-toolbar .apexcharts-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 .dark-theme #neowx-popup .modal-content {
   background-color: #444 !important;
@@ -6948,11 +6988,6 @@ footer.page-footer .row > .col-md-3 ul {
 }
 .dark-theme #neowx-popup .modal-header {
   border-bottom-color: rgba(255, 255, 255, 0.15);
-}
-.dark-theme #neowx-popup .close {
-  color: #ddd;
-  text-shadow: none;
-  opacity: 0.75;
 }
 
 /*# sourceMappingURL=style.css.map */
