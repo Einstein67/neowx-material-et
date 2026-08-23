@@ -565,6 +565,22 @@ footer.page-footer {
     padding: 0 3rem;
   }
 
+  // A pop-up is the card enlarged, so its title follows that card's
+  // Appearance/title_align. js/app.js copies the resolved value onto the modal
+  // and measures --nwm-title-reserve from whatever sits in the header's corner
+  // - the chart toolbar in "align" mode, the close button otherwise. The 3rem
+  // fallback is the symmetric padding above, for the moment before it has been
+  // measured.
+  &[data-title-align="left"] .modal-title,
+  &[data-title-align="center-adjusted"] .modal-title {
+    padding-left: 0;
+    padding-right: var(--nwm-title-reserve, 3rem);
+  }
+
+  &[data-title-align="left"] .modal-title {
+    text-align: left;
+  }
+
   .modal-body {
     // A copied chart is created with height: '100%' and ApexCharts measures
     // that against this element (minus its padding), so the dialog needs a
