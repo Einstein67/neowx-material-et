@@ -233,6 +233,18 @@ function neowxPopupModal() {
     var modal = wrapper.firstElementChild;
     var closeLabel = (window.NEOWX_TEXTS && window.NEOWX_TEXTS.close) || 'Close';
     modal.querySelector('.close').setAttribute('aria-label', closeLabel);
+
+    // The dialog title is the card heading, so give it the classes the cards
+    // give theirs (js.inc emits them, since the accent colour is a skin.conf
+    // setting). Read here rather than at load time: js.inc runs after app.js.
+    var titleClasses = (window.NEOWX_TITLE_CLASS || '').split(/\s+/);
+    var titleEl = modal.querySelector('.modal-title');
+    for (var i = 0; i < titleClasses.length; i++) {
+        if (titleClasses[i] !== '') {
+            titleEl.classList.add(titleClasses[i]);
+        }
+    }
+
     document.body.appendChild(modal);
 
     // Bootstrap already closes on ESC and on a click outside the dialog, so all

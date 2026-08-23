@@ -495,6 +495,37 @@ footer.page-footer {
     }
   }
 
+  // Card headings are centred, and the dialog is meant to read as the card
+  // enlarged. Centring the flex row on its own would leave the title off-centre
+  // by the width of the close button, so the button comes out of the flow.
+  // Bootstrap's -1rem margins on it cancelled the header padding while it was a
+  // flex item; offsets against the padding box do that job now, and leaving the
+  // margins in would pull it a further 1rem outside the dialog.
+  .modal-header {
+    position: relative;
+    justify-content: center;
+
+    .close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+    }
+  }
+
+  // js/app.js gives the title the same classes a card heading has (size and
+  // accent colour, both from NEOWX_TITLE_CLASS in js.inc). What it cannot pick
+  // up there is what the headings get from sitting in a .card .card-body, and
+  // Bootstrap's own .modal-title line-height is looser than a heading's.
+  .modal-title {
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: center;
+    // Symmetric, so the title stays centred while a long one still breaks
+    // before it reaches the close button rather than running under it.
+    padding: 0 3rem;
+  }
+
   .modal-body {
     // A copied chart is created with height: '100%' and ApexCharts measures
     // that against this element (minus its padding), so the dialog needs a

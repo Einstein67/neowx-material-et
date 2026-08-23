@@ -70,6 +70,12 @@
     window.NEOWX_TEXTS = {
         close: "$gettext('close')"
     };
+
+    // Card headings are <h5 class="h5-responsive $Extras.color-text">. The
+    // pop-up builds its title in JS, so it is given the same classes from here
+    // rather than hard-coded ones - the colour follows [Extras] color in
+    // skin.conf and would otherwise drift on any theme but the default.
+    window.NEOWX_TITLE_CLASS = "h5-responsive $Extras.color-text";
 </script>
 
 ## Global apexcharts config

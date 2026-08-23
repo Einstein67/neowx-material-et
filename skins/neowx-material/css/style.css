@@ -6875,6 +6875,22 @@ footer.page-footer .row > .col-md-3 ul {
     max-width: calc(100vw - 4rem);
   }
 }
+#neowx-popup .modal-header {
+  position: relative;
+  justify-content: center;
+}
+#neowx-popup .modal-header .close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+}
+#neowx-popup .modal-title {
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: center;
+  padding: 0 3rem;
+}
 #neowx-popup .modal-body {
   height: calc(100vh - 11rem);
   min-height: 280px;
