@@ -641,7 +641,7 @@ function neowxAlignChartToolbar(chartContext) {
 }
 
 // --- CARD HEADING ALIGNMENT -----------------------------------------------
-// Appearance/item_title_align picks how a card's heading sits: center (as it always
+// Appearance/items_title_align picks how a card's heading sits: center (as it always
 // has), left, or center-adjusted - centred in what is left once the card's
 // expand button or toolbar is allowed for. head.inc emits the alignment as CSS,
 // which is all "center" and "left" need.

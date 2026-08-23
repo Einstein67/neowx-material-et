@@ -333,7 +333,7 @@ href="img/splash/splash_1536x2048.png"
 </style>
 
 ## +-------------------------------------------------------------------------+
-## | Card heading alignment                       Appearance/item_title_align      |
+## | Card heading alignment                       Appearance/items_title_align      |
 ## +-------------------------------------------------------------------------+
 ## Only the heading moves. The rule targets it directly rather than the
 ## .card-body's text-center, so a value card's reading, a chart and a forecast
@@ -354,15 +354,15 @@ href="img/splash/splash_1536x2048.png"
 ## have none at all - so it cannot be a constant here.
 #set $_ALIGNS = ('center', 'left', 'center-adjusted')
 
-#set $_item_title_align = str($Extras.Appearance.get('item_title_align', 'center')).strip().lower()
-#if $_item_title_align not in $_ALIGNS
-    #set $_item_title_align = 'center'
+#set $_items_title_align = str($Extras.Appearance.get('items_title_align', 'center')).strip().lower()
+#if $_items_title_align not in $_ALIGNS
+    #set $_items_title_align = 'center'
 #end if
 
 ## Per-card overrides, keyed by the name the card carries as data-name:
 ##   - [[[ItemTitleAlign]]] maps names to values, for value cards and built-in
 ##     charts, which have no section of their own
-##   - a "item_title_align" key inside an [[Embedded]] card's or a
+##   - a "items_title_align" key inside an [[Embedded]] card's or a
 ##     [[[customChart...]]] section, which is where those two are configured
 ##     anyway
 #set $_title_overrides = {}
@@ -377,7 +377,7 @@ href="img/splash/splash_1536x2048.png"
 #for $_key in $Extras.Appearance.keys()
     #set $_sub = $Extras.Appearance[$_key]
     #if hasattr($_sub, 'get')
-        #set $_a = str($_sub.get('item_title_align', '')).strip().lower()
+        #set $_a = str($_sub.get('items_title_align', '')).strip().lower()
         #if $_a in $_ALIGNS
             #silent $_title_overrides.update({str($_key): $_a})
         #end if
@@ -387,7 +387,7 @@ href="img/splash/splash_1536x2048.png"
     #for $_key in $Extras.Embedded.keys()
         #set $_sub = $Extras.Embedded[$_key]
         #if hasattr($_sub, 'get')
-            #set $_a = str($_sub.get('item_title_align', '')).strip().lower()
+            #set $_a = str($_sub.get('items_title_align', '')).strip().lower()
             #if $_a in $_ALIGNS
                 #silent $_title_overrides.update({str($_key): $_a})
             #end if
@@ -395,9 +395,9 @@ href="img/splash/splash_1536x2048.png"
     #end for
 #end if
 
-#if $_item_title_align != 'center' or len($_title_overrides) > 0
+#if $_items_title_align != 'center' or len($_title_overrides) > 0
 <style>
-    #for $_name, $_align in [(None, $_item_title_align)] + sorted($_title_overrides.items())
+    #for $_name, $_align in [(None, $_items_title_align)] + sorted($_title_overrides.items())
         #if $_name is None
             #set $_card = '.card'
         #else

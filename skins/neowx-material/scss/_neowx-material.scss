@@ -566,7 +566,7 @@ footer.page-footer {
   }
 
   // A pop-up is the card enlarged, so its title follows that card's
-  // Appearance/item_title_align. js/app.js copies the resolved value onto the modal
+  // Appearance/items_title_align. js/app.js copies the resolved value onto the modal
   // and measures --nwm-item-title-reserve from whatever sits in the header's corner
   // - the chart toolbar in "align" mode, the close button otherwise. The 3rem
   // fallback is the symmetric padding above, for the moment before it has been
