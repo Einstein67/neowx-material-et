@@ -388,3 +388,240 @@ footer.page-footer {
   }
 }
 
+
+// ==============================================================================
+
+// Pop-up window
+// ---------------------------------------------------------------------------
+// The "expand" buttons - one added to every ApexCharts toolbar (Appearance /
+// enableChartPopup), one on every [[Embedded]] card (enableEmbeddedPopup) -
+// and the modal they share.
+
+// ApexCharts appends custom icons after the hamburger menu, and its `index`
+// option cannot move ours reliably: the zoom buttons are left out on charts
+// with chart.zoom.enabled = false (the line charts), so a fixed position lands
+// somewhere different depending on the chart. Reordering the flex container
+// does not care how many buttons there are. This is a no-op when the pop-up
+// button is switched off, since the menu is last already.
+.apexcharts-toolbar .apexcharts-menu-icon {
+  order: 1;
+}
+
+// ApexCharts styles .apexcharts-toolbar-custom-icon itself, but its icon
+// sizing and hover rules only name the built-in buttons, so both are repeated
+// here at the vendor's own values - this button sits in the vendor's toolbar,
+// so a near-miss on the hover shade shows up next to the buttons either side
+// of it. fill/stroke come from attributes on the inline SVG in js.inc.
+.apexcharts-toolbar-custom-icon.neowx-chart-popup-icon {
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: rgba(15, 23, 42, 0.06);
+    color: #1f2937;
+  }
+}
+
+.apexcharts-theme-dark .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+// Embedded cards have no toolbar of their own, so this rebuilds the look of
+// the ApexCharts one. Those values are deliberately copied rather than reused
+// through .apexcharts-* selectors: that stylesheet is vendored, and leaning on
+// it would turn the next ApexCharts upgrade into a silent restyling here.
+.nwm-embed-toolbar {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 11;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 3px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.nwm-embed-toolbar-icon {
+  cursor: pointer;
+  // WCAG 2.5.8 Target Size (Minimum): 24x24 CSS px hit target.
+  width: 26px;
+  height: 24px;
+  color: #6e8192;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.12s ease, color 0.12s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    pointer-events: none;
+  }
+
+  &:hover {
+    background: rgba(15, 23, 42, 0.06);
+    color: #1f2937;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #008ffb;
+    outline-offset: 1px;
+  }
+}
+
+#neowx-popup {
+  // modal-xl caps the dialog at 1140px, which leaves most of a wide screen
+  // unused. The whole point of the pop-up is room, so take nearly all of it
+  // and let the margins be the only gutter. Only from the sm breakpoint up:
+  // below it Bootstrap gives the dialog .5rem margins and full width, and
+  // capping at 100vw - 4rem there would make it narrower, not wider.
+  @media (min-width: 576px) {
+    .modal-dialog {
+      max-width: calc(100vw - 4rem);
+    }
+  }
+
+  // Card headings are centred, and the dialog is meant to read as the card
+  // enlarged. Centring the flex row on its own would leave the title off-centre
+  // by the width of the close button, so the button comes out of the flow.
+  // Bootstrap's -1rem margins on it cancelled the header padding while it was a
+  // flex item; offsets against the padding box do that job now, and leaving the
+  // margins in would pull it a further 1rem outside the dialog.
+  .modal-header {
+    position: relative;
+    justify-content: center;
+
+    .close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+    }
+  }
+
+  // js/app.js gives the title the same classes a card heading has (size and
+  // accent colour, both from NEOWX_TITLE_CLASS in js.inc). What it cannot pick
+  // up there is what the headings get from sitting in a .card .card-body, and
+  // Bootstrap's own .modal-title line-height is looser than a heading's.
+  .modal-title {
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: center;
+    // Symmetric, so the title stays centred while a long one still breaks
+    // before it reaches the close button rather than running under it.
+    padding: 0 3rem;
+  }
+
+  .modal-body {
+    // A copied chart is created with height: '100%' and ApexCharts measures
+    // that against this element (minus its padding), so the dialog needs a
+    // real height. 11rem covers 3.5rem of dialog margins plus a ~4rem header,
+    // and the remaining slack keeps a taller header from pushing the modal
+    // past the viewport.
+    height: calc(100vh - 11rem);
+    min-height: 280px;
+  }
+
+  // The media below is sized in percentages, and a percentage height only
+  // resolves when every element up to the one with a real height has a
+  // definite height too. Without this the mount point is auto-height and an
+  // iframe silently falls back to its 150px default. (A chart is unaffected
+  // either way: ApexCharts measures the mount's parent itself.)
+  #neowx-popup-mount {
+    height: 100%;
+  }
+
+  // An image keeps its own proportions rather than the card's cropped ratio.
+  .nwm-embed-popup-media {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  img.nwm-embed-popup-media {
+    object-fit: contain;
+  }
+}
+
+// Dark mode - the modal is appended to <body>, outside any .card, so it needs
+// the same treatment the cards get above.
+@media (prefers-color-scheme: dark) {
+  .auto-theme {
+    .nwm-embed-toolbar {
+      background: rgba(28, 28, 31, 0.82);
+    }
+
+    .nwm-embed-toolbar-icon {
+      color: #d4d6dc;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+      }
+    }
+
+    #neowx-popup {
+      .modal-content {
+        background-color: #444 !important;
+        color: #ddd !important;
+      }
+
+      .modal-header {
+        border-bottom-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .close {
+        color: #ddd;
+        text-shadow: none;
+        opacity: 0.75;
+      }
+    }
+  }
+}
+
+.dark-theme {
+  .nwm-embed-toolbar {
+    background: rgba(28, 28, 31, 0.82);
+  }
+
+  .nwm-embed-toolbar-icon {
+    color: #d4d6dc;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+  }
+
+  #neowx-popup {
+    .modal-content {
+      background-color: #444 !important;
+      color: #ddd !important;
+    }
+
+    .modal-header {
+      border-bottom-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .close {
+      color: #ddd;
+      text-shadow: none;
+      opacity: 0.75;
+    }
+  }
+}

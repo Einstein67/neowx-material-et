@@ -55,6 +55,29 @@
     #set $defaultChartBehavior = "pan"
 #end if
 
+## Default-on, so an unrecognised value must not leave the feature switched on
+## with no way to turn it off. Normalised the way bin/user/panelorder.py reads
+## enablePanels, rather than the exact-match the opt-in settings above use.
+#set $enableChartPopup = "true"
+#if str($Extras.Appearance.get('enableChartPopup', 'true')).strip().lower() in ('false', 'no', '0')
+    #set $enableChartPopup = "false"
+#end if
+
+## Strings for js/app.js, which is a plain .js file with no template access.
+## Emitted after app.js is loaded above, so app.js must only read these lazily
+## (at click time) - anything read at its top level would still be undefined.
+<script type="text/javascript">
+    window.NEOWX_TEXTS = {
+        close: "$gettext('close')"
+    };
+
+    // Card headings are <h5 class="h5-responsive $Extras.color-text">. The
+    // pop-up builds its title in JS, so it is given the same classes from here
+    // rather than hard-coded ones - the colour follows [Extras] color in
+    // skin.conf and would otherwise drift on any theme but the default.
+    window.NEOWX_TITLE_CLASS = "h5-responsive $Extras.color-text";
+</script>
+
 ## Global apexcharts config
 <script type="text/javascript">
     // Charts drawn in "align" mode (the only ones with xaxis.min+max set) keep
@@ -165,6 +188,19 @@
             },
             toolbar: {
                 autoSelected: '$defaultChartBehavior',
+#if $enableChartPopup == "true"
+                // Opens a copy of the chart in a pop-up window. Set as a global
+                // default so every chart gets the button; neowxChartPopup lives
+                // in js/app.js, which is loaded above.
+                tools: {
+                    customIcons: [{
+                        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>',
+                        title: "$gettext('expand_chart')",
+                        class: 'neowx-chart-popup-icon',
+                        click: neowxChartPopup
+                    }]
+                },
+#end if
                 export: {
                     csv: {
                         headerCategory: 'DateTime',
