@@ -399,8 +399,82 @@ href="img/splash/splash_1536x2048.png"
     #end for
 #end if
 
-#if $_items_title_align != 'center' or len($_title_overrides) > 0
+## A [[[sections]]] panel can set items_title_align for everything it lists,
+## which is the setting most people want: a whole panel of charts left-aligned
+## without naming each one. It reaches the cards the panel holds, never the
+## panel's own title.
+##
+## Qualified by the kind of card the panel holds, because a value card and a
+## chart card for the same observation carry the SAME data-name - "barometer"
+## is usually in both a cards list and a charts list, and a rule keyed on the
+## name alone would move both. The panel's content setting says which kind it
+## holds, and the templates give each kind its own class.
+##
+## Every selector these produce has the same specificity as a per-card one, so
+## which wins is decided by the order they are emitted in below: section rules
+## first, per-card rules after.
+#set $_CONTENT_CARD_KINDS = {
+    'chart': ('.card-chart',),
+    'telemetry_chart': ('.card-chart',),
+    'telemetry': ('.card-value',),
+    'embedded': ('.card',),
+}
+#set $_section_overrides = []
+#if $varExists('Extras.Appearance.sections')
+    #for $_sid in $Extras.Appearance.sections.keys()
+        #set $_section = $Extras.Appearance.sections[$_sid]
+        #if not hasattr($_section, 'get')
+            #continue
+        #end if
+        #set $_a = str($_section.get('items_title_align', '')).strip().lower()
+        #if $_a not in $_ALIGNS
+            #continue
+        #end if
+        ## A default (or unrecognised) content is the cards panel, which holds
+        ## value cards and can hold the forecast card too.
+        #set $_content = str($_section.get('content', '')).strip().lower()
+        #set $_kinds = $_CONTENT_CARD_KINDS.get($_content, ('.card-value', '.card-forecast'))
+        ## configobj gives a list for "a, b, c" and a string for a single name.
+        #set $_items = $_section.get('items', [])
+        #if isinstance($_items, str)
+            #set $_items = $_items.split(',')
+        #end if
+        #for $_item in $_items
+            #set $_item = str($_item).strip()
+            #if $_item != '' and all(c.isalnum() or c in '_.:-' for c in $_item)
+                #silent $_section_overrides.append(($_kinds, $_item, $_a))
+            #end if
+        #end for
+    #end for
+#end if
+
+#if $_items_title_align != 'center' or len($_title_overrides) > 0 or len($_section_overrides) > 0
 <style>
+    ## The panel-wide rules first: same specificity as the per-card ones below,
+    ## so anything named individually there overrides what its panel asked for.
+    #for $_kinds, $_item, $_align in $_section_overrides
+        #set $_sel = ', '.join([$_k + '[data-name="' + $_item + '"] > .card-body > .h5-responsive' for $_k in $_kinds])
+    $_sel {
+        #if $_align == 'left'
+        text-align: left;
+        padding-left: var(--nwm-item-title-inset, 0px);
+        padding-right: var(--nwm-item-title-reserve, 0px);
+        #else if $_align == 'center-adjusted'
+        text-align: center;
+        padding-left: 0;
+        padding-right: var(--nwm-item-title-reserve, 0px);
+        #else
+        text-align: center;
+        padding-left: 0;
+        padding-right: 0;
+        #end if
+    }
+        #for $_k in $_kinds
+    ${_k}[data-name="${_item}"] {
+        --nwm-item-title-align: $_align;
+    }
+        #end for
+    #end for
     #for $_name, $_align in [(None, $_items_title_align)] + sorted($_title_overrides.items())
         #if $_name is None
             #set $_card = '.card'
