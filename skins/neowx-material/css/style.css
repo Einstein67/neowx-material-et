@@ -6914,11 +6914,11 @@ footer.page-footer .row > .col-md-3 ul {
   text-align: center;
   padding: 0 3rem;
 }
-#neowx-popup[data-title-align=left] .modal-title, #neowx-popup[data-title-align=center-adjusted] .modal-title {
+#neowx-popup[data-item-title-align=left] .modal-title, #neowx-popup[data-item-title-align=center-adjusted] .modal-title {
   padding-left: 0;
-  padding-right: var(--nwm-title-reserve, 3rem);
+  padding-right: var(--nwm-item-title-reserve, 3rem);
 }
-#neowx-popup[data-title-align=left] .modal-title {
+#neowx-popup[data-item-title-align=left] .modal-title {
   text-align: left;
 }
 #neowx-popup .modal-body {

@@ -275,8 +275,8 @@ function neowxPopupModal() {
             hosted.remove();
         }
         // The next pop-up may come from a card aligned differently.
-        modal.removeAttribute('data-title-align');
-        modal.style.removeProperty('--nwm-title-reserve');
+        modal.removeAttribute('data-item-title-align');
+        modal.style.removeProperty('--nwm-item-title-reserve');
         _neowxPopupActive = false;
     });
 
@@ -305,7 +305,7 @@ function neowxOpenPopup(title, onShown, onHidden, ownClose, card) {
         // card's is. The room to leave is measured from the dialog's own corner
         // once it is on screen and the toolbar has landed - see the shown
         // handler below.
-        modal.setAttribute('data-title-align', neowxCardTitleAlign(card));
+        modal.setAttribute('data-item-title-align', neowxCardItemTitleAlign(card));
 
         // Fill the dialog only once it is on screen. Nothing inside a modal has
         // a size while Bootstrap still has it at display:none, and with .fade
@@ -641,7 +641,7 @@ function neowxAlignChartToolbar(chartContext) {
 }
 
 // --- CARD HEADING ALIGNMENT -----------------------------------------------
-// Appearance/title_align picks how a card's heading sits: center (as it always
+// Appearance/item_title_align picks how a card's heading sits: center (as it always
 // has), left, or center-adjusted - centred in what is left once the card's
 // expand button or toolbar is allowed for. head.inc emits the alignment as CSS,
 // which is all "center" and "left" need.
@@ -652,7 +652,7 @@ function neowxAlignChartToolbar(chartContext) {
 // in "align" mode, and nothing at all on a value card, on a chart in
 // "chart_default" mode, or wherever the pop-up buttons are switched off. So it is measured from
 // whatever is actually in the corner, and written to the card as
-// --nwm-title-reserve for the stylesheet to use.
+// --nwm-item-title-reserve for the stylesheet to use.
 
 // Gap between the heading and the control, so the two never quite touch.
 var NEOWX_TITLE_GUTTER = 8;
@@ -697,13 +697,13 @@ function neowxSetTitleSpacing(card) {
         var cardBox = card.getBoundingClientRect();
         var headingLeft = heading.getBoundingClientRect().left;
         var inset = Math.max(0, NEOWX_TITLE_INSET - (headingLeft - cardBox.left));
-        card.style.setProperty('--nwm-title-inset', inset + 'px');
+        card.style.setProperty('--nwm-item-title-inset', inset + 'px');
 
         var corner = neowxCardCorner(card);
         // No control, or one that is laid out but not shown: nothing to leave
         // room for, and center-adjusted then behaves as center.
         if (!corner || window.getComputedStyle(corner).display === 'none') {
-            card.style.removeProperty('--nwm-title-reserve');
+            card.style.removeProperty('--nwm-item-title-reserve');
             return;
         }
         var cornerBox = corner.getBoundingClientRect();
@@ -715,7 +715,7 @@ function neowxSetTitleSpacing(card) {
         // time and would creep outwards on every pass.
         var contentRight = bodyBox.right - (parseFloat(bodyStyle.paddingRight) || 0);
         var reserve = Math.max(0, contentRight - cornerBox.left + NEOWX_TITLE_GUTTER);
-        card.style.setProperty('--nwm-title-reserve', reserve + 'px');
+        card.style.setProperty('--nwm-item-title-reserve', reserve + 'px');
     } catch (e) {
         console.error('neowx-material: could not measure the heading reserve', e);
     }
@@ -724,11 +724,11 @@ function neowxSetTitleSpacing(card) {
 // What head.inc resolved for this card, from the custom property it set there.
 // A pop-up opened from a card with no alignment of its own - or from nothing at
 // all - centres, which is the skin's default.
-function neowxCardTitleAlign(card) {
+function neowxCardItemTitleAlign(card) {
     if (!card) {
         return 'center';
     }
-    var align = window.getComputedStyle(card).getPropertyValue('--nwm-title-align').trim();
+    var align = window.getComputedStyle(card).getPropertyValue('--nwm-item-title-align').trim();
     return (align === 'left' || align === 'center-adjusted') ? align : 'center';
 }
 
@@ -737,7 +737,7 @@ function neowxCardTitleAlign(card) {
 // dialog's own close button, and both are in the header.
 function neowxSetPopupTitleReserve(modal) {
     try {
-        var align = modal.getAttribute('data-title-align');
+        var align = modal.getAttribute('data-item-title-align');
         if (align !== 'left' && align !== 'center-adjusted') {
             return;
         }
@@ -757,7 +757,7 @@ function neowxSetPopupTitleReserve(modal) {
         var contentRight = headerBox.right -
             (parseFloat(window.getComputedStyle(header).paddingRight) || 0);
         var reserve = Math.max(0, contentRight - cornerBox.left + NEOWX_TITLE_GUTTER);
-        modal.style.setProperty('--nwm-title-reserve', reserve + 'px');
+        modal.style.setProperty('--nwm-item-title-reserve', reserve + 'px');
     } catch (e) {
         console.error('neowx-material: could not measure the dialog heading reserve', e);
     }

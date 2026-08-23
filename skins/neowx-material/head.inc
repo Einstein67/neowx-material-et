@@ -333,7 +333,7 @@ href="img/splash/splash_1536x2048.png"
 </style>
 
 ## +-------------------------------------------------------------------------+
-## | Card heading alignment                       Appearance/title_align      |
+## | Card heading alignment                       Appearance/item_title_align      |
 ## +-------------------------------------------------------------------------+
 ## Only the heading moves. The rule targets it directly rather than the
 ## .card-body's text-center, so a value card's reading, a chart and a forecast
@@ -345,30 +345,30 @@ href="img/splash/splash_1536x2048.png"
 ## How much room to leave for the card's expand button or toolbar is a runtime
 ## question - it depends which control that card ended up with, and the chart
 ## ones are built in JavaScript - so js/app.js measures it and sets
-## --nwm-title-reserve on the card. The fallback of 0px is what a card with no
+## --nwm-item-title-reserve on the card. The fallback of 0px is what a card with no
 ## control gets, which makes center-adjusted behave as center there.
 ##
-## It sets --nwm-title-inset the same way: how far a left-aligned heading has
+## It sets --nwm-item-title-inset the same way: how far a left-aligned heading has
 ## to be pushed off the card's edge, on top of whatever the card body's own
 ## padding already contributes. That differs by card - the [[Embedded]] ones
 ## have none at all - so it cannot be a constant here.
 #set $_ALIGNS = ('center', 'left', 'center-adjusted')
 
-#set $_title_align = str($Extras.Appearance.get('title_align', 'center')).strip().lower()
-#if $_title_align not in $_ALIGNS
-    #set $_title_align = 'center'
+#set $_item_title_align = str($Extras.Appearance.get('item_title_align', 'center')).strip().lower()
+#if $_item_title_align not in $_ALIGNS
+    #set $_item_title_align = 'center'
 #end if
 
 ## Per-card overrides, keyed by the name the card carries as data-name:
-##   - [[[TitleAlign]]] maps names to values, for value cards and built-in
+##   - [[[ItemTitleAlign]]] maps names to values, for value cards and built-in
 ##     charts, which have no section of their own
-##   - a "title_align" key inside an [[Embedded]] card's or a
+##   - a "item_title_align" key inside an [[Embedded]] card's or a
 ##     [[[customChart...]]] section, which is where those two are configured
 ##     anyway
 #set $_title_overrides = {}
-#if $varExists('Extras.Appearance.TitleAlign')
-    #for $_key in $Extras.Appearance.TitleAlign.keys()
-        #set $_a = str($Extras.Appearance.TitleAlign[$_key]).strip().lower()
+#if $varExists('Extras.Appearance.ItemTitleAlign')
+    #for $_key in $Extras.Appearance.ItemTitleAlign.keys()
+        #set $_a = str($Extras.Appearance.ItemTitleAlign[$_key]).strip().lower()
         #if $_a in $_ALIGNS
             #silent $_title_overrides.update({str($_key): $_a})
         #end if
@@ -377,7 +377,7 @@ href="img/splash/splash_1536x2048.png"
 #for $_key in $Extras.Appearance.keys()
     #set $_sub = $Extras.Appearance[$_key]
     #if hasattr($_sub, 'get')
-        #set $_a = str($_sub.get('title_align', '')).strip().lower()
+        #set $_a = str($_sub.get('item_title_align', '')).strip().lower()
         #if $_a in $_ALIGNS
             #silent $_title_overrides.update({str($_key): $_a})
         #end if
@@ -387,7 +387,7 @@ href="img/splash/splash_1536x2048.png"
     #for $_key in $Extras.Embedded.keys()
         #set $_sub = $Extras.Embedded[$_key]
         #if hasattr($_sub, 'get')
-            #set $_a = str($_sub.get('title_align', '')).strip().lower()
+            #set $_a = str($_sub.get('item_title_align', '')).strip().lower()
             #if $_a in $_ALIGNS
                 #silent $_title_overrides.update({str($_key): $_a})
             #end if
@@ -395,9 +395,9 @@ href="img/splash/splash_1536x2048.png"
     #end for
 #end if
 
-#if $_title_align != 'center' or len($_title_overrides) > 0
+#if $_item_title_align != 'center' or len($_title_overrides) > 0
 <style>
-    #for $_name, $_align in [(None, $_title_align)] + sorted($_title_overrides.items())
+    #for $_name, $_align in [(None, $_item_title_align)] + sorted($_title_overrides.items())
         #if $_name is None
             #set $_card = '.card'
         #else
@@ -405,16 +405,16 @@ href="img/splash/splash_1536x2048.png"
         #end if
     $_card {
         /* Read by js/app.js when a pop-up inherits the card's alignment. */
-        --nwm-title-align: $_align;
+        --nwm-item-title-align: $_align;
     }
     $_card > .card-body > .h5-responsive {
         #if $_align == 'left'
         text-align: left;
-        padding-left: var(--nwm-title-inset, 0px);
-        padding-right: var(--nwm-title-reserve, 0px);
+        padding-left: var(--nwm-item-title-inset, 0px);
+        padding-right: var(--nwm-item-title-reserve, 0px);
         #else if $_align == 'center-adjusted'
         text-align: center;
-        padding-right: var(--nwm-title-reserve, 0px);
+        padding-right: var(--nwm-item-title-reserve, 0px);
         #else
         text-align: center;
         padding-left: 0;
