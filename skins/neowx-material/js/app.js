@@ -495,10 +495,11 @@ document.addEventListener('click', function (e) {
 // --- CHART TOOLBAR POSITION -----------------------------------------------
 // Appearance/chart_toolbar in skin.conf decides where a chart's buttons go:
 //
-//   default  - ApexCharts' own placement, inside the chart below the heading
-//   separate - only the expand button moves, into the card's top-right corner,
-//              the same spot the [[Embedded]] cards put theirs
-//   align    - the whole toolbar moves into that corner
+//   chart_default - ApexCharts' own placement, inside the chart below the
+//                   heading
+//   separate      - only the expand button moves, into the card's top-right
+//                   corner, the same spot the [[Embedded]] cards put theirs
+//   align         - the whole toolbar moves into that corner
 //
 // js.inc normalises the setting and hands it over as NEOWX_CHART_TOOLBAR, and
 // calls neowxSetupChartToolbar from the chart's mounted and updated events.
@@ -526,7 +527,7 @@ function neowxText(key, fallback) {
 
 function neowxChartToolbarMode() {
     var mode = window.NEOWX_CHART_TOOLBAR;
-    return (mode === 'separate' || mode === 'align') ? mode : 'default';
+    return (mode === 'separate' || mode === 'align') ? mode : 'chart_default';
 }
 
 function neowxSetupChartToolbar(chartContext) {

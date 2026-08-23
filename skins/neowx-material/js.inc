@@ -65,14 +65,14 @@
 
 ## Where the chart buttons sit - see chart_toolbar in skin.conf. Anything not
 ## recognised falls back to the ApexCharts placement rather than to a guess.
-#set $chartToolbar = str($Extras.Appearance.get('chart_toolbar', 'default')).strip().lower()
-#if $chartToolbar not in ('default', 'separate', 'align')
-    #set $chartToolbar = "default"
+#set $chartToolbar = str($Extras.Appearance.get('chart_toolbar', 'chart_default')).strip().lower()
+#if $chartToolbar not in ('chart_default', 'separate', 'align')
+    #set $chartToolbar = "chart_default"
 #end if
 ## "separate" moves the expand button out of the toolbar, so with the pop-up
 ## switched off there is nothing left for it to do.
 #if $chartToolbar == "separate" and $enableChartPopup == "false"
-    #set $chartToolbar = "default"
+    #set $chartToolbar = "chart_default"
 #end if
 
 ## Strings for js/app.js, which is a plain .js file with no template access.
