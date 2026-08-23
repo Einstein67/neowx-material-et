@@ -360,7 +360,7 @@ href="img/splash/splash_1536x2048.png"
 #end if
 
 ## Per-card overrides, keyed by the name the card carries as data-name:
-##   - [[[ItemTitleAlign]]] maps names to values, for value cards and built-in
+##   - [[[ItemsTitleAlign]]] maps names to values, for value cards and built-in
 ##     charts, which have no section of their own
 ##   - an items_title_align key inside an [[Embedded]] card's or a
 ##     [[[customChart...]]] section, which is where those two are configured
@@ -370,9 +370,9 @@ href="img/splash/splash_1536x2048.png"
 ## own section - the more specific place to have said it. tests/ has a check
 ## that pins this; do not reorder the loops without moving it.
 #set $_title_overrides = {}
-#if $varExists('Extras.Appearance.ItemTitleAlign')
-    #for $_key in $Extras.Appearance.ItemTitleAlign.keys()
-        #set $_a = str($Extras.Appearance.ItemTitleAlign[$_key]).strip().lower()
+#if $varExists('Extras.Appearance.ItemsTitleAlign')
+    #for $_key in $Extras.Appearance.ItemsTitleAlign.keys()
+        #set $_a = str($Extras.Appearance.ItemsTitleAlign[$_key]).strip().lower()
         #if $_a in $_ALIGNS
             #silent $_title_overrides.update({str($_key): $_a})
         #end if
