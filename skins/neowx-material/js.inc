@@ -77,7 +77,8 @@
 
 ## Strings for js/app.js, which is a plain .js file with no template access.
 ## Emitted after app.js is loaded above, so app.js must only read these lazily
-## (at click time) - anything read at its top level would still be undefined.
+## (at click or mount time) - anything read at its top level would still be
+## undefined.
 <script type="text/javascript">
     window.NEOWX_TEXTS = {
         close: "$gettext('close')",
@@ -85,8 +86,8 @@
         expand_chart: "$gettext('expand_chart')"
     };
 
-    // Where a chart's buttons go: default / separate / align. Read lazily, at
-    // mount time - see neowxChartToolbarMode in js/app.js.
+    // Where a chart's buttons go: chart_default / separate / align. Read
+    // lazily, at mount time - see neowxChartToolbarMode in js/app.js.
     window.NEOWX_CHART_TOOLBAR = "$chartToolbar";
 
     // Card headings are <h5 class="h5-responsive $Extras.color-text">. The
@@ -242,9 +243,10 @@
             },
             events: {
                 mounted: neowxMountedHandler,
-                // ApexCharts rebuilds the toolbar on a re-render, and a
-                // re-render is also how it answers a resize - which is when
-                // the heading above the chart can change height.
+                // ApexCharts rebuilds the toolbar on a re-render, so the
+                // rebuilt one has to be put back where chart_toolbar asks for
+                // it. (A heading that changes height is covered separately, by
+                // the resize listener and ResizeObserver in js/app.js.)
                 updated: neowxSetupChartToolbar,
                 zoomed: neowxZoomHandler,
                 beforeResetZoom: neowxBeforeResetHandler

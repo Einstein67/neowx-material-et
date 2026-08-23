@@ -527,8 +527,8 @@ footer.page-footer {
     }
   }
 
-  // Card headings are centred, and the dialog is meant to read as the card
-  // enlarged. The close button is out of the flex flow entirely, so centring
+  // Card headings are centred by default, and the dialog is meant to read as
+  // the card enlarged - see the items_title_align rules below for the rest. The close button is out of the flex flow entirely, so centring
   // the row centres the title on the dialog rather than on what is left of it.
   .modal-header {
     position: relative;
@@ -536,11 +536,16 @@ footer.page-footer {
   }
 
   // The close button, and a chart toolbar in "align" mode, share this seat:
-  // centred on the header row, right edge on the header's own padding. That
-  // padding is what neowxAlignChartToolbar measures for the toolbar, so the two
-  // line up whichever mode is on - the corner does not move between them.
+  // centred on the header row, right edge on the header's own padding.
+  // neowxAlignChartToolbar clears the inline top/right ApexCharts set from the
+  // canvas, so this one rule places both - which is why the corner does not
+  // move between modes.
   .modal-header .nwm-popup-close,
   .modal-header .nwm-hosted-toolbar {
+    // Stated rather than inherited from the vendored .apexcharts-toolbar rule,
+    // which is what a hosted toolbar would otherwise be relying on to be taken
+    // out of the header's centred flex row.
+    position: absolute;
     top: 50%;
     right: 1rem;
     transform: translateY(-50%);

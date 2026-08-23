@@ -80,7 +80,7 @@
         #end if
         #for $i, $x in $enumerate($fcast.daily)
             <div class="col-12 col-md-6 col-xl-4 mb-4">
-                <div class="card card-forecast">
+                <div class="card card-forecast" data-name="forecast">
                     <div class="card-body text-center pb-1">
                         <h3 class="h5-responsive $Extras.color-text">
                             #if $Extras.Forecast.show_today_tomorrow == "yes" and $i == 0
@@ -285,7 +285,7 @@
         #end if
 
         <div class="col-12 mb-4">
-            <div class="card card-forecast">
+            <div class="card card-forecast" data-name="forecast">
                 <div class="card-body text-center pb-1">
                     <h3 class="h5-responsive $Extras.color-text">
                         $pgettext("Forecast","forecast") - Error

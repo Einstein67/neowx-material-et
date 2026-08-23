@@ -333,14 +333,14 @@ href="img/splash/splash_1536x2048.png"
 </style>
 
 ## +-------------------------------------------------------------------------+
-## | Card heading alignment                       Appearance/items_title_align      |
+## | Card heading alignment                 Appearance/items_title_align      |
 ## +-------------------------------------------------------------------------+
 ## Only the heading moves. The rule targets it directly rather than the
 ## .card-body's text-center, so a value card's reading, a chart and a forecast
 ## row stay centred whatever the heading does.
 ##
-## "center" is what the skin has always done, so a site that leaves it alone
-## emits no CSS here at all.
+## "center" is what the skin has always done, so a site that sets neither this
+## nor a per-card override emits no CSS here at all.
 ##
 ## How much room to leave for the card's expand button or toolbar is a runtime
 ## question - it depends which control that card ended up with, and the chart
@@ -362,9 +362,13 @@ href="img/splash/splash_1536x2048.png"
 ## Per-card overrides, keyed by the name the card carries as data-name:
 ##   - [[[ItemTitleAlign]]] maps names to values, for value cards and built-in
 ##     charts, which have no section of their own
-##   - a "items_title_align" key inside an [[Embedded]] card's or a
+##   - an items_title_align key inside an [[Embedded]] card's or a
 ##     [[[customChart...]]] section, which is where those two are configured
 ##     anyway
+##
+## Applied in that order, so a card named in both places ends up following its
+## own section - the more specific place to have said it. tests/ has a check
+## that pins this; do not reorder the loops without moving it.
 #set $_title_overrides = {}
 #if $varExists('Extras.Appearance.ItemTitleAlign')
     #for $_key in $Extras.Appearance.ItemTitleAlign.keys()
@@ -401,6 +405,12 @@ href="img/splash/splash_1536x2048.png"
         #if $_name is None
             #set $_card = '.card'
         #else
+            ## Anything that could close the attribute selector early would take
+            ## every rule after it in this block down with it, so a name that is
+            ## not plain gets no rule rather than a broken one.
+            #if not all(c.isalnum() or c in '_.:-' for c in $_name)
+                #continue
+            #end if
             #set $_card = '.card[data-name="' + $_name + '"]'
         #end if
     $_card {
@@ -414,6 +424,10 @@ href="img/splash/splash_1536x2048.png"
         padding-right: var(--nwm-item-title-reserve, 0px);
         #else if $_align == 'center-adjusted'
         text-align: center;
+        /* Explicit, not omitted: an override under a "left" global would
+           otherwise inherit that rule's padding-left and centre the heading in
+           a box padded on one side only. */
+        padding-left: 0;
         padding-right: var(--nwm-item-title-reserve, 0px);
         #else
         text-align: center;
@@ -423,4 +437,9 @@ href="img/splash/splash_1536x2048.png"
     }
     #end for
 </style>
+<script type="text/javascript">
+    // js/app.js measures the room each card's control needs, which is work
+    // worth doing only because the rules above are here to use it.
+    window.NEOWX_ITEM_TITLE_ALIGN_SET = true;
+</script>
 #end if
