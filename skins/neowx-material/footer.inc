@@ -124,7 +124,7 @@
 
         #if $Extras.Footer.support_skin == "yes"
             <span class="mx-2">&bull;</span>
-            <a href="https://github.com/seehase/neowx-material" target="_blank">Fork of NeoWX Material</a> skin
+            <a href="https://github.com/Einstein67/neowx-material-et" target="_blank">Fork of NeoWX-Skin by Seehase</a> - 
 
             #if $Extras.Footer.show_version == "yes"
                 v<span id="footer-skin-version">$Extras.version</span>
