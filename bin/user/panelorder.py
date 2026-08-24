@@ -70,7 +70,7 @@ from weewx.cheetahgenerator import SearchList
 
 log = logging.getLogger(__name__)
 
-VERSION = "2.0.1"
+VERSION = "2.0.2"
 
 # Segment types.  'type' is None for a section with no title, whose items
 # render loose rather than inside a panel.
@@ -82,7 +82,9 @@ CARD = "card"
 CONTENTS = (CARD, "chart", "embedded", "telemetry", "telemetry_chart")
 
 # Keys a section may carry that are settings rather than typos.
-SETTING_KEYS = ("items", "title", "collapsed", "content")
+# items_title_align is read by head.inc, not here - it is listed so a panel
+# that sets it is not reported as carrying an unknown setting.
+SETTING_KEYS = ("items", "title", "collapsed", "content", "items_title_align")
 
 # Order settings from 1.68.x.  Only used to recognise an unmigrated config.
 LEGACY_KEYS = (

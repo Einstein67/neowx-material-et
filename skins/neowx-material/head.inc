@@ -331,3 +331,189 @@ href="img/splash/splash_1536x2048.png"
         }
     }
 </style>
+
+## +-------------------------------------------------------------------------+
+## | Card heading alignment                 Appearance/items_title_align      |
+## +-------------------------------------------------------------------------+
+## Only the heading moves. The rule targets it directly rather than the
+## .card-body's text-center, so a value card's reading, a chart and a forecast
+## row stay centred whatever the heading does.
+##
+## "center" is what the skin has always done, so a site that sets neither this
+## nor a per-card override emits no CSS here at all.
+##
+## How much room to leave for the card's expand button or toolbar is a runtime
+## question - it depends which control that card ended up with, and the chart
+## ones are built in JavaScript - so js/app.js measures it and sets
+## --nwm-item-title-reserve on the card. The fallback of 0px is what a card with no
+## control gets, which makes center-adjusted behave as center there.
+##
+## It sets --nwm-item-title-inset the same way: how far a left-aligned heading has
+## to be pushed off the card's edge, on top of whatever the card body's own
+## padding already contributes. That differs by card - the [[Embedded]] ones
+## have none at all - so it cannot be a constant here.
+#set $_ALIGNS = ('center', 'left', 'center-adjusted')
+
+#set $_items_title_align = str($Extras.Appearance.get('items_title_align', 'center')).strip().lower()
+#if $_items_title_align not in $_ALIGNS
+    #set $_items_title_align = 'center'
+#end if
+
+## Per-card overrides, keyed by the name the card carries as data-name:
+##   - [[[ItemsTitleAlign]]] maps names to values, for value cards and built-in
+##     charts, which have no section of their own
+##   - an items_title_align key inside an [[Embedded]] card's or a
+##     [[[customChart...]]] section, which is where those two are configured
+##     anyway
+##
+## Applied in that order, so a card named in both places ends up following its
+## own section - the more specific place to have said it. tests/ has a check
+## that pins this; do not reorder the loops without moving it.
+#set $_title_overrides = {}
+#if $varExists('Extras.Appearance.ItemsTitleAlign')
+    #for $_key in $Extras.Appearance.ItemsTitleAlign.keys()
+        #set $_a = str($Extras.Appearance.ItemsTitleAlign[$_key]).strip().lower()
+        #if $_a in $_ALIGNS
+            #silent $_title_overrides.update({str($_key): $_a})
+        #end if
+    #end for
+#end if
+#for $_key in $Extras.Appearance.keys()
+    #set $_sub = $Extras.Appearance[$_key]
+    #if hasattr($_sub, 'get')
+        #set $_a = str($_sub.get('items_title_align', '')).strip().lower()
+        #if $_a in $_ALIGNS
+            #silent $_title_overrides.update({str($_key): $_a})
+        #end if
+    #end if
+#end for
+#if $varExists('Extras.Embedded')
+    #for $_key in $Extras.Embedded.keys()
+        #set $_sub = $Extras.Embedded[$_key]
+        #if hasattr($_sub, 'get')
+            #set $_a = str($_sub.get('items_title_align', '')).strip().lower()
+            #if $_a in $_ALIGNS
+                #silent $_title_overrides.update({str($_key): $_a})
+            #end if
+        #end if
+    #end for
+#end if
+
+## A [[[sections]]] panel can set items_title_align for everything it lists,
+## which is the setting most people want: a whole panel of charts left-aligned
+## without naming each one. It reaches the cards the panel holds, never the
+## panel's own title.
+##
+## Qualified by the kind of card the panel holds, because a value card and a
+## chart card for the same observation carry the SAME data-name - "barometer"
+## is usually in both a cards list and a charts list, and a rule keyed on the
+## name alone would move both. The panel's content setting says which kind it
+## holds, and the templates give each kind its own class.
+##
+## Every selector these produce has the same specificity as a per-card one, so
+## which wins is decided by the order they are emitted in below: section rules
+## first, per-card rules after.
+#set $_CONTENT_CARD_KINDS = {
+    'chart': ('.card-chart',),
+    'telemetry_chart': ('.card-chart',),
+    'telemetry': ('.card-value',),
+    'embedded': ('.card',),
+}
+#set $_section_overrides = []
+#if $varExists('Extras.Appearance.sections')
+    #for $_sid in $Extras.Appearance.sections.keys()
+        #set $_section = $Extras.Appearance.sections[$_sid]
+        #if not hasattr($_section, 'get')
+            #continue
+        #end if
+        #set $_a = str($_section.get('items_title_align', '')).strip().lower()
+        #if $_a not in $_ALIGNS
+            #continue
+        #end if
+        ## A default (or unrecognised) content is the cards panel, which holds
+        ## value cards and can hold the forecast card too.
+        #set $_content = str($_section.get('content', '')).strip().lower()
+        #set $_kinds = $_CONTENT_CARD_KINDS.get($_content, ('.card-value', '.card-forecast'))
+        ## configobj gives a list for "a, b, c" and a string for a single name.
+        #set $_items = $_section.get('items', [])
+        #if isinstance($_items, str)
+            #set $_items = $_items.split(',')
+        #end if
+        #for $_item in $_items
+            #set $_item = str($_item).strip()
+            #if $_item != '' and all(c.isalnum() or c in '_.:-' for c in $_item)
+                #silent $_section_overrides.append(($_kinds, $_item, $_a))
+            #end if
+        #end for
+    #end for
+#end if
+
+#if $_items_title_align != 'center' or len($_title_overrides) > 0 or len($_section_overrides) > 0
+<style>
+    ## The panel-wide rules first: same specificity as the per-card ones below,
+    ## so anything named individually there overrides what its panel asked for.
+    #for $_kinds, $_item, $_align in $_section_overrides
+        #set $_sel = ', '.join([$_k + '[data-name="' + $_item + '"] > .card-body > .h5-responsive' for $_k in $_kinds])
+    $_sel {
+        #if $_align == 'left'
+        text-align: left;
+        padding-left: var(--nwm-item-title-inset, 0px);
+        padding-right: var(--nwm-item-title-reserve, 0px);
+        #else if $_align == 'center-adjusted'
+        text-align: center;
+        padding-left: 0;
+        padding-right: var(--nwm-item-title-reserve, 0px);
+        #else
+        text-align: center;
+        padding-left: 0;
+        padding-right: 0;
+        #end if
+    }
+        #for $_k in $_kinds
+    ${_k}[data-name="${_item}"] {
+        --nwm-item-title-align: $_align;
+    }
+        #end for
+    #end for
+    #for $_name, $_align in [(None, $_items_title_align)] + sorted($_title_overrides.items())
+        #if $_name is None
+            #set $_card = '.card'
+        #else
+            ## Anything that could close the attribute selector early would take
+            ## every rule after it in this block down with it, so a name that is
+            ## not plain gets no rule rather than a broken one.
+            #if not all(c.isalnum() or c in '_.:-' for c in $_name)
+                #continue
+            #end if
+            #set $_card = '.card[data-name="' + $_name + '"]'
+        #end if
+    $_card {
+        /* Read by js/app.js when a pop-up inherits the card's alignment. */
+        --nwm-item-title-align: $_align;
+    }
+    $_card > .card-body > .h5-responsive {
+        #if $_align == 'left'
+        text-align: left;
+        padding-left: var(--nwm-item-title-inset, 0px);
+        padding-right: var(--nwm-item-title-reserve, 0px);
+        #else if $_align == 'center-adjusted'
+        text-align: center;
+        /* Explicit, not omitted: an override under a "left" global would
+           otherwise inherit that rule's padding-left and centre the heading in
+           a box padded on one side only. */
+        padding-left: 0;
+        padding-right: var(--nwm-item-title-reserve, 0px);
+        #else
+        text-align: center;
+        padding-left: 0;
+        padding-right: 0;
+        #end if
+    }
+    #end for
+</style>
+<script type="text/javascript">
+    // js/app.js measures the room each card's control needs, which is work
+    // worth doing only because the rules above are here to use it.
+    window.NEOWX_ITEM_TITLE_ALIGN_SET = true;
+</script>
+#end if

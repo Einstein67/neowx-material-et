@@ -51,7 +51,7 @@
     #set iframe_aspect = $getVar('Extras.Embedded.' + name + '.aspect_ratio', "4/3")
     #if iframe_url != ""
         <div class="col-12 col-md-6 col-xl-4 mb-4">
-            <div class="card overflow-hidden">
+            <div class="card overflow-hidden" data-name="$name">
                 $embedToolbar()
                 <div class="card-body text-center d-flex flex-column px-0 ${'pb-0' if iframe_title != '' else 'py-0'} overflow-hidden">
                     #if iframe_title != ""
@@ -98,7 +98,7 @@
 
     #if image_url != ""
         <div class="col-12 col-md-6 col-xl-4 mb-4">
-            <div class="card overflow-hidden">
+            <div class="card overflow-hidden" data-name="$name">
                 $embedToolbar()
                 <div class="card-body text-center d-flex flex-column ${padding_x} ${padding_y} overflow-hidden">
                     #if image_title != ""

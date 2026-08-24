@@ -219,9 +219,15 @@ function neowxPopupModal() {
         '<div class="modal-content">',
         '<div class="modal-header">',
         '<h5 class="modal-title" id="' + NEOWX_POPUP_ID + '-title"></h5>',
-        '<button type="button" class="close" data-dismiss="modal">',
-        '<span aria-hidden="true">&times;</span>',
+        // The [[Embedded]] cards' toolbar, carrying nothing but a close button.
+        // In "align" mode the chart's own toolbar takes this exact place and
+        // ends with the same button, so the two never look like two different
+        // controls, and the corner never shifts between modes.
+        '<div class="nwm-embed-toolbar nwm-popup-close">',
+        '<button type="button" class="nwm-embed-toolbar-icon" data-dismiss="modal">',
+        NEOWX_CLOSE_ICON,
         '</button>',
+        '</div>',
         '</div>',
         '<div class="modal-body">',
         '<div id="' + NEOWX_POPUP_ID + '-mount"></div>',
@@ -231,8 +237,10 @@ function neowxPopupModal() {
         '</div>'
     ].join('');
     var modal = wrapper.firstElementChild;
-    var closeLabel = (window.NEOWX_TEXTS && window.NEOWX_TEXTS.close) || 'Close';
-    modal.querySelector('.close').setAttribute('aria-label', closeLabel);
+    var closeLabel = neowxText('close', 'Close');
+    var closeButton = modal.querySelector('.nwm-popup-close button');
+    closeButton.setAttribute('aria-label', closeLabel);
+    closeButton.title = closeLabel;
 
     // The dialog title is the card heading, so give it the classes the cards
     // give theirs (js.inc emits them, since the accent colour is a skin.conf
@@ -253,13 +261,28 @@ function neowxPopupModal() {
         // Bootstrap 4 ignores hide() while the dialog is still fading in, so a
         // pending shown handler should never outlive a close. Drop it anyway
         // rather than let that behaviour be load-bearing.
+        // Released first, ahead of everything that could throw: jQuery does not
+        // wrap handlers, so a throw below would strand the guard and, as the
+        // note on it says, leave every expand button on the page dead with
+        // nothing to explain why. Nothing after this re-opens the dialog.
+        _neowxPopupActive = false;
         $(modal).off('shown.bs.modal.neowx');
         neowxRunTeardown();
         var mount = document.getElementById(NEOWX_POPUP_ID + '-mount');
         if (mount) {
             mount.innerHTML = '';
         }
-        _neowxPopupActive = false;
+        // In "align" mode the chart's toolbar was moved into the header, which
+        // is outside the mount - so emptying that does not take it with it, and
+        // it would still be sitting there over the next pop-up's title.
+        var hosted = modal.querySelector('.modal-header > .apexcharts-toolbar');
+        if (hosted) {
+            neowxUnobserveCorner(hosted);
+            hosted.remove();
+        }
+        // The next pop-up may come from a card aligned differently.
+        modal.removeAttribute('data-item-title-align');
+        modal.style.removeProperty('--nwm-item-title-reserve');
     });
 
     return modal;
@@ -267,7 +290,10 @@ function neowxPopupModal() {
 
 // onShown is handed the (empty) mount point once the dialog is on screen, and
 // onHidden - if given - runs when it closes, before the mount is emptied.
-function neowxOpenPopup(title, onShown, onHidden) {
+// ownClose says the content brings its own close button (the chart pop-up puts
+// one in the chart toolbar, which lands where the header's would be), so the
+// header's is taken out of the way for as long as that content is up.
+function neowxOpenPopup(title, onShown, onHidden, ownClose, card) {
     if (_neowxPopupActive) {
         return;
     }
@@ -276,7 +302,28 @@ function neowxOpenPopup(title, onShown, onHidden) {
 
     try {
         var modal = neowxPopupModal();
+        // One modal serves both kinds of pop-up, so this is set on every open
+        // rather than only when it is wanted.
+        modal.classList.toggle('nwm-popup-own-close', !!ownClose);
         document.getElementById(NEOWX_POPUP_ID + '-title').textContent = title;
+        // A pop-up is the card enlarged, so its title is aligned the way that
+        // card's is. The room to leave is measured from the dialog's own corner
+        // once it is on screen and the toolbar has landed - see the shown
+        // handler below.
+        modal.setAttribute('data-item-title-align', neowxCardItemTitleAlign(card));
+        // Seeded from the card's own measurement, because the dialog's cannot
+        // be taken yet: in "align" mode the toolbar it measures against does
+        // not exist until the chart has rendered, which is after the dialog is
+        // on screen. Without this the title is laid out against the 3rem
+        // fallback and then visibly jumps when the real figure arrives. The two
+        // controls hold the same buttons give or take the expand one, so the
+        // seed is close enough that the correction does not show.
+        if (card) {
+            var seed = card.style.getPropertyValue('--nwm-item-title-reserve');
+            if (seed) {
+                modal.style.setProperty('--nwm-item-title-reserve', seed);
+            }
+        }
 
         // Fill the dialog only once it is on screen. Nothing inside a modal has
         // a size while Bootstrap still has it at display:none, and with .fade
@@ -287,8 +334,14 @@ function neowxOpenPopup(title, onShown, onHidden) {
             try {
                 onShown(document.getElementById(NEOWX_POPUP_ID + '-mount'));
             } catch (e) {
+                // The header's close button was taken out of the way on the
+                // promise that the content would bring its own. It cannot now,
+                // so give it back rather than leave a dialog with no visible
+                // way out of it.
+                modal.classList.remove('nwm-popup-own-close');
                 console.error('neowx-material: could not fill the pop-up window', e);
             }
+            neowxSetPopupTitleReserve(modal);
         });
         $(modal).modal('show');
     } catch (e) {
@@ -364,11 +417,34 @@ function neowxChartPopup(chartCtx) {
     // the copy into the card chart's zoom and hover syncing.
     delete config.chart.id;
     delete config.chart.group;
-    // No expand button on the chart that is already expanded.
-    if (config.chart.toolbar && config.chart.toolbar.tools) {
-        config.chart.toolbar.tools.customIcons = [];
+    // In "align" mode the toolbar lands on the dialog's header row, where the
+    // header's own close button is, so the close moves into the toolbar instead.
+    // The other modes leave the toolbar in the chart and keep the header's.
+    var toolbarCloses = neowxChartToolbarMode() === 'align';
+    if (config.chart.toolbar) {
+        if (config.chart.toolbar.tools && !toolbarCloses) {
+            // No expand button on the chart that is already expanded.
+            config.chart.toolbar.tools.customIcons = [];
+        } else if (config.chart.toolbar.tools) {
+            config.chart.toolbar.tools.customIcons = [{
+                icon: NEOWX_CLOSE_ICON,
+                title: neowxText('close', 'Close'),
+                class: 'neowx-chart-close-icon',
+                click: function () {
+                    $('#' + NEOWX_POPUP_ID).modal('hide');
+                }
+            }];
+        }
+        // ApexCharts turns these into style.top/right on the toolbar when it
+        // builds it. "align" re-parents the toolbar and clears both, so pin
+        // them at the vendor's own default here rather than let an offset set
+        // on the card's chart follow the copy into a dialog it was not
+        // measured against.
+        config.chart.toolbar.offsetX = 0;
+        config.chart.toolbar.offsetY = 0;
     }
 
+    var chartCard = chartCtx.el && chartCtx.el.closest ? chartCtx.el.closest('.card') : null;
     neowxOpenPopup(neowxPopupTitle(chartCtx), function (mount) {
         // The copy inherits chart.events.mounted by reference. On a customChart*
         // using hidevalues that is the handler chart_hidden_series.inc builds,
@@ -394,7 +470,7 @@ function neowxChartPopup(chartCtx) {
             delete NEOWX_ALIGNED[chart.w.globals.chartID];
         }
         chart.destroy();
-    });
+    }, toolbarCloses, chartCard);
 }
 
 // --- Embedded iFrames and images ------------------------------------------
@@ -425,7 +501,7 @@ function neowxEmbedPopup(button) {
     var title = neowxCardTitle(button) || media.getAttribute('alt') || '';
     neowxOpenPopup(title, function (mount) {
         mount.appendChild(copy);
-    });
+    }, null, false, card);
 }
 
 // Registered unconditionally: app.js is a plain .js file with no access to the
@@ -438,3 +514,428 @@ document.addEventListener('click', function (e) {
         neowxEmbedPopup(button);
     }
 });
+
+// --- CHART TOOLBAR POSITION -----------------------------------------------
+// Appearance/chart_toolbar in skin.conf decides where a chart's buttons go:
+//
+//   chart_default - ApexCharts' own placement, inside the chart below the
+//                   heading
+//   separate      - only the expand button moves, into the card's top-right
+//                   corner, the same spot the [[Embedded]] cards put theirs
+//   align         - the whole toolbar moves into that corner
+//
+// js.inc normalises the setting and hands it over as NEOWX_CHART_TOOLBAR, and
+// calls neowxSetupChartToolbar from the chart's mounted and updated events.
+
+// Shared with js.inc, which uses it for the toolbar's own expand button.
+var NEOWX_EXPAND_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" ' +
+    'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
+    'stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/>' +
+    '<path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>';
+
+var NEOWX_CLOSE_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" ' +
+    'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
+    'stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>';
+
+// The strings come from js.inc, which is emitted after this file is loaded, so
+// they can only be read at click or mount time - never at the top level here.
+function neowxText(key, fallback) {
+    return (window.NEOWX_TEXTS && window.NEOWX_TEXTS[key]) || fallback;
+}
+
+function neowxChartToolbarMode() {
+    var mode = window.NEOWX_CHART_TOOLBAR;
+    return (mode === 'separate' || mode === 'align') ? mode : 'chart_default';
+}
+
+function neowxSetupChartToolbar(chartContext) {
+    var mode = neowxChartToolbarMode();
+    if (mode === 'align') {
+        neowxAlignChartToolbar(chartContext);
+    } else if (mode === 'separate') {
+        neowxSeparateExpandButton(chartContext);
+    }
+}
+
+// --- separate -------------------------------------------------------------
+// The card gets the [[Embedded]] cards' own toolbar markup, so both kinds of
+// card end up with the same button in the same place, from the same stylesheet
+// rules. Built here rather than in the templates because a chart card is
+// emitted from eight of them.
+function neowxSeparateExpandButton(chartContext) {
+    try {
+        var el = chartContext && chartContext.el;
+        var card = el && el.closest ? el.closest('.card') : null;
+        // The pop-up's chart is not in a card, and is already expanded.
+        if (!card) {
+            return;
+        }
+        // 'updated' fires on every re-render, so this must not stack up. Scoped
+        // to a direct child, as neowxCardCorner is: a match nested deeper is not
+        // the one that would be measured, so treating it as "already done" would
+        // leave a card with a button and no room reserved for it.
+        if (card.querySelector(':scope > .nwm-embed-toolbar')) {
+            return;
+        }
+
+        var label = neowxText('expand_chart', 'Expand chart');
+        var toolbar = document.createElement('div');
+        toolbar.className = 'nwm-embed-toolbar';
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'nwm-embed-toolbar-icon';
+        button.title = label;
+        button.setAttribute('aria-label', label);
+        button.innerHTML = NEOWX_EXPAND_ICON;
+        button.addEventListener('click', function () {
+            neowxChartPopup(chartContext);
+        });
+        toolbar.appendChild(button);
+        // A direct child of .card, which is what the stylesheet positions it
+        // against - the templates place the [[Embedded]] one the same way.
+        card.appendChild(toolbar);
+        neowxObserveCorner(toolbar);
+        neowxSetTitleSpacing(card);
+    } catch (e) {
+        console.error('neowx-material: could not add the chart expand button', e);
+    }
+}
+
+// ApexCharts closes its export menu from a document-level click handler that
+// looks for .apexcharts-menu inside the chart's own element. A hosted toolbar
+// takes the menu with it, out of where that handler looks, so clicking the
+// chart - or picking an item off the menu - would leave it hanging open with
+// only the hamburger able to shut it. This does that job for menus that moved.
+//
+// Registered unconditionally: with chart_toolbar anything but "align" nothing
+// carries .nwm-hosted-toolbar and this matches nothing.
+document.addEventListener('click', function (e) {
+    var open = document.querySelectorAll(
+        '.nwm-hosted-toolbar .apexcharts-menu.apexcharts-menu-open');
+    if (open.length === 0) {
+        return;
+    }
+    // The hamburger toggles the menu itself; closing it here as well would
+    // undo the opening click. Every other click closes, which is the rule
+    // ApexCharts applies to the menus it can still see.
+    if (e.target.closest && e.target.closest('.apexcharts-menu-icon')) {
+        return;
+    }
+    for (var i = 0; i < open.length; i++) {
+        open[i].classList.remove('apexcharts-menu-open');
+    }
+});
+
+// --- align ----------------------------------------------------------------
+// ApexCharts anchors its toolbar to the chart canvas, which on a card sits
+// below the heading. Its offsetX/offsetY settings can shift it from there, but
+// only in pixels measured against a canvas that resizes, re-renders and is
+// mid-transition inside a dialog - which never stayed reliably on the same spot
+// as the button it is meant to line up with.
+//
+// So the toolbar is moved instead: into the card, or into the dialog's header,
+// where the very same stylesheet rule that places the [[Embedded]] cards'
+// button places it. Being the same rule, the two cannot drift apart.
+//
+// The catch is that ApexCharts builds a fresh toolbar inside the canvas
+// whenever it re-renders - the zoom handler in js.inc calls updateOptions on
+// every zoom - so this runs on 'updated' as well as at mount, and takes the
+// stale one away when it does.
+function neowxAlignChartToolbar(chartContext) {
+    try {
+        var el = chartContext && chartContext.el;
+        if (!el || !el.closest) {
+            return;
+        }
+        // In the pop-up the header is the counterpart of the card: it is what
+        // carries the dialog's own close button.
+        var content = el.closest('.modal-content');
+        var host = el.closest('.card') || (content && content.querySelector('.modal-header'));
+        if (!host) {
+            return;
+        }
+        // Only a toolbar still inside the chart is a new one. Once hosted it is
+        // no longer in there, and a re-render that produced no new toolbar
+        // must leave the hosted one alone.
+        var toolbar = el.querySelector('.apexcharts-toolbar');
+        if (!toolbar) {
+            return;
+        }
+        var hosted = host.querySelector(':scope > .apexcharts-toolbar');
+        // ApexCharts sets these from chart.toolbar.offsetX/offsetY; they are
+        // measured against the canvas, which is no longer what it sits in.
+        toolbar.style.top = '';
+        toolbar.style.right = '';
+        // Out here the vendor's theme classes on the canvas no longer reach it,
+        // so the stylesheet dresses .nwm-hosted-toolbar from the skin's own
+        // theme instead - the same rules that dress the [[Embedded]] button.
+        // Reading the canvas class here would be no good anyway: ApexCharts has
+        // not always set it by the time a card chart reports mounted.
+        toolbar.classList.add('nwm-hosted-toolbar');
+        host.appendChild(toolbar);
+        // Appended before the old one is taken away: if appending throws, the
+        // card keeps the toolbar it had rather than ending up with none.
+        if (hosted && hosted !== toolbar) {
+            // Unobserved first: ApexCharts builds a fresh toolbar on every
+            // re-render, so without this the observer collects a detached one
+            // per zoom for the life of the page.
+            neowxUnobserveCorner(hosted);
+            hosted.remove();
+        }
+        // Whatever now hosts it may have to leave the heading room for it. In
+        // the dialog this is the only chance to measure: the pop-up asks for it
+        // as soon as it is shown, which is before render() has fired mounted
+        // and put a toolbar here at all.
+        if (host.classList.contains('card')) {
+            neowxObserveCorner(toolbar);
+            neowxSetTitleSpacing(host);
+        } else {
+            neowxSetPopupTitleReserve(document.getElementById(NEOWX_POPUP_ID));
+        }
+    } catch (e) {
+        // Nothing here is load-bearing - a chart whose toolbar stayed where
+        // ApexCharts put it is still a working chart.
+        console.error('neowx-material: could not place the chart toolbar', e);
+    }
+}
+
+// --- CARD HEADING ALIGNMENT -----------------------------------------------
+// Appearance/items_title_align picks how a card's heading sits: center (as it always
+// has), left, or center-adjusted - centred in what is left once the card's
+// expand button or toolbar is allowed for. head.inc emits the alignment as CSS,
+// which is all "center" needs.
+//
+// "left" and "center-adjusted" also need to know how much room that control
+// takes, and that is not a number the templates can know: it is a 32 px
+// one-button toolbar on an [[Embedded]] card or a chart in "separate" mode, a
+// whole toolbar in "align" mode, and nothing at all on a value card, on a
+// chart in "chart_default" mode, or wherever the pop-up buttons are switched
+// off. So it is measured from whatever is actually in the corner and written to
+// the card as --nwm-item-title-reserve; "left" additionally needs
+// --nwm-item-title-inset, since the card body's own left padding is not the
+// same on every kind of card.
+
+// Whether any card asks for an alignment other than the default. head.inc
+// emits nothing at all for a site that leaves items_title_align alone, so
+// without this the whole measuring apparatus below - two rects and two
+// getComputedStyle per card, on load, on resize, and a ResizeObserver on every
+// card and body for the life of the page - would run to feed CSS that does not
+// exist. Set by head.inc, so read lazily: this file loads first.
+function neowxItemTitleAlignInUse() {
+    return window.NEOWX_ITEM_TITLE_ALIGN_SET === true;
+}
+
+// Gap between the heading and the control, so the two never quite touch.
+var NEOWX_TITLE_GUTTER = 8;
+
+// How far a left-aligned heading sits from the card's edge. The card body's
+// own padding is not enough on its own and is not even the same everywhere -
+// half a rem on most cards, none at all on the [[Embedded]] ones, whose body
+// is px-0 so the media can run to the edge - which would leave their headings
+// flush against it. This is the dialog header's padding, so a heading starts
+// on the same line whether it is on a card or in the pop-up that card opens.
+var NEOWX_TITLE_INSET = 16;
+
+// The control a card carries in its top-right corner, if it has one at all:
+// the [[Embedded]] cards' expand button, the one app.js adds to a chart card in
+// "separate" mode, or a toolbar hosted there in "align" mode.
+function neowxCardCorner(card) {
+    return card.querySelector(':scope > .nwm-embed-toolbar, :scope > .nwm-hosted-toolbar');
+}
+
+function neowxSetTitleSpacing(card) {
+    try {
+        if (!card || !card.querySelector || !neowxItemTitleAlignInUse()) {
+            return;
+        }
+        var body = card.querySelector(':scope > .card-body');
+        var heading = body ? body.querySelector(':scope > .h5-responsive') : null;
+        if (!heading) {
+            return;
+        }
+        var bodyBox = body.getBoundingClientRect();
+        if (bodyBox.width === 0) {
+            return;
+        }
+        var bodyStyle = window.getComputedStyle(body);
+
+        // Left-aligned headings start on NEOWX_TITLE_INSET from the card's
+        // edge, whatever the card body contributes towards it. Taken off the
+        // heading's own box, which is where the text starts from and is not
+        // affected by the padding being set here - reading the body's padding
+        // instead would miss that an [[Embedded]] card's body is not only
+        // unpadded but sits slightly inside the card.
+        var cardBox = card.getBoundingClientRect();
+        var headingLeft = heading.getBoundingClientRect().left;
+        var inset = Math.max(0, NEOWX_TITLE_INSET - (headingLeft - cardBox.left));
+        card.style.setProperty('--nwm-item-title-inset', inset + 'px');
+
+        var corner = neowxCardCorner(card);
+        // No control, or one that is laid out but not shown: nothing to leave
+        // room for, and center-adjusted then behaves as center.
+        if (!corner || window.getComputedStyle(corner).display === 'none') {
+            card.style.removeProperty('--nwm-item-title-reserve');
+            return;
+        }
+        var cornerBox = corner.getBoundingClientRect();
+        // A control that measures zero is one that is not laid out yet, which is
+        // the same thing as not having one as far as this pass is concerned -
+        // and it has to clear the property for the same reason, or a value
+        // measured against some earlier control survives a pass that is
+        // supposed to recompute from scratch.
+        if (cornerBox.width === 0) {
+            card.style.removeProperty('--nwm-item-title-reserve');
+            return;
+        }
+        // Measured against the card body's content edge rather than the
+        // heading's own, which already carries whatever reserve was set last
+        // time and would creep outwards on every pass.
+        var contentRight = bodyBox.right - (parseFloat(bodyStyle.paddingRight) || 0);
+        var reserve = Math.max(0, contentRight - cornerBox.left + NEOWX_TITLE_GUTTER);
+        card.style.setProperty('--nwm-item-title-reserve', reserve + 'px');
+    } catch (e) {
+        console.error('neowx-material: could not measure the heading reserve', e);
+    }
+}
+
+// What head.inc resolved for this card, from the custom property it set there.
+// A pop-up opened from a card with no alignment of its own - or from nothing at
+// all - centres, which is the skin's default.
+function neowxCardItemTitleAlign(card) {
+    if (!card) {
+        return 'center';
+    }
+    var align = window.getComputedStyle(card).getPropertyValue('--nwm-item-title-align').trim();
+    return (align === 'left' || align === 'center-adjusted') ? align : 'center';
+}
+
+// The dialog's counterpart of neowxSetTitleSpacing. What sits in its corner is
+// either the chart toolbar - "align" mode hosts it on the header row - or the
+// dialog's own close button, and both are in the header.
+function neowxSetPopupTitleReserve(modal) {
+    try {
+        if (!modal) {
+            return;
+        }
+        var align = modal.getAttribute('data-item-title-align');
+        if (align !== 'left' && align !== 'center-adjusted') {
+            return;
+        }
+        var header = modal.querySelector('.modal-header');
+        var title = header ? header.querySelector('.modal-title') : null;
+        // In precedence order, not as one selector list: querySelector returns
+        // the first match in TREE order, and the close button is built into the
+        // header while the toolbar is appended after it - so a list would always
+        // answer with the close button, which "align" mode hides.
+        var corner = header ? header.querySelector('.apexcharts-toolbar') : null;
+        if (corner && window.getComputedStyle(corner).display === 'none') {
+            corner = null;
+        }
+        if (!corner && header) {
+            corner = header.querySelector('.nwm-popup-close');
+        }
+        if (!title || !corner || window.getComputedStyle(corner).display === 'none') {
+            return;
+        }
+        var cornerBox = corner.getBoundingClientRect();
+        var headerBox = header.getBoundingClientRect();
+        if (cornerBox.width === 0 || headerBox.width === 0) {
+            return;
+        }
+        var contentRight = headerBox.right -
+            (parseFloat(window.getComputedStyle(header).paddingRight) || 0);
+        var reserve = Math.max(0, contentRight - cornerBox.left + NEOWX_TITLE_GUTTER);
+        modal.style.setProperty('--nwm-item-title-reserve', reserve + 'px');
+    } catch (e) {
+        console.error('neowx-material: could not measure the dialog heading reserve', e);
+    }
+}
+
+// Every card on the page. Charts call neowxSetTitleSpacing themselves once
+// their toolbar exists, which is after this has run for them.
+function neowxSetTitleSpacings() {
+    var cards = document.querySelectorAll('.card');
+    for (var i = 0; i < cards.length; i++) {
+        neowxSetTitleSpacing(cards[i]);
+    }
+}
+
+// js.inc loads this file at the end of the page, so the cards are already
+// there and the first pass can just run. The later hooks are for anything that
+// changes the measurement afterwards: a card still parsing when this ran, web
+// fonts settling on load, and a resize, which can change the card body's own
+// padding at a breakpoint. All idempotent - each pass recomputes from scratch.
+neowxSetTitleSpacings();
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', neowxSetTitleSpacings);
+}
+
+window.addEventListener('load', neowxSetTitleSpacings);
+
+var _neowxTitleResizeTimer = null;
+window.addEventListener('resize', function () {
+    clearTimeout(_neowxTitleResizeTimer);
+    _neowxTitleResizeTimer = setTimeout(function () {
+        neowxSetTitleSpacings();
+        // An open pop-up's title measures against the dialog, which the resize
+        // moved as well.
+        neowxSetPopupTitleReserve(document.getElementById(NEOWX_POPUP_ID));
+    }, 250);
+});
+
+// A card's own box can move without the window changing at all: an
+// [[Embedded]] card's image arrives and lays its body out differently, a chart
+// finishes rendering, a panel is expanded. The measurement comes off those
+// boxes, so watch them rather than hope the first pass caught them settled.
+var _neowxTitleObserver = null;
+
+// The control is watched too, and it is the one that cannot be picked up in the
+// sweep below: a chart's is built in JavaScript long after this runs, and its
+// width changes again the first time a zoom adds the reset button. Called by
+// whichever function put it there.
+function neowxObserveCorner(corner) {
+    if (_neowxTitleObserver && corner) {
+        try {
+            _neowxTitleObserver.observe(corner);
+        } catch (e) {
+            console.error('neowx-material: could not watch a card control', e);
+        }
+    }
+}
+
+function neowxUnobserveCorner(corner) {
+    if (_neowxTitleObserver && corner) {
+        try {
+            _neowxTitleObserver.unobserve(corner);
+        } catch (e) {
+            console.error('neowx-material: could not stop watching a card control', e);
+        }
+    }
+}
+
+if (typeof ResizeObserver !== 'undefined' && neowxItemTitleAlignInUse()) {
+    _neowxTitleObserver = new ResizeObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+            var target = entries[i].target;
+            var card = target.classList.contains('card')
+                ? target
+                : (target.closest ? target.closest('.card') : null);
+            neowxSetTitleSpacing(card);
+        }
+    });
+    // The body as well as the card: an image arriving can move the body inside
+    // a card whose own box never changes.
+    var _neowxWatched = document.querySelectorAll(
+        '.card, .card > .card-body, .card > .nwm-embed-toolbar');
+    for (var _c = 0; _c < _neowxWatched.length; _c++) {
+        try {
+            _neowxTitleObserver.observe(_neowxWatched[_c]);
+        } catch (e) {
+            // One element failing must not leave the rest unwatched.
+            console.error('neowx-material: could not watch a card', e);
+        }
+    }
+}

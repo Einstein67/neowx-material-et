@@ -407,12 +407,19 @@ footer.page-footer {
   order: 1;
 }
 
+// ...and the pop-up's close button goes after even that, so it ends up where
+// the dialog's own close button used to be: last, in the top-right corner.
+.apexcharts-toolbar .neowx-chart-close-icon {
+  order: 2;
+}
+
 // ApexCharts styles .apexcharts-toolbar-custom-icon itself, but its icon
 // sizing and hover rules only name the built-in buttons, so both are repeated
 // here at the vendor's own values - this button sits in the vendor's toolbar,
 // so a near-miss on the hover shade shows up next to the buttons either side
 // of it. fill/stroke come from attributes on the inline SVG in js.inc.
-.apexcharts-toolbar-custom-icon.neowx-chart-popup-icon {
+.apexcharts-toolbar-custom-icon.neowx-chart-popup-icon,
+.apexcharts-toolbar-custom-icon.neowx-chart-close-icon {
   svg {
     width: 18px;
     height: 18px;
@@ -424,7 +431,27 @@ footer.page-footer {
   }
 }
 
-.apexcharts-theme-dark .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover {
+// Hosted in a card or a dialog header, the toolbar is outside the canvas whose
+// theme class the vendor's selected/hover rules hang off, so they are restated
+// here against the toolbar itself. The theme-dependent half lives with the
+// [[Embedded]] toolbar's dark rules further down, so both are dressed the same.
+.nwm-hosted-toolbar {
+  .apexcharts-pan-icon.apexcharts-selected,
+  .apexcharts-reset-zoom-icon.apexcharts-selected,
+  .apexcharts-selection-icon.apexcharts-selected,
+  .apexcharts-zoom-icon.apexcharts-selected {
+    background: rgba(0, 143, 251, 0.12);
+    color: #008ffb;
+  }
+
+  button:hover {
+    background: rgba(15, 23, 42, 0.06);
+    color: #1f2937;
+  }
+}
+
+.apexcharts-theme-dark .apexcharts-toolbar-custom-icon.neowx-chart-popup-icon:hover,
+.apexcharts-theme-dark .apexcharts-toolbar-custom-icon.neowx-chart-close-icon:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
@@ -433,7 +460,12 @@ footer.page-footer {
 // the ApexCharts one. Those values are deliberately copied rather than reused
 // through .apexcharts-* selectors: that stylesheet is vendored, and leaning on
 // it would turn the next ApexCharts upgrade into a silent restyling here.
-.nwm-embed-toolbar {
+//
+// chart_toolbar = separate gives chart cards this same toolbar, built in
+// js/app.js - which is the point of it: one button, one place, one set of
+// rules, whichever kind of card it sits on.
+.nwm-embed-toolbar,
+.card > .nwm-hosted-toolbar {
   position: absolute;
   top: 6px;
   right: 6px;
@@ -495,22 +527,34 @@ footer.page-footer {
     }
   }
 
-  // Card headings are centred, and the dialog is meant to read as the card
-  // enlarged. Centring the flex row on its own would leave the title off-centre
-  // by the width of the close button, so the button comes out of the flow.
-  // Bootstrap's -1rem margins on it cancelled the header padding while it was a
-  // flex item; offsets against the padding box do that job now, and leaving the
-  // margins in would pull it a further 1rem outside the dialog.
+  // Card headings are centred by default, and the dialog is meant to read as
+  // the card enlarged - see the items_title_align rules below for the rest. The close button is out of the flex flow entirely, so centring
+  // the row centres the title on the dialog rather than on what is left of it.
   .modal-header {
     position: relative;
     justify-content: center;
+  }
 
-    .close {
-      position: absolute;
-      top: 0;
-      right: 0;
-      margin: 0;
-    }
+  // The close button, and a chart toolbar in "align" mode, share this seat:
+  // centred on the header row, right edge on the header's own padding.
+  // neowxAlignChartToolbar clears the inline top/right ApexCharts set from the
+  // canvas, so this one rule places both - which is why the corner does not
+  // move between modes.
+  .modal-header .nwm-popup-close,
+  .modal-header .nwm-hosted-toolbar {
+    // Stated rather than inherited from the vendored .apexcharts-toolbar rule,
+    // which is what a hosted toolbar would otherwise be relying on to be taken
+    // out of the header's centred flex row.
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+  }
+
+  // In "align" mode the chart's toolbar takes that seat and ends with a close
+  // button of its own, so this one would be a second one underneath it.
+  &.nwm-popup-own-close .modal-header .nwm-popup-close {
+    display: none;
   }
 
   // js/app.js gives the title the same classes a card heading has (size and
@@ -524,6 +568,28 @@ footer.page-footer {
     // Symmetric, so the title stays centred while a long one still breaks
     // before it reaches the close button rather than running under it.
     padding: 0 3rem;
+  }
+
+  // A pop-up is the card enlarged, so its title follows that card's
+  // Appearance/items_title_align. js/app.js copies the resolved value onto the modal
+  // and measures --nwm-item-title-reserve from whatever sits in the header's corner
+  // - the chart toolbar in "align" mode, the close button otherwise. The 3rem
+  // fallback is the symmetric padding above, for the moment before it has been
+  // measured.
+  &[data-item-title-align="left"] .modal-title,
+  &[data-item-title-align="center-adjusted"] .modal-title {
+    // Spanning the header, not shrink-wrapped to the text. The header centres
+    // its flex items, so a title sized to its own text is already sitting in
+    // the middle and text-align inside it has nothing left to decide - which
+    // is what made a left-aligned card open a centred dialog. On a card the
+    // heading is a block filling the body, so the question never arose there.
+    flex: 1 1 auto;
+    padding-left: 0;
+    padding-right: var(--nwm-item-title-reserve, 3rem);
+  }
+
+  &[data-item-title-align="left"] .modal-title {
+    text-align: left;
   }
 
   .modal-body {
@@ -562,17 +628,30 @@ footer.page-footer {
 // the same treatment the cards get above.
 @media (prefers-color-scheme: dark) {
   .auto-theme {
-    .nwm-embed-toolbar {
+    .nwm-embed-toolbar,
+    .nwm-hosted-toolbar {
       background: rgba(28, 28, 31, 0.82);
     }
 
-    .nwm-embed-toolbar-icon {
+    .nwm-embed-toolbar-icon,
+    .nwm-hosted-toolbar button {
       color: #d4d6dc;
 
       &:hover {
         background: rgba(255, 255, 255, 0.08);
         color: #fff;
       }
+    }
+
+    // The hamburger's dropdown is a child of the toolbar, so it travelled too.
+    .nwm-hosted-toolbar .apexcharts-menu {
+      background: rgba(28, 28, 31, 0.92);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #f3f4f6;
+    }
+
+    .nwm-hosted-toolbar .apexcharts-menu-item:hover {
+      background: rgba(255, 255, 255, 0.08);
     }
 
     #neowx-popup {
@@ -585,27 +664,35 @@ footer.page-footer {
         border-bottom-color: rgba(255, 255, 255, 0.15);
       }
 
-      .close {
-        color: #ddd;
-        text-shadow: none;
-        opacity: 0.75;
-      }
     }
   }
 }
 
 .dark-theme {
-  .nwm-embed-toolbar {
+  .nwm-embed-toolbar,
+  .nwm-hosted-toolbar {
     background: rgba(28, 28, 31, 0.82);
   }
 
-  .nwm-embed-toolbar-icon {
+  .nwm-embed-toolbar-icon,
+  .nwm-hosted-toolbar button {
     color: #d4d6dc;
 
     &:hover {
       background: rgba(255, 255, 255, 0.08);
       color: #fff;
     }
+  }
+
+  // The hamburger's dropdown is a child of the toolbar, so it travelled too.
+  .nwm-hosted-toolbar .apexcharts-menu {
+    background: rgba(28, 28, 31, 0.92);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #f3f4f6;
+  }
+
+  .nwm-hosted-toolbar .apexcharts-menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
   }
 
   #neowx-popup {
@@ -618,10 +705,5 @@ footer.page-footer {
       border-bottom-color: rgba(255, 255, 255, 0.15);
     }
 
-    .close {
-      color: #ddd;
-      text-shadow: none;
-      opacity: 0.75;
-    }
   }
 }
