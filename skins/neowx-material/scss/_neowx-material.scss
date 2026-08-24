@@ -578,6 +578,12 @@ footer.page-footer {
   // measured.
   &[data-item-title-align="left"] .modal-title,
   &[data-item-title-align="center-adjusted"] .modal-title {
+    // Spanning the header, not shrink-wrapped to the text. The header centres
+    // its flex items, so a title sized to its own text is already sitting in
+    // the middle and text-align inside it has nothing left to decide - which
+    // is what made a left-aligned card open a centred dialog. On a card the
+    // heading is a block filling the body, so the question never arose there.
+    flex: 1 1 auto;
     padding-left: 0;
     padding-right: var(--nwm-item-title-reserve, 3rem);
   }

@@ -310,6 +310,19 @@ function neowxOpenPopup(title, onShown, onHidden, ownClose, card) {
         // once it is on screen and the toolbar has landed - see the shown
         // handler below.
         modal.setAttribute('data-item-title-align', neowxCardItemTitleAlign(card));
+        // Seeded from the card's own measurement, because the dialog's cannot
+        // be taken yet: in "align" mode the toolbar it measures against does
+        // not exist until the chart has rendered, which is after the dialog is
+        // on screen. Without this the title is laid out against the 3rem
+        // fallback and then visibly jumps when the real figure arrives. The two
+        // controls hold the same buttons give or take the expand one, so the
+        // seed is close enough that the correction does not show.
+        if (card) {
+            var seed = card.style.getPropertyValue('--nwm-item-title-reserve');
+            if (seed) {
+                modal.style.setProperty('--nwm-item-title-reserve', seed);
+            }
+        }
 
         // Fill the dialog only once it is on screen. Nothing inside a modal has
         // a size while Bootstrap still has it at display:none, and with .fade
