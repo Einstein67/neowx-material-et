@@ -177,7 +177,7 @@ How the current-page trend arrows work and how to tune them:
 
 1. **Install the extension:**
    ```bash
-   weectl extension install https://github.com/seehase/neowx-material/archive/refs/heads/master.zip
+   weectl extension install https://github.com/Einstein67/neowx-material-et/archive/refs/heads/master-et.zip
    ```
 
 2. **Restart WeeWX:**
