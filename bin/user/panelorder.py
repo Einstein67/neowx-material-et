@@ -70,7 +70,7 @@ from weewx.cheetahgenerator import SearchList
 
 log = logging.getLogger(__name__)
 
-VERSION = "2.0.1"
+VERSION = "2.0.2"
 
 # Segment types.  'type' is None for a section with no title, whose items
 # render loose rather than inside a panel.
