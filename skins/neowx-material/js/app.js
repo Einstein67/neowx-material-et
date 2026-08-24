@@ -277,6 +277,7 @@ function neowxPopupModal() {
         // it would still be sitting there over the next pop-up's title.
         var hosted = modal.querySelector('.modal-header > .apexcharts-toolbar');
         if (hosted) {
+            neowxUnobserveCorner(hosted);
             hosted.remove();
         }
         // The next pop-up may come from a card aligned differently.
@@ -602,6 +603,31 @@ function neowxSeparateExpandButton(chartContext) {
     }
 }
 
+// ApexCharts closes its export menu from a document-level click handler that
+// looks for .apexcharts-menu inside the chart's own element. A hosted toolbar
+// takes the menu with it, out of where that handler looks, so clicking the
+// chart - or picking an item off the menu - would leave it hanging open with
+// only the hamburger able to shut it. This does that job for menus that moved.
+//
+// Registered unconditionally: with chart_toolbar anything but "align" nothing
+// carries .nwm-hosted-toolbar and this matches nothing.
+document.addEventListener('click', function (e) {
+    var open = document.querySelectorAll(
+        '.nwm-hosted-toolbar .apexcharts-menu.apexcharts-menu-open');
+    if (open.length === 0) {
+        return;
+    }
+    // The hamburger toggles the menu itself; closing it here as well would
+    // undo the opening click. Every other click closes, which is the rule
+    // ApexCharts applies to the menus it can still see.
+    if (e.target.closest && e.target.closest('.apexcharts-menu-icon')) {
+        return;
+    }
+    for (var i = 0; i < open.length; i++) {
+        open[i].classList.remove('apexcharts-menu-open');
+    }
+});
+
 // --- align ----------------------------------------------------------------
 // ApexCharts anchors its toolbar to the chart canvas, which on a card sits
 // below the heading. Its offsetX/offsetY settings can shift it from there, but
@@ -652,6 +678,10 @@ function neowxAlignChartToolbar(chartContext) {
         // Appended before the old one is taken away: if appending throws, the
         // card keeps the toolbar it had rather than ending up with none.
         if (hosted && hosted !== toolbar) {
+            // Unobserved first: ApexCharts builds a fresh toolbar on every
+            // re-render, so without this the observer collects a detached one
+            // per zoom for the life of the page.
+            neowxUnobserveCorner(hosted);
             hosted.remove();
         }
         // Whatever now hosts it may have to leave the heading room for it. In
@@ -872,6 +902,16 @@ function neowxObserveCorner(corner) {
             _neowxTitleObserver.observe(corner);
         } catch (e) {
             console.error('neowx-material: could not watch a card control', e);
+        }
+    }
+}
+
+function neowxUnobserveCorner(corner) {
+    if (_neowxTitleObserver && corner) {
+        try {
+            _neowxTitleObserver.unobserve(corner);
+        } catch (e) {
+            console.error('neowx-material: could not stop watching a card control', e);
         }
     }
 }
