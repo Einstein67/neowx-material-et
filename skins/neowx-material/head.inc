@@ -439,10 +439,14 @@ href="img/splash/splash_1536x2048.png"
         #if isinstance($_items, str)
             #set $_items = $_items.split(',')
         #end if
+        ## Delegate to panelorder.py's parser rather than re-deriving the slug
+        ## sanitize rule here: it also handles the "-2" collision suffix and
+        ## the "section-<n>" fallback for a name with no usable characters.
+        #set $_sslug = $panelSectionSlug($_sid)
         #for $_item in $_items
             #set $_item = str($_item).strip()
             #if $_item != '' and all(c.isalnum() or c in '_.:-' for c in $_item)
-                #silent $_section_overrides.append(($_kinds, $_item, $_a))
+                #silent $_section_overrides.append(($_kinds, $_item, $_a, $_sslug))
             #end if
         #end for
     #end for
@@ -452,8 +456,13 @@ href="img/splash/splash_1536x2048.png"
 <style>
     ## The panel-wide rules first: same specificity as the per-card ones below,
     ## so anything named individually there overrides what its panel asked for.
-    #for $_kinds, $_item, $_align in $_section_overrides
-        #set $_sel = ', '.join([$_k + '[data-name="' + $_item + '"] > .card-body > .h5-responsive' for $_k in $_kinds])
+    #for $_kinds, $_item, $_align, $_sslug in $_section_overrides
+        ## :where() contributes zero specificity, which is load bearing here.
+        ## The comment above _CONTENT_CARD_KINDS records that section rules and
+        ## per-card rules must stay at EQUAL specificity, with emission order
+        ## deciding which wins. A bare second attribute selector would raise
+        ## these above the per-card rules below and silently invert that.
+        #set $_sel = ', '.join([$_k + ':where([data-section="' + $_sslug + '"])[data-name="' + $_item + '"] > .card-body > .h5-responsive' for $_k in $_kinds])
     $_sel {
         #if $_align == 'left'
         text-align: left;
