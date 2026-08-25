@@ -431,8 +431,10 @@ function updatePayloadValues(payload) {
                 if (windDirValue !== undefined) {
                     formattedValue += ' ' + getCompass(windDirValue);
 
-                    // Update wind direction icon
-                    let windIcon = document.getElementById('wind-icon');
+                    // Update wind direction icon (class, not id - a windSpeed
+                    // card can render more than once per page under
+                    // per-section duplicates, so scope the lookup to this card)
+                    let windIcon = card.querySelector('.nwm-wind-icon');
                     if (windIcon && (currentText !== formattedValue)) {
                         let deg = Math.round(parseFloat(windDirValue));
                         // Remove existing direction class (wi-wind from-NNN-deg)

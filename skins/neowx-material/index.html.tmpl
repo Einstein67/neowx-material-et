@@ -45,13 +45,13 @@
     #end if
 #end def
 
-#def iframeCard($name)
+#def iframeCard($name, $section = "")
     #set iframe_url = $getVar('Extras.Embedded.' + name + '.url', "")
     #set iframe_title = $getVar('Extras.Embedded.' + name + '.title', "")
     #set iframe_aspect = $getVar('Extras.Embedded.' + name + '.aspect_ratio', "4/3")
     #if iframe_url != ""
         <div class="col-12 col-md-6 col-xl-4 mb-4">
-            <div class="card overflow-hidden" data-name="$name">
+            <div class="card overflow-hidden" data-name="$name" data-section="$section">
                 $embedToolbar()
                 <div class="card-body text-center d-flex flex-column px-0 ${'pb-0' if iframe_title != '' else 'py-0'} overflow-hidden">
                     #if iframe_title != ""
@@ -68,7 +68,7 @@
     #end if
 #end def
 
-#def imageCard($name)
+#def imageCard($name, $section = "")
     #set image_url = $getVar('Extras.Embedded.' + name + '.url', "")
     ## by adding a timestamp parameter we prevent browser caching of the image
     #set $sep = '&' if '?' in $image_url else '?'
@@ -98,7 +98,7 @@
 
     #if image_url != ""
         <div class="col-12 col-md-6 col-xl-4 mb-4">
-            <div class="card overflow-hidden" data-name="$name">
+            <div class="card overflow-hidden" data-name="$name" data-section="$section">
                 $embedToolbar()
                 <div class="card-body text-center d-flex flex-column ${padding_x} ${padding_y} overflow-hidden">
                     #if image_title != ""
@@ -126,11 +126,11 @@
         #end if
     #end def
 
-    #def valuesCard($name)
+    #def valuesCard($name, $section = "")
         ## ET requires a valid positive sum to be shown
         #if $getVar('day.' + name + '.has_data') and ($name != 'ET' or ($day.ET.sum.raw is not None and $day.ET.sum.raw >= 0.0))
             <div class="col-12 col-md-6 col-xl-4 mb-4">
-                <div class="card card-value" id="${name}-value" data-name="$name">
+                <div class="card card-value" data-name="$name" data-section="$section">
                     <div class="card-body text-center">
                         <h3 class="h5-responsive $Extras.color-text">
                             $getVar('obs.label.' + name)
@@ -142,7 +142,7 @@
 
                 #else if $name == 'windSpeed'
 
-                    <i id="wind-icon" class="wi wi-wind from-$current.windDir.formatted-deg"
+                    <i class="wi wi-wind nwm-wind-icon from-$current.windDir.formatted-deg"
                     title="$current.windDir.formatted°" data-toggle="tooltip" data-html="true"></i>
 
                 #end if
@@ -255,7 +255,7 @@
 ## | Chart values are defined in the JS section below                        |
 ## +-------------------------------------------------------------------------+
 
-#def chartCard($name, $name2 = "XX")
+#def chartCard($name, $name2 = "XX", $section = "")
     #if $name.startswith('customChart')
         ## Custom chart: read config from Extras.Appearance
         #set $cc = $Extras.Appearance.get($name, {})
@@ -271,10 +271,10 @@
             #set $cc_sensors_str = chr(44).join($cc_vals_list)
             #if len($cc_vals_list) > 0 and $cc_any_has_data
                 <div class="col-12 col-xl-6 mb-4">
-                    <div class="card card-chart" id="${name}-chart" data-name="$name" data-sensors="$cc_sensors_str">
+                    <div class="card card-chart" data-name="$name" data-section="$section" data-sensors="$cc_sensors_str">
                         <div class="card-body text-center">
                             <h5 class="h5-responsive $Extras.color-text">$cc_title</h5>
-                            <div id="${name}chart"></div>
+                            <div data-chart-mount="$name"></div>
                         </div>
                     </div>
                 </div>
@@ -282,7 +282,7 @@
         #end if
     #else if ($chartHasData($name) or $name == "windvec") and $name not in ["appTemp", "windrun"] and ($name != 'ET' or ($day.ET.sum.raw is not None and $day.ET.sum.raw >= 0.0))
         <div class="col-12 col-xl-6 mb-4">
-            <div class="card card-chart" id="${name}-chart" data-name="$name">
+            <div class="card card-chart" data-name="$name" data-section="$section">
                 <div class="card-body text-center">
                     <h5 class="h5-responsive $Extras.color-text">
                         #if $name2 != "XX"
@@ -292,7 +292,7 @@
                             $getVar('Extras.Charts.Titles.' + name, $getVar('obs.label.' + name))
                         #end if
                     </h5>
-                    <div id="${name}chart"></div>
+                    <div data-chart-mount="$name"></div>
                 </div>
             </div>
         </div>
@@ -303,7 +303,7 @@
 ## | Helper: render a single value-card item by name                         |
 ## +-------------------------------------------------------------------------+
 
-#def renderValueItem($x, $in_panel, $is_first, $is_last)
+#def renderValueItem($x, $in_panel, $is_first, $is_last, $section = "")
     ## 'forecast' renders via #include, which only sees the search list and
     ## #set global vars - so its placement flags are handed over as globals.
     ## is_first / is_last refer to the cards actually rendered in this segment,
@@ -312,9 +312,10 @@
         #set global $forecast_in_panel = $in_panel
         #set global $forecast_is_first = $is_first
         #set global $forecast_is_last  = $is_last
+        #set global $forecast_section  = $section
         #include "forecast.inc"
     #else
-        $valuesCard($x)
+        $valuesCard($x, $section)
     #end if
 #end def
 
@@ -352,7 +353,7 @@
     #if $seg['type'] is None
         ## No panel – render cards directly into the surrounding row
         #for $x in $seg['items']
-            $renderValueItem($x, False, $f_first, $f_last)
+            $renderValueItem($x, False, $f_first, $f_last, $seg['slug'])
         #end for
     #else
         ## Expansion panel
@@ -361,7 +362,7 @@
             #set $p_show  = ' show' if $p_exp else ''
             #set $p_id    = 'nwm-val-panel-' + str($panel_idx)
             <div class="col-12 mb-3">
-                <div class="card nwm-expansion-panel">
+                <div class="card nwm-expansion-panel" data-section="$seg['slug']">
                     #set global $panel_title = $seg['title']
                     #set global $panel_id    = $p_id
                     #set global $panel_type  = $seg['type']
@@ -370,7 +371,7 @@
                         <div class="nwm-panel-body">
                             <div class="row">
                                 #for $x in $seg['items']
-                                    $renderValueItem($x, True, $f_first, $f_last)
+                                    $renderValueItem($x, True, $f_first, $f_last, $seg['slug'])
                                 #end for
                             </div>
                         </div>
@@ -388,7 +389,7 @@
 #def renderChartSegment($seg, $panel_idx)
     #if $seg['type'] is None
         #for $x in $seg['items']
-            $chartCard($x)
+            $chartCard($x, section=$seg['slug'])
         #end for
     #else
         #set $any_has_data = False
@@ -416,7 +417,7 @@
             #set $p_show  = ' show' if $p_exp else ''
             #set $p_id    = 'nwm-chart-panel-' + str($panel_idx)
             <div class="col-12 mb-3">
-                <div class="card nwm-expansion-panel">
+                <div class="card nwm-expansion-panel" data-section="$seg['slug']">
                     #set global $panel_title = $seg['title']
                     #set global $panel_id    = $p_id
                     #set global $panel_type  = $seg['type']
@@ -425,7 +426,7 @@
                         <div class="nwm-panel-body">
                             <div class="row">
                                 #for $x in $seg['items']
-                                    $chartCard($x)
+                                    $chartCard($x, section=$seg['slug'])
                                 #end for
                             </div>
                         </div>
@@ -440,11 +441,11 @@
 ## | Helper: render items inside a panel (or directly) for embedded content   |
 ## +-------------------------------------------------------------------------+
 
-#def renderEmbItem($x)
+#def renderEmbItem($x, $section = "")
     #if $x.startswith("iFrame")
-        $iframeCard($x)
+        $iframeCard($x, $section)
     #else if $x.startswith("image")
-        $imageCard($x)
+        $imageCard($x, $section)
     #else
         $notFoundCard($x)
     #end if
@@ -453,7 +454,7 @@
 #def renderEmbSegment($seg, $panel_idx)
     #if $seg['type'] is None
         #for $x in $seg['items']
-            $renderEmbItem($x)
+            $renderEmbItem($x, $seg['slug'])
         #end for
     #else
         ## Embedded items are always rendered, so a group is never empty.
@@ -461,7 +462,7 @@
         #set $p_show  = ' show' if $p_exp else ''
         #set $p_id    = 'nwm-emb-panel-' + str($panel_idx)
         <div class="col-12 mb-3">
-            <div class="card nwm-expansion-panel">
+            <div class="card nwm-expansion-panel" data-section="$seg['slug']">
                 #set global $panel_title = $seg['title']
                 #set global $panel_id    = $p_id
                 #set global $panel_type  = $seg['type']
@@ -470,7 +471,7 @@
                     <div class="nwm-panel-body">
                         <div class="row">
                             #for $x in $seg['items']
-                                $renderEmbItem($x)
+                                $renderEmbItem($x, $seg['slug'])
                             #end for
                         </div>
                     </div>
@@ -715,8 +716,7 @@
                 #set global $cc_scope = ''
                 #include "chart_colors_setup.inc"
 
-                var chartElement = document.querySelector('#$id');
-                if (chartElement) {
+                document.querySelectorAll('[data-chart-mount="$name"]').forEach(function (chartElement) {
                     new ApexCharts(chartElement, {
                         ...graph_${type}_config,
                         ## Per-series colors aligned to emitted series: series1 = slot 0; series2-8
@@ -833,7 +833,7 @@
                             #end if
                         ]
                     }).render()
-                }
+                });
 
             #end if
 
@@ -962,8 +962,7 @@
             #set $sc_color_list = []
             #silent $sc_color_list.append($cc_color_refs[0] if len($cc_color_refs) > 0 else 'default')
             #silent $sc_color_list.append($cc_color_refs[1] if len($cc_color_refs) > 1 else 'default')
-            var windvecchart = document.querySelector('#windvecchart');
-            if (windvecchart) {
+            document.querySelectorAll('[data-chart-mount="windvec"]').forEach(function (windvecchart) {
                 new ApexCharts(windvecchart, {
                     ...graph_radar_config,
                     #if len($cc_color_refs) > 0
@@ -991,7 +990,7 @@
                         },
                     ]
                 }).render()
-            }
+            });
             #silent $processed_charts.add("windvec")
 
             // --- Default single-series charts: loop over the chart sections ---
@@ -1140,11 +1139,10 @@
                                     #silent $cc_hidden_names.append($getVar('obs.label.' + val))
                                 #end if
                             #end for
-                            var chartElement = document.querySelector('#$cc_id');
-                            if (chartElement) {
+                            document.querySelectorAll('[data-chart-mount="$x"]').forEach(function (chartElement) {
                                 #if len($cc_hidden_names) > 0
                                 chartElement.style.opacity = '0';
-                                setTimeout(function () { var _e = document.querySelector('#$cc_id'); if (_e) { _e.style.opacity = '1'; } }, 2000);
+                                setTimeout(function () { chartElement.style.opacity = '1'; }, 2000);
                                 #end if
                                 new ApexCharts(chartElement, {
                                     ...graph_${cc_type}_config,
@@ -1304,7 +1302,7 @@
                                         ], $cc_color_count, "$x"),
                                     #end if
                                 }).render()
-                            }
+                            });
                         #end if
                     #end if
                 #end if

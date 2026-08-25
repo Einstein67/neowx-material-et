@@ -26,15 +26,54 @@ function debugLog(message) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Get all IDs of elements with class "card-value" and store in a variable
     const valueCards = document.querySelectorAll('.card-value');
-    const valueCardIds = Array.from(valueCards).map(card => card.id);
-    debugLog('Value Card IDs: ' + valueCardIds);
+    const valueCardNames = Array.from(valueCards).map(card => card.getAttribute('data-name'));
+    debugLog('Value cards: ' + valueCardNames);
 
-    // Get all IDs of elements with class "card-chart" and store in a variable
     const cardCharts = document.querySelectorAll('.card-chart');
-    const cardChartIds = Array.from(cardCharts).map(card => card.id);
-    debugLog('Card Chart IDs: ' + cardChartIds);
+    const cardChartNames = Array.from(cardCharts).map(card => card.getAttribute('data-name'));
+    debugLog('Chart cards: ' + cardChartNames);
+
+    // An item can appear in several sections, so a name matches several cards.
+    // Pick the one nearest the element clicked rather than the first in the
+    // document: clicking a card in a Temperature panel should reach the chart
+    // in that panel, not a copy at the top of the page.
+    //
+    // Scoping by data-section instead cannot work here - a value card is in a
+    // content = card section and its chart in a content = chart section, so
+    // their slugs never match.
+    function findJumpTarget(selector, from) {
+        var all = Array.from(document.querySelectorAll(selector));
+        var visible = all.filter(function (el) { return el.offsetParent !== null; });
+        if (!visible.length) return all[0] || null;
+        var y = from.getBoundingClientRect().top + window.pageYOffset;
+        return visible.reduce(function (best, el) {
+            var d = Math.abs(el.getBoundingClientRect().top + window.pageYOffset - y);
+            return d < best.d ? { el: el, d: d } : best;
+        }, { el: visible[0], d: Infinity }).el;
+    }
+
+    // A target inside a collapsed panel has display:none, so its bounding rect
+    // is all zeros and scrollToElement would scroll to (pageYOffset - 100):
+    // a ~100px twitch upward, with the highlight flashing on something
+    // invisible. Expand first, then scroll once layout has settled.
+    //
+    // Bootstrap 4.4.1, so this is the jQuery plugin - there is no
+    // bootstrap.Collapse.getOrCreateInstance() here.
+    function jumpTo(target) {
+        if (!target) return;
+        var body = target.closest('.collapse');
+        if (body && !body.classList.contains('show')) {
+            var header = body.parentNode.querySelector(':scope > .nwm-panel-header');
+            if (header) header.setAttribute('aria-expanded', 'true');
+            $(body).one('shown.bs.collapse', function () {
+                scrollToElement(target, true);
+            });
+            $(body).collapse('show');
+            return;
+        }
+        scrollToElement(target, true);
+    }
 
     // --- CLICK HANDLER 1: Value Cards -> Jump to Chart Cards ---
     valueCards.forEach(function(valueCard) {
@@ -46,11 +85,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Special handling for wind icon - jump to wind vector image
+            // The wind icon jumps to the wind vector chart. This looked up
+            // 'embedded_imageWindVect' from 2021 until 2026 and never worked -
+            // no template has ever emitted that id - so the click fell through
+            // to the i.wi guard below and was swallowed.
+            //
+            // No imageWindVect fallback: that card does not exist and will not.
             if (sensorName === 'windSpeed' && e.target.closest('i.wi')) {
-                const vectorChart = document.getElementById('embedded_imageWindVect');
+                const vectorChart = findJumpTarget('.card-chart[data-name="windvec"]', valueCard);
                 if (vectorChart) {
-                    scrollToElement(vectorChart);
+                    jumpTo(vectorChart);
                     e.preventDefault();
                     e.stopPropagation();
                     return;
@@ -75,22 +119,26 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Find the corresponding chart card by data-name (direct match first)
-            let chartCard = document.querySelector('.card-chart[data-name="' + chartSensorName + '"]');
+            let chartCard = findJumpTarget('.card-chart[data-name="' + chartSensorName + '"]', valueCard);
 
             // Fallback: search custom charts whose data-sensors attribute contains this sensor
             if (!chartCard) {
                 const customCharts = document.querySelectorAll('.card-chart[data-sensors]');
+                const matches = [];
                 for (const cc of customCharts) {
                     const sensors = cc.getAttribute('data-sensors').split(',').map(function(s) { return s.trim(); });
                     if (sensors.indexOf(chartSensorName) !== -1) {
-                        chartCard = cc;
-                        break;
+                        matches.push(cc);
                     }
+                }
+                if (matches.length) {
+                    chartCard = findJumpTarget('.card-chart[data-sensors]', valueCard);
+                    if (matches.indexOf(chartCard) === -1) chartCard = matches[0];
                 }
             }
 
             if (chartCard) {
-                scrollToElement(chartCard, true);
+                jumpTo(chartCard);
                 debugLog('✓ Jumped from value card "' + sensorName + '" to chart "' + chartCard.getAttribute('data-name') + '"');
             } else {
                 debugLog('⚠️ No chart card found for sensor: ' + chartSensorName);
@@ -122,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Find the corresponding value card by data-name (direct match first)
-            let valueCard = document.querySelector('.card-value[data-name="' + valueSensorName + '"]');
+            let valueCard = findJumpTarget('.card-value[data-name="' + valueSensorName + '"]', chartCard);
 
             // Fallback: if this is a custom chart, use data-sensors to find first existing value card
             if (!valueCard) {
@@ -130,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (dataSensors) {
                     const sensors = dataSensors.split(',').map(function(s) { return s.trim(); });
                     for (const sensor of sensors) {
-                        const candidate = document.querySelector('.card-value[data-name="' + sensor + '"]');
+                        const candidate = findJumpTarget('.card-value[data-name="' + sensor + '"]', chartCard);
                         if (candidate) {
                             valueCard = candidate;
                             break;
@@ -140,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (valueCard) {
-                scrollToElement(valueCard, true);
+                jumpTo(valueCard);
                 debugLog('✓ Jumped from chart "' + sensorName + '" to value card "' + valueCard.getAttribute('data-name') + '"');
                 e.preventDefault();
             } else {

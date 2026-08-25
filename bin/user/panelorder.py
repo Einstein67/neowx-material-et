@@ -45,7 +45,11 @@ items and, optionally, how to present them:
   content    card (default), chart, embedded, telemetry, telemetry_chart
 
 Sections render in declaration order within each content value.  Items are
-de-duplicated, first occurrence winning, separately per content value.
+de-duplicated within a section, first occurrence winning - the same item may
+appear in as many sections as you like and renders once in each.  'forecast' is
+the exception: one per page, wherever it is listed, later occurrences dropped.
+Each segment also carries a 'slug': the section name reduced to [A-Za-z0-9_-]
+and made unique across every section, which the templates emit as data-section.
 
 Registration is not optional.  Without this, the templates call names that were
 never added to the search list and the pages fail to generate:
@@ -70,7 +74,7 @@ from weewx.cheetahgenerator import SearchList
 
 log = logging.getLogger(__name__)
 
-VERSION = "2.0.2"
+VERSION = "2.1.0"
 
 # Segment types.  'type' is None for a section with no title, whose items
 # render loose rather than inside a panel.
@@ -80,6 +84,13 @@ STATIC = "static"
 
 CARD = "card"
 CONTENTS = (CARD, "chart", "embedded", "telemetry", "telemetry_chart")
+
+# Items that render at most once per page however many sections list them.
+# The forecast is one large card with fixed inner element ids
+# (forecast-table, forecast_hour_icons) and its own #include-plus-#set global
+# handoff; a second copy would duplicate those ids and the two would fight
+# over the globals.  Everything else may now repeat once per section.
+SINGLETON_ITEMS = ("forecast",)
 
 # Keys a section may carry that are settings rather than typos.
 # items_title_align is read by head.inc, not here - it is listed so a panel
@@ -136,6 +147,10 @@ _warned_problems = {}
 # id(appearance) -> {(content, enable_panels): segments}.
 _sections_cache = {}
 
+# parse_sections() memoises per (content, enable_panels); the slug map is
+# neither, so it gets its own key inside the same weakref-bounded bucket.
+_SLUG_KEY = ("__slugs__",)
+
 
 def _problem_seen(appearance, problem):
     bucket = _warned_problems.get(id(appearance))
@@ -184,6 +199,72 @@ def _as_list(value):
 
 def _appearance(skin_dict):
     return skin_dict.get("Extras", {}).get("Appearance", {})
+
+
+def _slug_char_ok(ch):
+    """ASCII-only test.  str.isalnum() passes 'e-acute' and other non-ASCII
+    letters, which would then appear raw in an attribute selector."""
+    return ("a" <= ch <= "z") or ("A" <= ch <= "Z") or ("0" <= ch <= "9") or ch in "_-"
+
+
+def _slugs(appearance, sections):
+    """Map every section id to a unique slug for use as an attribute value.
+
+    Computed over ALL sections, not per content region: one page renders the
+    card, chart and embedded regions into a single document, so two sections
+    with different content values can still collide there.
+
+    Case is preserved.  The slug goes verbatim into a CSS attribute selector,
+    which is case sensitive, so a user writing [data-section="soilCharts"]
+    must get back the name they wrote in skin.conf.
+    """
+    cached = _cache_get(appearance, _SLUG_KEY)
+    if cached is not None:
+        return cached
+
+    used = {}
+    result = {}
+    for idx, section_id in enumerate(
+            getattr(sections, "sections", list(sections.keys()))):
+        base = "".join(
+            c if _slug_char_ok(c) else "-" for c in str(section_id).strip())
+        while "--" in base:
+            base = base.replace("--", "-")
+        base = base.strip("-")
+        if not base:
+            base = "section-%d" % idx
+        slug = base
+        suffix = 2
+        while slug in used:
+            slug = "%s-%d" % (base, suffix)
+            suffix += 1
+        if slug != base:
+            log.warning(
+                "panelorder: sections '%s' and '%s' both reduce to the slug "
+                "'%s'; using '%s' for the second one. Rename one of them to "
+                "keep data-section values predictable.",
+                used[base], section_id, base, slug)
+        used[slug] = section_id
+        result[section_id] = slug
+
+    _cache_set(appearance, _SLUG_KEY, result)
+    return result
+
+
+def section_slug(skin_dict, section_id):
+    """The data-section value for one section, by its skin.conf name.
+
+    head.inc builds its items_title_align rules straight from
+    Extras.Appearance.sections rather than from parsed segments, and needs the
+    same slug the templates emit.  Exposed so that rule lives in exactly one
+    place: re-deriving it there would drop the collision suffix and the
+    empty-name fallback, and emit CSS that silently matches nothing.
+    """
+    appearance = _appearance(skin_dict)
+    sections = appearance.get("sections")
+    if not sections:
+        return ""
+    return _slugs(appearance, sections).get(str(section_id), "")
 
 
 def _report_unmigrated(appearance):
@@ -272,8 +353,11 @@ def parse_sections(skin_dict, content=CARD, enable_panels=True):
     if cached is not None:
         return cached
 
+    slugs = _slugs(appearance, sections)
+
     segments = []
-    seen = set()
+    # Spans every section, unlike the per-section 'seen' below.
+    claimed = set()
 
     for section_id in getattr(sections, "sections", list(sections.keys())):
         section = sections[section_id]
@@ -302,10 +386,16 @@ def parse_sections(skin_dict, content=CARD, enable_panels=True):
         _warn_unknown_keys(appearance, section, section_id)
 
         items = []
+        seen = set()
         for item in _as_list(section.get("items")):
-            if item not in seen:
-                seen.add(item)
-                items.append(item)
+            if item in seen:
+                continue
+            if item in SINGLETON_ITEMS:
+                if item in claimed:
+                    continue
+                claimed.add(item)
+            seen.add(item)
+            items.append(item)
         if not items:
             continue
 
@@ -322,10 +412,16 @@ def parse_sections(skin_dict, content=CARD, enable_panels=True):
                     "type": _panel_type(appearance, section, section_id),
                     "title": title,
                     "items": items,
+                    "slug": slugs[section_id],
                 }
             )
         else:
-            segments.append({"type": None, "title": "", "items": items})
+            segments.append({
+                "type": None,
+                "title": "",
+                "items": items,
+                "slug": slugs[section_id],
+            })
 
     _cache_set(appearance, cache_key, segments)
     return segments
@@ -335,13 +431,19 @@ def order_items(skin_dict, content=CARD):
     """Flat, de-duplicated item names for one content region.
 
     For loops that need the items themselves rather than the layout, such as
-    the chart JavaScript generation.
+    the chart JavaScript generation.  De-duplicates here rather than relying
+    on parse_sections, which now keeps a repeat that appears in a second
+    section - a chart's config and series data must still be emitted once
+    however many times the chart is displayed.
     """
-    return [
-        item
-        for segment in parse_sections(skin_dict, content, True)
-        for item in segment["items"]
-    ]
+    out = []
+    seen = set()
+    for segment in parse_sections(skin_dict, content, True):
+        for item in segment["items"]:
+            if item not in seen:
+                seen.add(item)
+                out.append(item)
+    return out
 
 
 class PanelOrder(SearchList):
@@ -362,4 +464,11 @@ class PanelOrder(SearchList):
         def panel_items(content=CARD):
             return order_items(skin_dict, content)
 
-        return [{"panelSegments": panel_segments, "panelItems": panel_items}]
+        def panel_section_slug(section_id):
+            return section_slug(skin_dict, section_id)
+
+        return [{
+            "panelSegments": panel_segments,
+            "panelItems": panel_items,
+            "panelSectionSlug": panel_section_slug,
+        }]
