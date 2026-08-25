@@ -152,7 +152,7 @@
 #def renderValueItem($x, $section = "")
     #if $x == "ET"
         #if $year.ET.has_data and $year.ET.sum.raw is not None and $year.ET.sum.raw > 0.0
-            $valuesCard('ET')
+            $valuesCard('ET', $section)
         #end if
     #else if $x == "temperatureThresholdDays"
         <div class="col-12 col-lg-6 mb-4">
