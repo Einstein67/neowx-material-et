@@ -479,7 +479,12 @@ href="img/splash/splash_1536x2048.png"
         #end if
     }
         #for $_k in $_kinds
-    ${_k}[data-name="${_item}"] {
+            ## Same :where() reasoning as $_sel above: js/app.js reads this
+            ## custom property via getComputedStyle(card), and the per-card
+            ## counterpart below (.card[data-name="X"]) is also (0,2,0) - a
+            ## bare second attribute here would raise this rule to (0,3,0)
+            ## and make it always win regardless of emission order.
+    ${_k}:where([data-section="${_sslug}"])[data-name="${_item}"] {
         --nwm-item-title-align: $_align;
     }
         #end for
