@@ -50,9 +50,15 @@
 ##
 ## The error branch further down needs none of this: its card is col-12, so it
 ## already breaks the row on both sides.
+##
+## $section is the enclosing [[[sections]]] slug, handed over the same way so
+## the forecast card wrapper can emit data-section - without it, head.inc's
+## section-scoped [data-section]/[data-name] CSS rules (e.g. items_title_align)
+## match nothing.
 #set $in_panel = $getVar('forecast_in_panel', False)
 #set $is_first = $getVar('forecast_is_first', True)
 #set $is_last  = $getVar('forecast_is_last', True)
+#set $section  = $getVar('forecast_section', '')
 
 ## $forecast is an autocalled SearchList method: every $forecast reference
 ## re-enters the Forecast SLE (rebuilding its params dict, json.dumps + md5
@@ -80,7 +86,7 @@
         #end if
         #for $i, $x in $enumerate($fcast.daily)
             <div class="col-12 col-md-6 col-xl-4 mb-4">
-                <div class="card card-forecast" data-name="forecast">
+                <div class="card card-forecast" data-name="forecast" data-section="$section">
                     <div class="card-body text-center pb-1">
                         <h3 class="h5-responsive $Extras.color-text">
                             #if $Extras.Forecast.show_today_tomorrow == "yes" and $i == 0
@@ -285,7 +291,7 @@
         #end if
 
         <div class="col-12 mb-4">
-            <div class="card card-forecast" data-name="forecast">
+            <div class="card card-forecast" data-name="forecast" data-section="$section">
                 <div class="card-body text-center pb-1">
                     <h3 class="h5-responsive $Extras.color-text">
                         $pgettext("Forecast","forecast") - Error
