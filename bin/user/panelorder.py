@@ -81,6 +81,13 @@ STATIC = "static"
 CARD = "card"
 CONTENTS = (CARD, "chart", "embedded", "telemetry", "telemetry_chart")
 
+# Items that render at most once per page however many sections list them.
+# The forecast is one large card with fixed inner element ids
+# (forecast-table, forecast_hour_icons) and its own #include-plus-#set global
+# handoff; a second copy would duplicate those ids and the two would fight
+# over the globals.  Everything else may now repeat once per section.
+SINGLETON_ITEMS = ("forecast",)
+
 # Keys a section may carry that are settings rather than typos.
 # items_title_align is read by head.inc, not here - it is listed so a panel
 # that sets it is not reported as carrying an unknown setting.
@@ -273,7 +280,8 @@ def parse_sections(skin_dict, content=CARD, enable_panels=True):
         return cached
 
     segments = []
-    seen = set()
+    # Spans every section, unlike the per-section 'seen' below.
+    claimed = set()
 
     for section_id in getattr(sections, "sections", list(sections.keys())):
         section = sections[section_id]
@@ -302,10 +310,16 @@ def parse_sections(skin_dict, content=CARD, enable_panels=True):
         _warn_unknown_keys(appearance, section, section_id)
 
         items = []
+        seen = set()
         for item in _as_list(section.get("items")):
-            if item not in seen:
-                seen.add(item)
-                items.append(item)
+            if item in seen:
+                continue
+            if item in SINGLETON_ITEMS:
+                if item in claimed:
+                    continue
+                claimed.add(item)
+            seen.add(item)
+            items.append(item)
         if not items:
             continue
 
@@ -335,13 +349,19 @@ def order_items(skin_dict, content=CARD):
     """Flat, de-duplicated item names for one content region.
 
     For loops that need the items themselves rather than the layout, such as
-    the chart JavaScript generation.
+    the chart JavaScript generation.  De-duplicates here rather than relying
+    on parse_sections, which now keeps a repeat that appears in a second
+    section - a chart's config and series data must still be emitted once
+    however many times the chart is displayed.
     """
-    return [
-        item
-        for segment in parse_sections(skin_dict, content, True)
-        for item in segment["items"]
-    ]
+    out = []
+    seen = set()
+    for segment in parse_sections(skin_dict, content, True):
+        for item in segment["items"]:
+            if item not in seen:
+                seen.add(item)
+                out.append(item)
+    return out
 
 
 class PanelOrder(SearchList):
