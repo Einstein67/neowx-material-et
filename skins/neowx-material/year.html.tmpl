@@ -324,8 +324,8 @@
 ## Parsing lives in bin/user/panelorder.py, which reads [[[sections]]] from
 ## skin.conf. Sections with a title become collapsible panels; those without
 ## render loose in the surrounding row.
-#set $val_segments   = $panelSegments('card')
-#set $chart_segments = $panelSegments('chart')
+#set $val_segments   = $panelSegments('card', page=$page)
+#set $chart_segments = $panelSegments('chart', page=$page)
 
 <!DOCTYPE html>
 <html lang="$lang">
@@ -413,7 +413,7 @@
 
         #def getChartJsCode($name, $id, $type, $series1, $series2 = "", $column = "avg", $series3 = "", $series4 = "", $series5 = "", $series6 = "", $series7 = "", $series8 = "")
 
-            #if $name in $panelItems('chart')
+            #if $name in $panelItems('chart', page=$page)
                 #set global $cc_name  = $name
                 #set global $cc_scope = ''
                 #include "chart_colors_setup.inc"
@@ -683,7 +683,7 @@
             #set $default_chart_columns = {'windDir': 'vecdir', 'ET': 'sum', 'rain': 'sum', 'windrun': 'sum', 'UV': 'max', 'radiation': 'max', 'luminosity': 'max', 'snowDepth': 'sum', 'lightning_strike_count': 'sum'}
             #set $default_chart_series = {'windDir': 'wind'}
 
-            #for $x in $panelItems('chart')
+            #for $x in $panelItems('chart', page=$page)
                 #if not $x.startswith('customChart') and $x not in $processed_charts
                     #silent $processed_charts.add($x)
                     #if $getVar('year.' + $x + '.has_data')
@@ -698,7 +698,7 @@
 
             // Custom charts
             #set $seen_custom_charts = set()
-            #for $x in $panelItems('chart')
+            #for $x in $panelItems('chart', page=$page)
                 #if $x.startswith('customChart') and $x not in $seen_custom_charts
                     #silent $seen_custom_charts.add($x)
                     #set $cc = $Extras.Appearance.get($x, {})
@@ -807,7 +807,7 @@
                         ##
                         ## Render the chart JS
                         ## Render chart JS
-                        #if len($cc_series_pairs) > 0 and $x in $panelItems('chart')
+                        #if len($cc_series_pairs) > 0 and $x in $panelItems('chart', page=$page)
                             #set $cc_id = $x + "chart"
                             #try
                                 #set $_ = $axes_list
