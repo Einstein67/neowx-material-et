@@ -27,10 +27,10 @@
 ## | Template for display card of battery symbol values (top section)        |
 ## +-------------------------------------------------------------------------+
 
-#def batteryCard($name)
+#def batteryCard($name, $section = "")
     #if $getVar('day.' + name + '.has_data') and ($getVar('day.' + name + '.max.raw') > 0 or $Extras.Telemetry.allow_zero_values == "yes")
         <div class="col-12 col-md-6 col-xl-4 mb-4">
-            <div class="card card-value h-100" id="${name}-value" data-name="$name">
+            <div class="card card-value h-100" data-name="$name" data-section="$section">
                 <div class="card-body text-center">
                     <h3 class="h5-responsive $Extras.color-text">
                         $getVar('obs.label.' + name)
@@ -168,15 +168,15 @@
 ## | Template for display card of chart (bottom section)                     |
 ## +-------------------------------------------------------------------------+
 
-#def chartCard($name)
+#def chartCard($name, $section = "")
     #if $getVar('day.' + name + '.has_data') and ($getVar('day.' + name + '.max.raw') > 0 or $Extras.Telemetry.allow_zero_values == "yes")
         <div class="col-12 col-xl-6 mb-4">
-            <div class="card card-chart h-100" id="${name}-chart-card" data-name="$name">
+            <div class="card card-chart h-100" data-name="$name" data-section="$section">
                 <div class="card-body text-center">
                     <h5 class="h5-responsive $Extras.color-text">
                         $getVar('obs.label.' + name)
                     </h5>
-                    <div id="$name-chart"></div>
+                    <div data-chart-mount="$name"></div>
                 </div>
             </div>
         </div>
@@ -188,11 +188,11 @@
 ## +-------------------------------------------------------------------------+
 
 
-#def renderTeleItem($x, $kind)
+#def renderTeleItem($x, $kind, $section = "")
     #if $kind == 'chart'
-        $chartCard($x)
+        $chartCard($x, $section)
     #else
-        $batteryCard($x)
+        $batteryCard($x, $section)
     #end if
 #end def
 
@@ -208,14 +208,14 @@
 
     #if $seg['type'] is None
         #for $x in $seg['items']
-            $renderTeleItem($x, $kind)
+            $renderTeleItem($x, $kind, $seg['slug'])
         #end for
     #else if len($vis_items) > 0
         #set $p_exp   = ($seg['type'] != 'collapsed')
         #set $p_show  = ' show' if $p_exp else ''
         #set $p_id    = 'nwm-tele-' + $kind + '-panel-' + str($panel_idx)
         <div class="col-12 mb-3">
-            <div class="card nwm-expansion-panel">
+            <div class="card nwm-expansion-panel" data-section="$seg['slug']">
                 #set global $panel_title = $seg['title']
                 #set global $panel_id    = $p_id
                 #set global $panel_type  = $seg['type']
@@ -224,7 +224,7 @@
                     <div class="nwm-panel-body">
                         <div class="row">
                             #for $x in $seg['items']
-                                $renderTeleItem($x, $kind)
+                                $renderTeleItem($x, $kind, $seg['slug'])
                             #end for
                         </div>
                     </div>
@@ -768,7 +768,8 @@
 
                 // currentvalue: --> $chart_interval <--
 
-                new ApexCharts(document.querySelector('#$name-chart'), {
+                document.querySelectorAll('[data-chart-mount="$name"]').forEach(function (chartElement) {
+                new ApexCharts(chartElement, {
                     ...graph_area_config,
                     #if $pg_align_mid
                     xaxis: {
@@ -853,6 +854,7 @@
                         }
                     ]
                 }).render()
+                });
 
             #end if
 
