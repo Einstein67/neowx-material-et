@@ -52,10 +52,13 @@ Which sections a page shows, and in what order, lives in
 
   Keys are the $page values the templates carry: day (index and yesterday),
   week, month (this month and the archives), year (likewise), telemetry.
-  Sections not listed do not appear on that page.  A page with no entry, and
-  every page when [[[pages]]] is absent, shows every section in declaration
-  order.  Order sorts WITHIN a content region - cards and charts are separate
-  columns, so a mixed list does not interleave them.
+  Sections not listed do not appear on that page.  A page with no entry, a
+  page whose entry has no 'sections =' line at all (so commenting the line
+  out is safe), and every page when [[[pages]]] is absent, all show every
+  section in declaration order.  Writing 'sections =' with nothing after it
+  is different from leaving the line out entirely: it means this page
+  deliberately shows nothing.  Order sorts WITHIN a content region - cards
+  and charts are separate columns, so a mixed list does not interleave them.
 
 Sections render in declaration order within each content value.  Items are
 de-duplicated within a section, first occurrence winning - the same item may
@@ -344,15 +347,19 @@ def enable_panels_setting(skin_dict):
 def _page_order(appearance, page):
     """Ordered section ids for one page, or None meaning 'no page filter'.
 
-    None is the compatibility path and covers four cases: no page was asked
+    None is the compatibility path and covers five cases: no page was asked
     for; there is no [[[pages]]] block; [[[pages]]] is itself a scalar (a
-    plain "pages = foo" written where a subsection block belongs); or this
-    page has no entry in it.  All four mean "every section, in declaration
-    order", which is what every config written before [[[pages]]] existed
-    expects.
+    plain "pages = foo" written where a subsection block belongs); this page
+    has no entry in it; or the entry exists but has no 'sections =' line at
+    all.  All five mean "every section, in declaration order", which is what
+    every config written before [[[pages]]] existed expects, and it is also
+    what makes commenting out a page's 'sections' line safe rather than
+    silently blanking the page.
 
-    An entry that exists but lists nothing is NOT None - it means the page
-    deliberately shows nothing.
+    An entry whose 'sections' line IS present, even written empty, is NOT
+    None: absence of the key means "not configured" (no filter), while an
+    explicit empty value means "configured to show nothing" - the two must
+    not collapse into each other.
     """
     if page is None:
         return None
@@ -370,6 +377,12 @@ def _page_order(appearance, page):
     entry = pages[key]
     if not hasattr(entry, "get"):
         # A scalar written where a [[[[page]]]] subsection belongs.
+        return None
+    if "sections" not in entry:
+        # Key missing entirely - never written, or its line commented out -
+        # means "not configured", the same as no entry at all.  An explicit
+        # 'sections =' (empty) falls through to _as_list below and returns
+        # [], which is deliberately different: "configured to show nothing".
         return None
     return _as_list(entry.get("sections"))
 
