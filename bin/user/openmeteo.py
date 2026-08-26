@@ -183,6 +183,10 @@ class Forecast(SearchList):
 
     def forecast(self):
 
+        # No page argument here on purpose: this is the fetch gate, not a
+        # render call, and it must stay page-independent. The forecast being
+        # hidden on one page's [[[pages]]] list must not stop the data from
+        # being fetched for another page that still shows it.
         enabled = "forecast" in order_items(self.generator.skin_dict, "card")
 
         if enabled != True:

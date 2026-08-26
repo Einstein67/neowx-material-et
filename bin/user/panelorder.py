@@ -44,10 +44,28 @@ items and, optionally, how to present them:
              none  -> panel chrome, always open, no toggle
   content    card (default), chart, embedded, telemetry, telemetry_chart
 
+Which sections a page shows, and in what order, lives in
+[Extras][[Appearance]][[[pages]]]:
+
+    [[[[day]]]]
+        sections = overview, temp_charts, soil
+
+  Keys are the $page values the templates carry: day (index and yesterday),
+  week, month (this month and the archives), year (likewise), telemetry.
+  Sections not listed do not appear on that page.  A page with no entry, a
+  page whose entry has no 'sections =' line at all (so commenting the line
+  out is safe), and every page when [[[pages]]] is absent, all show every
+  section in declaration order.  Writing 'sections =' with nothing after it
+  is different from leaving the line out entirely: it means this page
+  deliberately shows nothing.  Order sorts WITHIN a content region - cards
+  and charts are separate columns, so a mixed list does not interleave them.
+
 Sections render in declaration order within each content value.  Items are
 de-duplicated within a section, first occurrence winning - the same item may
 appear in as many sections as you like and renders once in each.  'forecast' is
-the exception: one per page, wherever it is listed, later occurrences dropped.
+the exception: one per page, later occurrences dropped.  The guard is scoped to
+a single parse_sections() call, i.e. per content value - which is enough
+because 'forecast' only has a render path under content = card.
 Each segment also carries a 'slug': the section name reduced to [A-Za-z0-9_-]
 and made unique across every section, which the templates emit as data-section.
 
@@ -57,10 +75,10 @@ never added to the search list and the pages fail to generate:
     [CheetahGenerator]
         search_list_extensions = user.panelorder.PanelOrder
 
-Then, in a template:
+Then, in a template that has declared #attr $page:
 
-    #set $segments = $panelSegments('card')
-    #set $flat     = $panelItems('chart')
+    #set $segments = $panelSegments('card', page=$page)
+    #set $flat     = $panelItems('chart', page=$page)
 
 panelSegments carries the grouping and is what you loop over to draw a row or a
 panel.  panelItems flattens the same data to bare names, for the places that
@@ -74,7 +92,7 @@ from weewx.cheetahgenerator import SearchList
 
 log = logging.getLogger(__name__)
 
-VERSION = "2.1.0"
+VERSION = "2.2.1"
 
 # Segment types.  'type' is None for a section with no title, whose items
 # render loose rather than inside a panel.
@@ -141,14 +159,15 @@ def _already_seen(seen_set, obj):
 _warned_problems = {}
 
 # parse_sections() itself is memoised per (appearance identity, content,
-# enable_panels) so the ~40-60 calls a single template can make for one
-# content region (chart JS generation is called from inside nested loops)
-# collapse to one real parse per report cycle.  Bucket is
-# id(appearance) -> {(content, enable_panels): segments}.
+# enable_panels, page) so the ~40-60 calls a single template can make for
+# one content region (chart JS generation is called from inside nested
+# loops) collapse to one real parse per report cycle.  Bucket is
+# id(appearance) -> {(content, enable_panels, page): segments}.
 _sections_cache = {}
 
-# parse_sections() memoises per (content, enable_panels); the slug map is
-# neither, so it gets its own key inside the same weakref-bounded bucket.
+# parse_sections() memoises per (content, enable_panels, page); the slug map
+# is none of those - it's the same for every page - so it gets its own key
+# inside the same weakref-bounded bucket.
 _SLUG_KEY = ("__slugs__",)
 
 
@@ -328,14 +347,62 @@ def enable_panels_setting(skin_dict):
     return str(raw).strip().lower() not in FALSE_WORDS
 
 
-def parse_sections(skin_dict, content=CARD, enable_panels=True):
+def _page_order(appearance, page):
+    """Ordered section ids for one page, or None meaning 'no page filter'.
+
+    None is the compatibility path and covers five cases: no page was asked
+    for; there is no [[[pages]]] block; [[[pages]]] is itself a scalar (a
+    plain "pages = foo" written where a subsection block belongs); this page
+    has no entry in it; or the entry exists but has no 'sections =' line at
+    all.  All five mean "every section, in declaration order", which is what
+    every config written before [[[pages]]] existed expects, and it is also
+    what makes commenting out a page's 'sections' line safe rather than
+    silently blanking the page.
+
+    An entry whose 'sections' line IS present, even written empty, is NOT
+    None: absence of the key means "not configured" (no filter), while an
+    explicit empty value means "configured to show nothing" - the two must
+    not collapse into each other.
+    """
+    if page is None:
+        return None
+    pages = appearance.get("pages")
+    if not pages or not hasattr(pages, "get"):
+        # Absent, or a scalar written where a [[[pages]]] block belongs -
+        # e.g. "pages = today" instead of a [[[[day]]]] subsection.  Without
+        # this guard, 'in' below becomes a substring test ('day' in 'today'
+        # is True) and pages[key] then raises TypeError, blanking the page
+        # instead of degrading.
+        return None
+    key = str(page).strip()
+    if key not in pages:
+        return None
+    entry = pages[key]
+    if not hasattr(entry, "get"):
+        # A scalar written where a [[[[page]]]] subsection belongs.
+        return None
+    if "sections" not in entry:
+        # Key missing entirely - never written, or its line commented out -
+        # means "not configured", the same as no entry at all.  An explicit
+        # 'sections =' (empty) falls through to _as_list below and returns
+        # [], which is deliberately different: "configured to show nothing".
+        return None
+    return _as_list(entry.get("sections"))
+
+
+def parse_sections(skin_dict, content=CARD, enable_panels=True, page=None):
     """Return the layout segments for one content region.
 
     With enable_panels false the grouping is discarded but every item is kept,
     so turning panels off degrades to a flat row rather than losing cards.
 
-    Results are memoised per (appearance identity, content, enable_panels),
-    since a single template can call this dozens of times for the same
+    'page' is one of the $page values the templates carry - day, week, month,
+    year, telemetry.  When [[[pages]]] names that page, only the sections it
+    lists are returned, in the order it lists them.  Anything else means every
+    section in declaration order.
+
+    Results are memoised per (appearance identity, content, enable_panels,
+    page), since a single template can call this dozens of times for the same
     content region (chart JS generation runs inside nested per-item loops).
     That also bounds the unknown-content/-collapsed/-key warnings below to
     once per distinct problem per config, instead of once per call.
@@ -348,7 +415,8 @@ def parse_sections(skin_dict, content=CARD, enable_panels=True):
 
     wanted = str(content).strip().lower()
     enable_panels = bool(enable_panels)
-    cache_key = (wanted, enable_panels)
+    page_key = None if page is None else str(page).strip()
+    cache_key = (wanted, enable_panels, page_key)
     cached = _cache_get(appearance, cache_key)
     if cached is not None:
         return cached
@@ -359,7 +427,34 @@ def parse_sections(skin_dict, content=CARD, enable_panels=True):
     # Spans every section, unlike the per-section 'seen' below.
     claimed = set()
 
-    for section_id in getattr(sections, "sections", list(sections.keys())):
+    declared = getattr(sections, "sections", list(sections.keys()))
+    order = _page_order(appearance, page)
+    if order is None:
+        section_ids = declared
+    else:
+        # Iterate the PAGE's order, not the declaration order - filtering the
+        # declared list instead would give per-page selection but not per-page
+        # ordering, which is half the feature.
+        section_ids = []
+        seen_ids = set()
+        for sid in order:
+            if sid in seen_ids:
+                continue
+            seen_ids.add(sid)
+            if sid not in sections:
+                problem = ("page-section", page_key, sid)
+                if not _problem_seen(appearance, problem):
+                    _mark_problem(appearance, problem)
+                    log.warning(
+                        "panelorder: page '%s' lists section '%s', which is "
+                        "not defined in [[[sections]]]; ignoring it.",
+                        page_key,
+                        sid,
+                    )
+                continue
+            section_ids.append(sid)
+
+    for section_id in section_ids:
         section = sections[section_id]
 
         raw_content = section.get("content", CARD)
@@ -427,18 +522,21 @@ def parse_sections(skin_dict, content=CARD, enable_panels=True):
     return segments
 
 
-def order_items(skin_dict, content=CARD):
+def order_items(skin_dict, content=CARD, page=None):
     """Flat, de-duplicated item names for one content region.
 
     For loops that need the items themselves rather than the layout, such as
     the chart JavaScript generation.  De-duplicates here rather than relying
-    on parse_sections, which now keeps a repeat that appears in a second
-    section - a chart's config and series data must still be emitted once
-    however many times the chart is displayed.
+    on parse_sections, which keeps a repeat that appears in a second section -
+    a chart's config and series data must still be emitted once however many
+    times the chart is displayed.
+
+    Passing the page narrows this to the charts that page actually draws,
+    which is where the report-generation saving comes from.
     """
     out = []
     seen = set()
-    for segment in parse_sections(skin_dict, content, True):
+    for segment in parse_sections(skin_dict, content, True, page):
         for item in segment["items"]:
             if item not in seen:
                 seen.add(item)
@@ -456,13 +554,13 @@ class PanelOrder(SearchList):
     def get_extension_list(self, timespan, db_lookup):
         skin_dict = self.generator.skin_dict
 
-        def panel_segments(content=CARD, enable_panels=None):
+        def panel_segments(content=CARD, enable_panels=None, page=None):
             if enable_panels is None:
                 enable_panels = enable_panels_setting(skin_dict)
-            return parse_sections(skin_dict, content, enable_panels)
+            return parse_sections(skin_dict, content, enable_panels, page)
 
-        def panel_items(content=CARD):
-            return order_items(skin_dict, content)
+        def panel_items(content=CARD, page=None):
+            return order_items(skin_dict, content, page)
 
         def panel_section_slug(section_id):
             return section_slug(skin_dict, section_id)
