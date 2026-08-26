@@ -73,10 +73,10 @@ never added to the search list and the pages fail to generate:
     [CheetahGenerator]
         search_list_extensions = user.panelorder.PanelOrder
 
-Then, in a template:
+Then, in a template that has declared #attr $page:
 
-    #set $segments = $panelSegments('card')
-    #set $flat     = $panelItems('chart')
+    #set $segments = $panelSegments('card', page=$page)
+    #set $flat     = $panelItems('chart', page=$page)
 
 panelSegments carries the grouping and is what you loop over to draw a row or a
 panel.  panelItems flattens the same data to bare names, for the places that
@@ -157,14 +157,15 @@ def _already_seen(seen_set, obj):
 _warned_problems = {}
 
 # parse_sections() itself is memoised per (appearance identity, content,
-# enable_panels) so the ~40-60 calls a single template can make for one
-# content region (chart JS generation is called from inside nested loops)
-# collapse to one real parse per report cycle.  Bucket is
-# id(appearance) -> {(content, enable_panels): segments}.
+# enable_panels, page) so the ~40-60 calls a single template can make for
+# one content region (chart JS generation is called from inside nested
+# loops) collapse to one real parse per report cycle.  Bucket is
+# id(appearance) -> {(content, enable_panels, page): segments}.
 _sections_cache = {}
 
-# parse_sections() memoises per (content, enable_panels); the slug map is
-# neither, so it gets its own key inside the same weakref-bounded bucket.
+# parse_sections() memoises per (content, enable_panels, page); the slug map
+# is none of those - it's the same for every page - so it gets its own key
+# inside the same weakref-bounded bucket.
 _SLUG_KEY = ("__slugs__",)
 
 
