@@ -63,7 +63,9 @@ Which sections a page shows, and in what order, lives in
 Sections render in declaration order within each content value.  Items are
 de-duplicated within a section, first occurrence winning - the same item may
 appear in as many sections as you like and renders once in each.  'forecast' is
-the exception: one per page, wherever it is listed, later occurrences dropped.
+the exception: one per page, later occurrences dropped.  The guard is scoped to
+a single parse_sections() call, i.e. per content value - which is enough
+because 'forecast' only has a render path under content = card.
 Each segment also carries a 'slug': the section name reduced to [A-Za-z0-9_-]
 and made unique across every section, which the templates emit as data-section.
 
@@ -90,7 +92,7 @@ from weewx.cheetahgenerator import SearchList
 
 log = logging.getLogger(__name__)
 
-VERSION = "2.2.0"
+VERSION = "2.2.1"
 
 # Segment types.  'type' is None for a section with no title, whose items
 # render loose rather than inside a panel.

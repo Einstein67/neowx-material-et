@@ -156,7 +156,7 @@
         #end if
     #else if $x == "temperatureThresholdDays"
         <div class="col-12 col-lg-6 mb-4">
-            <div class="card">
+            <div class="card" data-name="temperatureThresholdDays" data-section="$section">
                 <div class="card-body text-center">
                     <h3 class="h5-responsive $Extras.color-text">$gettext("summer_days")</h3>
                     <div class="row">
@@ -849,7 +849,6 @@
 
                 ## Render chart JS
                 #if len($cc_series_pairs) > 0 and $x in $panelItems('chart', page=$page)
-                    #set $cc_id = $x + "chart"
                     #try
                         #set $_ = $axes_list
                     #except
