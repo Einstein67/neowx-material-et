@@ -344,10 +344,12 @@ def enable_panels_setting(skin_dict):
 def _page_order(appearance, page):
     """Ordered section ids for one page, or None meaning 'no page filter'.
 
-    None is the compatibility path and covers three cases: no page was asked
-    for, there is no [[[pages]]] block, or this page has no entry in it.  All
-    three mean "every section, in declaration order", which is what every
-    config written before [[[pages]]] existed expects.
+    None is the compatibility path and covers four cases: no page was asked
+    for; there is no [[[pages]]] block; [[[pages]]] is itself a scalar (a
+    plain "pages = foo" written where a subsection block belongs); or this
+    page has no entry in it.  All four mean "every section, in declaration
+    order", which is what every config written before [[[pages]]] existed
+    expects.
 
     An entry that exists but lists nothing is NOT None - it means the page
     deliberately shows nothing.
@@ -355,7 +357,12 @@ def _page_order(appearance, page):
     if page is None:
         return None
     pages = appearance.get("pages")
-    if not pages:
+    if not pages or not hasattr(pages, "get"):
+        # Absent, or a scalar written where a [[[pages]]] block belongs -
+        # e.g. "pages = today" instead of a [[[[day]]]] subsection.  Without
+        # this guard, 'in' below becomes a substring test ('day' in 'today'
+        # is True) and pages[key] then raises TypeError, blanking the page
+        # instead of degrading.
         return None
     key = str(page).strip()
     if key not in pages:
