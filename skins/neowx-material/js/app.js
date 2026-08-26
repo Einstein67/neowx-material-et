@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // content = card section and its chart in a content = chart section, so
     // their slugs never match.
     function findJumpTarget(selector, from) {
+        if (!from) return null;
         var all = Array.from(document.querySelectorAll(selector));
         var visible = all.filter(function (el) { return el.offsetParent !== null; });
         if (!visible.length) return all[0] || null;
@@ -58,14 +59,17 @@ document.addEventListener('DOMContentLoaded', function () {
     // a ~100px twitch upward, with the highlight flashing on something
     // invisible. Expand first, then scroll once layout has settled.
     //
-    // Bootstrap 4.4.1, so this is the jQuery plugin - there is no
-    // bootstrap.Collapse.getOrCreateInstance() here.
+    // Bootstrap 4.4.1, so this is the jQuery plugin, not a Bootstrap 5
+    // static instance getter.
     function jumpTo(target) {
         if (!target) return;
-        var body = target.closest('.collapse');
+        // A panel mid-animation carries .collapsing rather than .collapse, so
+        // matching only the latter silently scrolls on geometry that is about
+        // to change.
+        var body = target.closest('.collapse, .collapsing');
         if (body && !body.classList.contains('show')) {
-            var header = body.parentNode.querySelector(':scope > .nwm-panel-header');
-            if (header) header.setAttribute('aria-expanded', 'true');
+            // Bootstrap sets aria-expanded on the trigger itself during
+            // show(), and the trigger IS this header - so we do not touch it.
             $(body).one('shown.bs.collapse', function () {
                 scrollToElement(target, true);
             });
@@ -74,6 +78,78 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         scrollToElement(target, true);
     }
+
+    // --- PANEL STATE ---------------------------------------------------
+    // head.inc has already painted the remembered state via an injected
+    // stylesheet. Our job is to make the real DOM agree, then drop that
+    // override, then keep storage in step with what the user does next.
+    var NWM_PANEL_KEY = 'nwm-panels';
+
+    function nwmReadPanels() {
+        // sessionStorage THROWS rather than returning null in private mode
+        // and wherever site data is blocked, so every access is guarded.
+        try {
+            var raw = sessionStorage.getItem(NWM_PANEL_KEY);
+            var parsed = raw ? JSON.parse(raw) : {};
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                return {};
+            }
+            return parsed;
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function nwmWritePanel(slug, expanded) {
+        try {
+            var state = nwmReadPanels();
+            state[slug] = !!expanded;
+            sessionStorage.setItem(NWM_PANEL_KEY, JSON.stringify(state));
+        } catch (e) {
+            // Storage unavailable. The page still works; it just forgets.
+        }
+    }
+
+    (function nwmPanelState() {
+        var panels = document.querySelectorAll('.nwm-expansion-panel[data-section]');
+        if (!panels.length) return;
+        var stored = nwmReadPanels();
+
+        panels.forEach(function (panel) {
+            var header = panel.querySelector(':scope > .nwm-panel-header');
+            var body = panel.querySelector(':scope > .collapse');
+            if (!header || !body) return;
+            // A collapsed = none panel has no toggle. Restoring one to
+            // collapsed would hide it with no way to reopen it.
+            if (header.classList.contains('nwm-panel-static')) return;
+
+            var slug = panel.getAttribute('data-section');
+
+            // STEP 1 of 3: correct the DOM to match what the injected CSS is
+            // already showing. Set the class directly rather than going
+            // through Bootstrap's animated API - this must not animate.
+            if (Object.prototype.hasOwnProperty.call(stored, slug)) {
+                var wantOpen = !!stored[slug];
+                body.classList.toggle('show', wantOpen);
+                header.setAttribute('aria-expanded', wantOpen ? 'true' : 'false');
+            }
+
+            // STEP 3 of 3: keep storage in step from here on. Bootstrap fires
+            // these after the transition completes, and it maintains
+            // aria-expanded on the trigger itself, so we only record.
+            $(body).on('shown.bs.collapse', function () { nwmWritePanel(slug, true); });
+            $(body).on('hidden.bs.collapse', function () { nwmWritePanel(slug, false); });
+        });
+
+        // STEP 2 of 3: drop the override. This is visually inert ONLY because
+        // step 1 already made the DOM match it. Move this above the loop and
+        // every restored panel snaps - which is the exact flash this whole
+        // feature exists to avoid.
+        var override = document.getElementById('nwm-panel-restore');
+        if (override && override.parentNode) {
+            override.parentNode.removeChild(override);
+        }
+    })();
 
     // --- CLICK HANDLER 1: Value Cards -> Jump to Chart Cards ---
     valueCards.forEach(function(valueCard) {
