@@ -117,10 +117,16 @@
 #if $varExists('Extras.Appearance.rememberPanelState') and str($Extras.Appearance.rememberPanelState).strip().lower() not in ('false', 'no', '0')
 <script>
 (function () {
+    // Tells js/app.js the setting is on, so its own DOMContentLoaded handler
+    // knows whether to correct the DOM and bind the writers below - it has no
+    // template access of its own to check Extras.Appearance directly. Set
+    // before the try so it still lands even if storage is unreadable or the
+    // stored blob is malformed and one of the early returns below fires.
+    window.NWM_REMEMBER_PANELS = true;
     var stored;
     try { stored = JSON.parse(sessionStorage.getItem('nwm-panels') || '{}'); }
     catch (e) { return; }
-    if (!stored || typeof stored !== 'object' || stored.constructor !== Object) { return; }
+    if (!stored || typeof stored !== 'object' || Array.isArray(stored)) { return; }
     var css = '';
     for (var slug in stored) {
         if (!Object.prototype.hasOwnProperty.call(stored, slug)) { continue; }

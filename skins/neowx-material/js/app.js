@@ -111,43 +111,60 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     (function nwmPanelState() {
+        // head.inc sets this only inside its own rememberPanelState #if, and
+        // only it emits the head-injected restore override - so when it's
+        // unset there is nothing to correct or remove, and no future toggle
+        // is worth persisting. Without this gate, rememberPanelState = false
+        // still bound these handlers and still corrected the DOM below,
+        // reproducing the exact flash the setting exists to turn off.
+        if (window.NWM_REMEMBER_PANELS !== true) return;
         var panels = document.querySelectorAll('.nwm-expansion-panel[data-section]');
-        if (!panels.length) return;
         var stored = nwmReadPanels();
 
-        panels.forEach(function (panel) {
-            var header = panel.querySelector(':scope > .nwm-panel-header');
-            var body = panel.querySelector(':scope > .collapse');
-            if (!header || !body) return;
-            // A collapsed = none panel has no toggle. Restoring one to
-            // collapsed would hide it with no way to reopen it.
-            if (header.classList.contains('nwm-panel-static')) return;
+        try {
+            panels.forEach(function (panel) {
+                var header = panel.querySelector(':scope > .nwm-panel-header');
+                // :scope > .collapse must keep selecting the same element as
+                // head.inc's "header + .collapse" - the two halves agree on
+                // which node is the panel body only because both selectors
+                // resolve to it.
+                var body = panel.querySelector(':scope > .collapse');
+                if (!header || !body) return;
+                // A collapsed = none panel has no toggle. Restoring one to
+                // collapsed would hide it with no way to reopen it.
+                if (header.classList.contains('nwm-panel-static')) return;
 
-            var slug = panel.getAttribute('data-section');
+                var slug = panel.getAttribute('data-section');
 
-            // STEP 1 of 3: correct the DOM to match what the injected CSS is
-            // already showing. Set the class directly rather than going
-            // through Bootstrap's animated API - this must not animate.
-            if (Object.prototype.hasOwnProperty.call(stored, slug)) {
-                var wantOpen = !!stored[slug];
-                body.classList.toggle('show', wantOpen);
-                header.setAttribute('aria-expanded', wantOpen ? 'true' : 'false');
+                // STEP 1 of 3: correct the DOM to match what the injected CSS is
+                // already showing. Set the class directly rather than going
+                // through Bootstrap's animated API - this must not animate.
+                if (Object.prototype.hasOwnProperty.call(stored, slug)) {
+                    var wantOpen = !!stored[slug];
+                    body.classList.toggle('show', wantOpen);
+                    header.setAttribute('aria-expanded', wantOpen ? 'true' : 'false');
+                }
+
+                // STEP 3 of 3: keep storage in step from here on. Bootstrap fires
+                // these after the transition completes, and it maintains
+                // aria-expanded on the trigger itself, so we only record.
+                $(body).on('shown.bs.collapse', function () { nwmWritePanel(slug, true); });
+                $(body).on('hidden.bs.collapse', function () { nwmWritePanel(slug, false); });
+            });
+        } finally {
+            // STEP 2 of 3: drop the override, whether or not the loop above
+            // completed. This is visually inert ONLY because step 1 already
+            // ran for every panel it reached before this fires - a finally
+            // runs after the try body, so that ordering holds even on a
+            // thrown error. Moving this above the loop (or back into the try,
+            // after the loop, guarded by an early return on no panels) would
+            // let a restored panel snap into place, or - worse, on a thrown
+            // error - leave the override's unconditional rules pinning a
+            // stored-collapsed panel hidden with no way to reopen it.
+            var override = document.getElementById('nwm-panel-restore');
+            if (override && override.parentNode) {
+                override.parentNode.removeChild(override);
             }
-
-            // STEP 3 of 3: keep storage in step from here on. Bootstrap fires
-            // these after the transition completes, and it maintains
-            // aria-expanded on the trigger itself, so we only record.
-            $(body).on('shown.bs.collapse', function () { nwmWritePanel(slug, true); });
-            $(body).on('hidden.bs.collapse', function () { nwmWritePanel(slug, false); });
-        });
-
-        // STEP 2 of 3: drop the override. This is visually inert ONLY because
-        // step 1 already made the DOM match it. Move this above the loop and
-        // every restored panel snaps - which is the exact flash this whole
-        // feature exists to avoid.
-        var override = document.getElementById('nwm-panel-restore');
-        if (override && override.parentNode) {
-            override.parentNode.removeChild(override);
         }
     })();
 
