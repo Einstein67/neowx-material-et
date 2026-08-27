@@ -27,7 +27,7 @@ chart: {
             csv: {
                 headerCategory: 'DateTime',
                 categoryFormatter(x) {
-                    return new Date(x).getTime()
+                    return Math.floor(new Date(x).getTime() / 1000);
                 }
             }
         }
