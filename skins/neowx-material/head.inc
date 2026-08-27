@@ -105,6 +105,58 @@
 ## ApexChart stylesheet
 <link rel="stylesheet" href="js/vendor/apexcharts/apexcharts.css">
 
+## Panel state restore.  Must be INLINE and must run before the body parses:
+## the panels are painted from the server-rendered default, so anything that
+## waits for DOMContentLoaded shows the wrong state first and corrects it
+## visibly.  On a page that auto-refreshes every few minutes that flash would
+## be relentless.
+##
+## The override needs no knowledge of what the default IS.  Each stored state
+## maps to a rule that is either corrective or a no-op, so we can emit both
+## directions blind.
+#if $varExists('Extras.Appearance.rememberPanelState') and str($Extras.Appearance.rememberPanelState).strip().lower() not in ('false', 'no', '0')
+<script>
+(function () {
+    // Tells js/app.js the setting is on, so its own DOMContentLoaded handler
+    // knows whether to correct the DOM and bind the writers below - it has no
+    // template access of its own to check Extras.Appearance directly. Set
+    // before the try so it still lands even if storage is unreadable or the
+    // stored blob is malformed and one of the early returns below fires.
+    window.NWM_REMEMBER_PANELS = true;
+    var stored;
+    try { stored = JSON.parse(sessionStorage.getItem('nwm-panels') || '{}'); }
+    catch (e) { return; }
+    if (!stored || typeof stored !== 'object' || Array.isArray(stored)) { return; }
+    var css = '';
+    for (var slug in stored) {
+        if (!Object.prototype.hasOwnProperty.call(stored, slug)) { continue; }
+        if (!/^[A-Za-z0-9_-]+$/.test(slug)) { continue; }
+        var p = '.nwm-expansion-panel[data-section="' + slug + '"]';
+        // Static panels (collapsed = none) have no toggle, so a stale stored
+        // false would hide one with no way to reopen it.  The header is the
+        // body's immediate previous sibling, so + reaches exactly the right
+        // element without relying on the CSS :has selector.
+        var body = p + ' > .nwm-panel-header:not(.nwm-panel-static) + .collapse';
+        // The chevron rotates off [aria-expanded] on the header, which this
+        // override does not change - so without a matching transform the
+        // panel paints with its chevron pointing the wrong way.  This
+        // selector is (0,5,0) against the base rule's (0,3,0); a shorter one
+        // ties and is then decided by source order.
+        var icon = p + ' > .nwm-panel-header[aria-expanded] .nwm-panel-icon';
+        css += stored[slug]
+            ? body + '{display:block}' + icon + '{transform:rotate(180deg)}'
+            : body + '.show{display:none}' + icon + '{transform:none}';
+    }
+    if (css) {
+        var st = document.createElement('style');
+        st.id = 'nwm-panel-restore';
+        st.textContent = css;
+        document.head.appendChild(st);
+    }
+})();
+</script>
+#end if
+
 ## Appearance settings
 
 #if $Extras.Appearance.lo_value_color != ""
