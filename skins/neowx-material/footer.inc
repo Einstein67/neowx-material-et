@@ -124,7 +124,7 @@
 
         #if $Extras.Footer.support_skin == "yes"
             <span class="mx-2">&bull;</span>
-            <a href="https://github.com/seehase/neowx-material" target="_blank">Fork of NeoWX Material</a> skin
+            <a href="https://github.com/Einstein67/neowx-material-et" target="_blank">Fork of NeoWX-Skin by Seehase</a> - 
 
             #if $Extras.Footer.show_version == "yes"
                 v<span id="footer-skin-version">$Extras.version</span>
@@ -139,10 +139,7 @@
             <span class="mx-2">&bull;</span>
             <a href="$Extras.Footer.privacy_url" target="_blank">$Extras.Footer.privacy_label</a>
         #end if
-        ## Gated on the page actually SHOWING the forecast, not merely listing
-        ## it: with show_forecast off the item is still in the section, so
-        ## without this the footer credits a data source the page never drew.
-        #if $panelPageSetting('show_forecast', $page, $subpage) and "forecast" in $panelItems('card', page=$page, subpage=$subpage)
+        #if "forecast" in $panelItems('card', page=$page)
             <div class="text-center px-2">
                 Weather forecast data provided by&nbsp;<a href="https://open-meteo.com/">Open-Meteo.com</a> under (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>) license. Data may be modified (e.g., unit conversion, aggregation).
             </div>
