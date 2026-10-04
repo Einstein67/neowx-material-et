@@ -2,13 +2,24 @@
 
 **The most modern and feature-rich skin for WeeWX weather stations**
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-blue?style=flat-square)](https://weewx.seehausen.org/)
-[![GitHub Issues](https://img.shields.io/github/issues/seehase/neowx-material?style=flat-square)](https://github.com/seehase/neowx-material/issues)
-[![License](https://img.shields.io/github/license/seehase/neowx-material?style=flat-square)](LICENSE)
-
 This actively maintained fork brings NeoWX Material into the modern era with **real-time MQTT updates**, **weather forecasting**, **multi-axis charts**, **collapsible grouping panels**, **comprehensive telemetry monitoring**, **comprehensive multi-language support**, and many more improvements.
 
-> **Live Demo:** [weewx.seehausen.org](https://weewx.seehausen.org/)
+> **Live Demo:** [Home-ET](https://wetter.eini67.ddnss.de/)
+
+### Tested with WeeWx Version 5.5.0-1 - everything's fine
+
+### 🔧 My changes - et
+
+- The text for trend indicators has been shortened.
+- Custom date format for the month/year archive.
+- CPU-optimised report generation (`stale_age` in `skin.conf`).
+    - Only the `index.html` file and the NOAA archive text files are generated during each report run.
+    - The Yesterday, Archive (overview) and Almanac pages are generated every hour.
+    - The Week page is generated every 2 hours.
+    - The Month page and the Archive/Month page are generated every 4 hours.
+    - The History page (which is very CPU-intensive) is generated every 12 hours. The existing `refresh_interval` parameter, which is intended to reduce the load, is not working.
+    - All other pages, such as Year, Archive/Year and Telemetry, are generated every 24 hours.
+- ... and a few other things.
 
 ---
 
@@ -41,9 +52,6 @@ This is an **actively maintained** continuation of the NeoWX Material skin. The 
    - `title` — omit it for a plain row, add it for a collapsible panel
    - `collapsed` — `true`, `false`, or `none` for a panel that never collapses
    - `content` — `card`, `chart`, `embedded`, `telemetry` or `telemetry_chart`
-- Choose which sections each page shows, and in what order, with `[[[pages]]]` — and override a single page where two share a key (`day` → `current` / `yesterday`, `month` → `month` / `month_archive`, `year` → `year` / `year_archive`)
-- `show_embedded` and `show_forecast` put the embedded section and the forecast on any dashboard page, not just Current
-- Panels you collapse stay collapsed for the life of the browser tab, so the auto-refresh stops reopening them
 - Sections render in the order they are written, so a panel can be followed by an ungrouped row
 - Each section starts on a new line, so grouping is meaningful even without a title
 - Panels whose items all lack data are hidden rather than drawn empty
@@ -56,7 +64,6 @@ This is an **actively maintained** continuation of the NeoWX Material skin. The 
 - Signal quality monitoring (`rxCheckPercent`)
 - Per-field chart interval override — set different resolutions for different sensors
 - Customizable card and chart ordering via `telemetry` and `telemetry_chart` sections
-- Telemetry items can also be listed in any `card` or `chart` section on any dashboard page — a gauge in a card section, a time-series chart in a chart section, fetching that page's own time window (see the [Telemetry Configuration Guide](docs/TELEMETRY-CONFIG-GUIDE.md))
 
 ### 🔴 Real-Time MQTT Updates
 - **Live data updates** without page refresh
@@ -170,7 +177,7 @@ How the current-page trend arrows work and how to tune them:
 
 1. **Install the extension:**
    ```bash
-   weectl extension install https://github.com/seehase/neowx-material/archive/refs/heads/master.zip
+   weectl extension install https://github.com/Einstein67/neowx-material-et/archive/refs/heads/master-et.zip
    ```
 
 2. **Restart WeeWX:**
@@ -451,8 +458,8 @@ This project maintains the original license from NeoWX Material.
 
 ## 📞 Contact & Links
 
-- **Live Demo**: [weewx.seehausen.org](https://weewx.seehausen.org/)
-- **Issues**: [GitHub Issues](https://github.com/seehase/neowx-material/issues)
+- **Live Demo**: [Home-ET](https://wetter.eini67.ddnss.de/)
+- **Issues**: [GitHub Issues](https://github.com/Einstein67/neowx-material-et/issues)
 - **Original Project**: [neoground/neowx-material](https://github.com/neoground/neowx-material) (not maintained)
 - **WeeWX**: [weewx.com](https://weewx.com)
 
