@@ -165,7 +165,7 @@
                     #end if
                     #if $Extras.Footer.support_skin == "yes"
                         <span class="nwm-sep">&bull;</span>
-                        <span class="nwm-footer-item"><a href="https://github.com/seehase/neowx-material" target="_blank" rel="noopener">Fork of NeoWX Material</a>
+                        <span class="nwm-footer-item"><a href="https://github.com/Einstein67/neowx-material-et" target="_blank" rel="noopener">Fork of NeoWX Material</a>
                             #if $Extras.Footer.show_version == "yes"
                                 <span class="nwm-version">v<span id="footer-skin-version">$Extras.version</span></span>
                             #end if
