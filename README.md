@@ -8,7 +8,7 @@
 
 An actively maintained evolution of NeoWX Material featuring **interactive archive navigation**, **per-page collapsible layouts**, **real-time MQTT WebSocket updates**, **7-day Open-Meteo forecasts**, **multi-axis ApexCharts**, **station telemetry**, and **12 built-in languages**.
 
-> **Live Demo:** [weewx.seehausen.org](https://weewx.seehausen.org/)
+> **Live Demo:** [Home-ET](https://wetter.eini67.ddnss.de/)
 
 ![NeoWX Material Screenshot](docs/img/screenshot.png)
 

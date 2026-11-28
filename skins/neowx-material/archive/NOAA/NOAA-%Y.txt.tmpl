@@ -55,9 +55,9 @@ ELEV: $station.altitude
 
                                           TEMPERATURE ($unit.label.outTemp.strip())
 
-                              HEAT    COOL                              TROP.  SUM.   TROP.  ARKT.
+                              HEAT    COOL                              TROP.  SUM.   TROP.  ICE
           MEAN   MEAN         DEG     DEG                               DAYS   DAYS   NIGHT  DAYS
- YR  MO   MAX    MIN    MEAN  DAYS    DAYS      HI  DAY     LOW  DAY    >=30   >=25   >=20   <=-10
+ YR  MO   MAX    MIN    MEAN  DAYS    DAYS      HI  DAY     LOW  DAY    >=30   >=25   >=20   <=0
  ##YR  MO   MAX    MIN    MEAN  DAYS    DAYS      HI  DAY     LOW  DAY $ShowInt($TropicDay) $ShowInt($SummerDay) $ShowInt($TropicNight) $ShowInt($ArcticDay)
 --------------------------------------------------------------------------------------------------
 #for $month in $year.months
